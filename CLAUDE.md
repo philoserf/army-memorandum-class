@@ -12,6 +12,52 @@ Fork: `origin` = `x3c3/army-memorandum-class`, `upstream` = `glallen01/army-memo
 Upstream changes land as merged PRs. Check `git log --oneline upstream/master..HEAD` for
 local divergence before syncing.
 
+## Fork policy — do not contact upstream
+
+**This fork is under active divergent development. Nothing goes to
+`glallen01/army-memorandum-class` until that work is finished and deliberately
+proposed.** Upstream is a separate maintainer's project; unfinished work arriving there
+is noise for them, not a contribution.
+
+Three ways a fork pings upstream by accident. All three are avoidable:
+
+1. **Pull requests default to the parent.** On GitHub, a PR opened from a fork proposes
+   merging into the _upstream_ repo unless you change the base. The `gh` CLI reads this
+   from `remote.<name>.gh-resolved` in git config, which was pointed at `upstream` until
+   2026-09-09. It is now `origin`. Verify before opening any PR:
+
+   ```sh
+   git config --get-regexp gh-resolved    # want: remote.origin.gh-resolved base
+   gh repo set-default x3c3/army-memorandum-class   # to fix
+   ```
+
+   Prefer an explicit `--repo x3c3/army-memorandum-class` on every `gh pr` and
+   `gh issue` command regardless. It costs nothing and cannot be misconfigured.
+
+2. **A linked issue URL creates a cross-reference in upstream's timeline**, which
+   notifies everyone subscribed to that issue. Writing
+   `https://github.com/glallen01/army-memorandum-class/issues/37` in an issue or commit
+   message posts an event on their side. Backtick-wrapped text does not — code spans are
+   not parsed for references. Refer to upstream issues as `` `glallen01#37` ``.
+
+3. **`gh repo sync` and `git fetch upstream` are safe** — they read. Pushing is what
+   reaches them, and nothing here should ever push to an `upstream` ref.
+
+### Issue tracking
+
+Findings live on the fork: `gh issue list --repo x3c3/army-memorandum-class`. They came
+from a review recorded in `REVIEW.md`, and carry `kind:audit`, `kind:reduction`, or
+`kind:upstream` labels plus `severity:*` and `evidence:*`. Issues labeled `kind:upstream`
+are read-only mirrors of open upstream issues — track them here, but discuss them
+upstream, and never treat one as this fork's original work.
+
+### When the work is done
+
+Either propose a curated series of PRs upstream — small, separable, each against a clean
+branch — or graduate this repo to `philoserf` as an owned project, per the rule in
+`~/source/x3c3/CLAUDE.md` that a fork diverging meaningfully stops being a fork. Decide
+which before the divergence gets deep enough that neither is comfortable.
+
 ## Toolchain
 
 - **LuaLaTeX or XeLaTeX is required** — the class uses `fontspec` and calls
