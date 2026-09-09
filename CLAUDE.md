@@ -20,9 +20,15 @@ bundled `digsig.sty`, and the `examples/` that exercise them.
 - **GitHub still classifies this repo as a fork** (`isFork: true`, parent `glallen01`),
   so PR and issue defaults still point at the parent. The `upstream` remote
   (`glallen01/army-memorandum-class`) is kept for read-only tracking.
+- **The default branch here is `main`; upstream's is still `master`.** Renamed on
+  2026-09-09. This asymmetry is deliberate and load-bearing: comparison and sync commands
+  against upstream keep the `master` spelling (`git log upstream/master..HEAD`,
+  `git fetch upstream master`), while anything targeting this repo uses `main` (PR bases,
+  `git push origin main`). Do not "correct" `upstream/master` to `upstream/main` — there
+  is no `main` on `glallen01` and the command will simply fail.
 - **Divergence from upstream is documentation only.** At the time of writing,
-  `git log --oneline upstream/master..HEAD` is three CLAUDE.md commits and nothing else —
-  the class itself is at upstream parity. The substantive fork work is planned, not
+  `git log --oneline upstream/master..HEAD` is a handful of CLAUDE.md commits and nothing
+  else — the class itself is at upstream parity. The substantive fork work is planned, not
   landed: it lives as ~49 open issues (see Issue tracking). Re-check divergence before
   syncing rather than trusting this paragraph.
 
