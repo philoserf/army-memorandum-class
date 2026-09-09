@@ -44,11 +44,14 @@ Three ways a fork pings upstream by accident. All three are avoidable:
    gh repo set-default philoserf/army-memorandum-class   # to fix
    ```
 
-   **As verified on 2026-09-09 this is still `remote.upstream.gh-resolved base` — i.e.
-   currently misconfigured toward upstream.** Verify it yourself rather than assuming
-   either state; an earlier revision of this file claimed it had been fixed when it had
-   not. Regardless, pass an explicit `--repo philoserf/army-memorandum-class` on every
-   `gh pr` and `gh issue` command. It costs nothing and cannot be misconfigured.
+   This was set to `remote.origin.gh-resolved base` on 2026-09-09, replacing a stale
+   `remote.upstream` entry. **Run the check above rather than trusting this sentence** —
+   git config is not version-controlled, so it drifts per clone and per machine, and a
+   fresh clone of this repo starts with no `gh-resolved` at all. A previous revision of
+   this file asserted the fix had been applied when it had not; that is the failure mode
+   to guard against. Regardless of config, pass an explicit
+   `--repo philoserf/army-memorandum-class` on every `gh pr` and `gh issue` command. It
+   costs nothing and cannot be misconfigured.
 
 2. **A linked issue URL creates a cross-reference in upstream's timeline**, which
    notifies everyone subscribed to that issue. Writing
