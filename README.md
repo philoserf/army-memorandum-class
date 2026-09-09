@@ -78,7 +78,7 @@ cd examples && latexmk -lualatex example.tex     # build one example
 Add `-pvc` to the `latexmk` invocation for continuous preview while drafting; leave it off
 for one-shot builds.
 
-## Reference
+## Command reference
 
 ### Required fields
 
@@ -179,6 +179,36 @@ Any other option is passed through to KOMA-Script's `scrartcl`, which the class 
 
 `examples/armymemo.cls`, `examples/digsig.sty`, and `examples/DODb1.pdf` are symlinks to
 the repository root, so the examples always build against the live class.
+
+## References
+
+### AR 25-50, _Preparing and Managing Correspondence_
+
+The regulation this class implements. Headquarters, Department of the Army, dated
+**10 October 2020**, carrying an **administrative revision dated 4 October 2024**.
+
+- [Record page][ar25-50] — the stable link; it survives reissue.
+- [Direct PDF][ar25-50-pdf] — convenient, but the filename encodes the revision number and
+  changes whenever the regulation is reissued.
+
+Both dates matter when reading this README. The 2020 date is the base publication; the
+2024 administrative revision is what drives two of the class's choices. Its Summary of
+Change assigns the choice of font size and type, for both letters and memoranda, to Army
+senior leaders — following the rescission of DA Memorandum 25–52 — and changes the
+requirement from one space after ending punctuation to two.
+
+The first is why the class no longer forces Arial; the second is why `\frenchspacing` was
+removed. See `CHANGES.md` for the full rationale.
+
+### DAIG Correspondence and Reports Guide
+
+Department of the Army Inspector General guidance, the source for the Times New Roman
+default — see [Resources for Correspondence and Reports][daig]. `CHANGES.md` records the
+direct URL of the edition consulted, along with the passage quoted from it.
+
+[ar25-50]: https://armypubs.army.mil/ProductMaps/PubForm/Details.aspx?PUB_ID=1020633
+[ar25-50-pdf]: https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN42124-AR_25-50-007-WEB-13.pdf
+[daig]: https://ig.army.mil/IG-SCHOOL-RESOURCES/Resources-for-Correspondence-and-Reports/
 
 ## Provenance
 
