@@ -17,29 +17,41 @@ bundled `digsig.sty`, and the `examples/` that exercise them.
   subjects reference it (e.g. "Merge pull request #49 from x3c3/docs/fork-policy"), and
   GitHub still redirects the old path, so `gh repo view x3c3/...` resolves and looks
   correct. It is the same repo. Always write `philoserf` in new commands.
+- **The default branch is `main`** (renamed from `master` on 2026-09-09).
+- **There is no `upstream` remote.** It was removed on 2026-09-09; `origin` is the only
+  remote. Commands of the form `upstream/...` will fail — treat any you find in older
+  notes or commit messages as historical.
+- **`main` contains `glallen01/master` as of `ed2082e`** — the last common commit, and
+  the base to work from if a curated PR series is ever proposed. Everything after it here
+  is this repo's own work. To compare or resume tracking:
+
+  ```sh
+  git remote add upstream git@github.com:glallen01/army-memorandum-class.git
+  git fetch upstream
+  git log --oneline upstream/master..HEAD    # note: glallen01's default is `master`, not `main`
+  ```
+
+  Two glallen01 branches were never merged here and are no longer reachable locally:
+  `opord-example` (`3d5e5e1`, an OPORD example) and `digsig` (`0aa362d`, superseded by the
+  bundled `digsig.sty`). Both remain public on glallen01 and come back with the fetch above.
+
 - **GitHub still classifies this repo as a fork** (`isFork: true`, parent `glallen01`),
-  so PR and issue defaults still point at the parent. The `upstream` remote
-  (`glallen01/army-memorandum-class`) is kept for read-only tracking.
-- **The default branch here is `main`; upstream's is still `master`.** Renamed on
-  2026-09-09. This asymmetry is deliberate and load-bearing: comparison and sync commands
-  against upstream keep the `master` spelling (`git log upstream/master..HEAD`,
-  `git fetch upstream master`), while anything targeting this repo uses `main` (PR bases,
-  `git push origin main`). Do not "correct" `upstream/master` to `upstream/main` — there
-  is no `main` on `glallen01` and the command will simply fail.
-- **Divergence from upstream is documentation only.** At the time of writing,
-  `git log --oneline upstream/master..HEAD` is a handful of CLAUDE.md commits and nothing
-  else — the class itself is at upstream parity. The substantive fork work is planned, not
-  landed: it lives as ~49 open issues (see Issue tracking). Re-check divergence before
-  syncing rather than trusting this paragraph.
+  and removing the remote did not change that — it is repo metadata, not a remote. PR and
+  issue defaults still point at the parent, so the hazards below remain live.
+- **Divergence is documentation and tooling only.** The class itself is unchanged from
+  `ed2082e`. The substantive fork work is planned, not landed: it lives as ~49 open
+  issues (see Issue tracking).
 
 ## Fork policy — do not contact upstream
 
 **Nothing goes to `glallen01/army-memorandum-class` until the divergent work is finished
 and deliberately proposed.** Upstream is a separate maintainer's project; unfinished work
-arriving there is noise for them, not a contribution. This holds even though `origin` is
-now `philoserf` — GitHub still treats the repo as a fork, so every hazard below is live.
+arriving there is noise for them, not a contribution.
 
-Three ways a fork pings upstream by accident. All three are avoidable:
+Removing the `upstream` remote closed off the accidental `git push`, but it did **not**
+make this section obsolete: GitHub still treats the repo as a fork, and hazards 1 and 2
+below reach glallen01 with no remote configured at all. Hazard 3 applies only if someone
+re-adds it.
 
 1. **Pull requests default to the parent.** On GitHub, a PR opened from a fork proposes
    merging into the _upstream_ repo unless you change the base. The `gh` CLI reads this
@@ -65,8 +77,10 @@ Three ways a fork pings upstream by accident. All three are avoidable:
    message posts an event on their side. Backtick-wrapped text does not — code spans are
    not parsed for references. Refer to upstream issues as `` `glallen01#37` ``.
 
-3. **`gh repo sync` and `git fetch upstream` are safe** — they read. Pushing is what
-   reaches them, and nothing here should ever push to an `upstream` ref.
+3. **If you re-add the remote, keep it read-only.** `git fetch` and `gh repo sync` are
+   safe — they read. Pushing is what reaches them, and nothing here should ever push to
+   an `upstream` ref. Removing the remote (2026-09-09) was what took this hazard off the
+   table; re-adding it puts it back.
 
 ### Issue tracking
 
@@ -89,8 +103,9 @@ These issues are the backlog of intended divergence — read the relevant one be
 
 The graduate-to-`philoserf` option has already been taken. What remains is the other
 branch: if the work ever warrants it, propose a curated series of PRs upstream — small,
-separable, each against a clean branch. Until that is a deliberate decision, upstream is
-read-only.
+separable, each on a clean branch cut from `ed2082e`, the last commit this repo shares
+with glallen01. That requires re-adding the remote (see Repo identity), and is a
+deliberate decision, not a routine step.
 
 ## Toolchain
 
