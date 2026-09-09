@@ -8,31 +8,47 @@ A LaTeX document class (`armymemo.cls`) implementing the U.S. Army memorandum fo
 per AR 25-50. There is no application code — the deliverables are the class file, the
 bundled `digsig.sty`, and the `examples/` that exercise them.
 
-Fork: `origin` = `x3c3/army-memorandum-class`, `upstream` = `glallen01/army-memorandum-class`.
-Upstream changes land as merged PRs. Check `git log --oneline upstream/master..HEAD` for
-local divergence before syncing.
+## Repo identity — read before any `gh` command
+
+- `origin` = `philoserf/army-memorandum-class`. This repo **already graduated** from the
+  `x3c3` org to `philoserf`, per the rule in `~/source/x3c3/CLAUDE.md` that a fork
+  diverging meaningfully stops being a fork. It lives in `~/source/philoserf/`.
+- **`x3c3/army-memorandum-class` in git history is the pre-transfer name.** Commit
+  subjects reference it (e.g. "Merge pull request #49 from x3c3/docs/fork-policy"), and
+  GitHub still redirects the old path, so `gh repo view x3c3/...` resolves and looks
+  correct. It is the same repo. Always write `philoserf` in new commands.
+- **GitHub still classifies this repo as a fork** (`isFork: true`, parent `glallen01`),
+  so PR and issue defaults still point at the parent. The `upstream` remote
+  (`glallen01/army-memorandum-class`) is kept for read-only tracking.
+- **Divergence from upstream is documentation only.** At the time of writing,
+  `git log --oneline upstream/master..HEAD` is three CLAUDE.md commits and nothing else —
+  the class itself is at upstream parity. The substantive fork work is planned, not
+  landed: it lives as ~49 open issues (see Issue tracking). Re-check divergence before
+  syncing rather than trusting this paragraph.
 
 ## Fork policy — do not contact upstream
 
-**This fork is under active divergent development. Nothing goes to
-`glallen01/army-memorandum-class` until that work is finished and deliberately
-proposed.** Upstream is a separate maintainer's project; unfinished work arriving there
-is noise for them, not a contribution.
+**Nothing goes to `glallen01/army-memorandum-class` until the divergent work is finished
+and deliberately proposed.** Upstream is a separate maintainer's project; unfinished work
+arriving there is noise for them, not a contribution. This holds even though `origin` is
+now `philoserf` — GitHub still treats the repo as a fork, so every hazard below is live.
 
 Three ways a fork pings upstream by accident. All three are avoidable:
 
 1. **Pull requests default to the parent.** On GitHub, a PR opened from a fork proposes
    merging into the _upstream_ repo unless you change the base. The `gh` CLI reads this
-   from `remote.<name>.gh-resolved` in git config, which was pointed at `upstream` until
-   2026-09-09. It is now `origin`. Verify before opening any PR:
+   from `remote.<name>.gh-resolved` in git config.
 
    ```sh
    git config --get-regexp gh-resolved    # want: remote.origin.gh-resolved base
-   gh repo set-default x3c3/army-memorandum-class   # to fix
+   gh repo set-default philoserf/army-memorandum-class   # to fix
    ```
 
-   Prefer an explicit `--repo x3c3/army-memorandum-class` on every `gh pr` and
-   `gh issue` command regardless. It costs nothing and cannot be misconfigured.
+   **As verified on 2026-09-09 this is still `remote.upstream.gh-resolved base` — i.e.
+   currently misconfigured toward upstream.** Verify it yourself rather than assuming
+   either state; an earlier revision of this file claimed it had been fixed when it had
+   not. Regardless, pass an explicit `--repo philoserf/army-memorandum-class` on every
+   `gh pr` and `gh issue` command. It costs nothing and cannot be misconfigured.
 
 2. **A linked issue URL creates a cross-reference in upstream's timeline**, which
    notifies everyone subscribed to that issue. Writing
@@ -45,18 +61,27 @@ Three ways a fork pings upstream by accident. All three are avoidable:
 
 ### Issue tracking
 
-Findings live on the fork: `gh issue list --repo x3c3/army-memorandum-class`. They came
-from a review recorded in `REVIEW.md`, and carry `kind:audit`, `kind:reduction`, or
-`kind:upstream` labels plus `severity:*` and `evidence:*`. Issues labeled `kind:upstream`
-are read-only mirrors of open upstream issues — track them here, but discuss them
-upstream, and never treat one as this fork's original work.
+Findings live on the fork:
+
+```sh
+gh issue list --repo philoserf/army-memorandum-class
+```
+
+They came from a recorded audit and reduction review, and carry a `kind:` label —
+`audit`, `reduction`, `upstream`, `infra`, or `decision` — plus `severity:*` and
+`evidence:*`. Issues labeled `kind:upstream` are read-only mirrors of open upstream
+issues: track them here, discuss them upstream, and never treat one as this fork's
+original work.
+
+These issues are the backlog of intended divergence — read the relevant one before
+"fixing" something in the class, because the analysis is likely already written up there.
 
 ### When the work is done
 
-Either propose a curated series of PRs upstream — small, separable, each against a clean
-branch — or graduate this repo to `philoserf` as an owned project, per the rule in
-`~/source/x3c3/CLAUDE.md` that a fork diverging meaningfully stops being a fork. Decide
-which before the divergence gets deep enough that neither is comfortable.
+The graduate-to-`philoserf` option has already been taken. What remains is the other
+branch: if the work ever warrants it, propose a curated series of PRs upstream — small,
+separable, each against a clean branch. Until that is a deliberate decision, upstream is
+read-only.
 
 ## Toolchain
 
@@ -65,7 +90,10 @@ which before the divergence gets deep enough that neither is comfortable.
 - **Times New Roman and Arial must be installed system-wide** or compilation fails.
 - `chktex` is the only linter; `latexmk` drives builds; `latexrun` is optional.
 
-None of these are installed on this machine by default — check before promising a build.
+**None of these are installed on this machine** — `lualatex`, `xelatex`, `latexmk`,
+`chktex`, and `latexrun` were all absent as of 2026-09-09. Check before promising a
+build; changes to the class cannot be verified by compiling here without installing a
+TeX distribution first.
 
 ## Commands
 
@@ -77,6 +105,9 @@ make proper         # clean + remove *.out
 
 cd examples && latexmk -lualatex example.tex     # build a single example
 ```
+
+There is no test suite; `make check` is the whole of it. (Issue #51 proposes a
+golden-file regression harness — that is a proposal, not something that exists.)
 
 The README shows `latexmk -pdf -pvc -lualatex example.tex`; `-pvc` is continuous-preview
 watch mode — drop it for one-shot builds.
@@ -94,10 +125,11 @@ watch mode — drop it for one-shot builds.
   PDFs in the same commit as the class change (e.g. 9e6d5ef, 48e3c3b), so include them
   when changing rendered output.
 - **The README is stale on fonts.** It says the default is Arial; the class sets
-  `\setmainfont{Times New Roman}` (armymemo.cls:92), per the 4 OCT 24 AR 25-50 update and
-  DAIG guidance documented in `CHANGES.md`. Users override with `\setmainfont{Arial}`.
+  `\setmainfont{Times New Roman}` (armymemo.cls:92) and `\setsansfont{Arial}` (:93), per
+  the 4 OCT 24 AR 25-50 update and DAIG guidance documented in `CHANGES.md`. Users
+  override with `\setmainfont{Arial}`.
 - **Version lives in two places** — the `\ProvidesClass{armymemo}[YYYY/MM/DD X.Y.Z ...]`
-  line and `CHANGES.md`. Bump both.
+  line (armymemo.cls:5, currently `2026/03/29 0.3.0`) and `CHANGES.md`. Bump both.
 - `examples/armymemo.cls`, `examples/digsig.sty`, and `examples/DODb1.pdf` are symlinks to
   the repo root, so the examples always compile against the live class.
 
