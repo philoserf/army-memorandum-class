@@ -1,0 +1,36 @@
+            UNCLASSIFIED//FOR OFFICIAL USE ONLY (EXAMPLE ONLY)
+                              DEPARTMENT OF THE ARMY
+                                 ORGANIZATIONAL NAME/TITLE
+                               STANDARDIZED STREET ADDRESS
+                                   CITY, STATE 12345-1234
+
+
+
+
+ABC-DEF-GH                                                                     10 April 2019
+
+
+MEMORANDUM FOR RECORD
+
+SUBJECT: A memorandum that declares no memorandum line
+
+
+1. This memorandum sets no memorandum line. The class supplies MEMORANDUM FOR
+RECORD from the default branch, not from the list.
+
+2. Compare example-mfr.tex, which calls \mfr and reaches the same text through the list. The
+two bodies are worded identically so that any divergence between the routes shows up as a
+difference between the goldens.
+
+
+
+
+JOHN W. SMITH
+CPT, CY
+COMMANDING
+
+
+
+
+            UNCLASSIFIED//FOR OFFICIAL USE ONLY (EXAMPLE ONLY)
+

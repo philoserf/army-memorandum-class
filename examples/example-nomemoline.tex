@@ -1,0 +1,39 @@
+% !TEX program = lualatex
+% Coverage example: a memorandum that sets NO memo line at all. See #90.
+%
+% \am@memoline's first act is a three-deep \ifdefvoid: if \am@list@memolines,
+% \am@list@memothru and \am@list@memofor are all empty, it calls \mfr, so an author who
+% declares nothing still gets MEMORANDUM FOR RECORD. That default was unreachable from
+% the test suite -- every other example sets a memo line explicitly.
+%
+% Fourteen goldens contain the string MEMORANDUM FOR RECORD, which made this path look
+% covered. It was not: every one of those comes from a literal
+% \memoline{MEMORANDUM FOR RECORD} typed into the example. This file is the only one that
+% reaches the default, and therefore the only one that executes \mfr at render time.
+%
+% Deliberately no \memoline, \mfr, \multimemofor or \multimemothru below. Adding any one
+% of them silently destroys what this file tests.
+\documentclass{../armymemo}
+
+\address{Organizational Name/Title}
+\address{Standardized Street Address}
+\address{CITY, STATE~~12345-1234}
+
+\author{John W. Smith}\rank{CPT}\branch{CY}
+\officesymbol{ABC-DEF-GH}
+\signaturedate{10 April 2019}
+\documentmark{UNCLASSIFIED//FOR OFFICIAL USE ONLY (EXAMPLE ONLY)}
+\subject{A memorandum that declares no memorandum line}
+\title{COMMANDING}
+
+\begin{document}
+
+\begin{enumerate}
+\item This memorandum sets no memorandum line. The class supplies MEMORANDUM FOR
+  RECORD from the default branch, not from the list.
+\item Compare example-mfr.tex, which calls \verb!\mfr! and reaches the same text through
+  the list. The two bodies are worded identically so that any divergence between the
+  routes shows up as a difference between the goldens.
+\end{enumerate}
+
+\end{document}

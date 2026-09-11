@@ -2,6 +2,29 @@
 
 ---
 
+## [Unreleased]
+
+### Fixed
+
+- `\mfr` and the no-memo-line default path are covered by the harness. Neither was reachable
+  from any example: `\mfr`'s only occurrence in the tree was inside a `%` comment
+  (`examples/example-grid.tex:34`), and every example set a memo line explicitly, so
+  `\am@memoline`'s three-deep `\ifdefvoid` default -- the branch that supplies
+  `MEMORANDUM FOR RECORD` to an author who declares nothing -- never ran. Fourteen goldens
+  contain that string, which made the path look covered; all fourteen get it from a literal
+  `\memoline{MEMORANDUM FOR RECORD}` typed into the example. This mattered because 0.4.0
+  repointed `\mfr` at the newly canonical `\memoline` and the suite would have stayed green
+  had that been wrong. Two examples are added rather than one: `example-nomemoline.tex`
+  declares nothing and reaches `\mfr` through the default branch at `\AtEndDocument`, while
+  `example-mfr.tex` calls `\mfr` from the preamble, so the `\listadd` happens before
+  `\begin{document}`. Only timing distinguishes the routes, and a change that made `\mfr`
+  safe in one context but not the other would pass with a single example. Both bodies are
+  worded identically so a divergence between the routes shows up as a difference between
+  the goldens; today they render the line at the same position. Verified by mutation:
+  emptying `\mfr` fails exactly these two examples and leaves the other nineteen passing.
+
+---
+
 ## [0.4.0] - 2026-09-11
 
 ### Fixed
