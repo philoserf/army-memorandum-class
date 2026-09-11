@@ -21,8 +21,11 @@
 % The LICENSE file distributed with this class carries the text of GPL version 3,
 % which the grant above permits.
 
+% \NeedsTeXFormat comes first: the format check should run before anything else,
+% and the dated argument is a real floor, not decoration -- the classification marks
+% use \AddToHook{shipout/background}, which the kernel gained on 2020-10-01.
+\NeedsTeXFormat{LaTeX2e}[2020/10/01]
 \ProvidesClass{armymemo}[2026/03/29 0.3.0 Army Memorandum Class]
-\NeedsTeXFormat{LaTeX2e}
 
 % Canonical LaTeX2e order is \ProvidesClass -> \DeclareOption -> \ProcessOptions
 % -> \LoadClass. This file used to process options 140 lines after loading the
@@ -54,9 +57,6 @@
 ]{scrartcl}
 
 \AtBeginDocument{%
-  \ifstrempty{\am@documentmark}{}{%
-    \backgroundsetup{opacity=1, scale=1, angle=0,contents={\am@classmark{\am@documentmark}}}\BgThispage
-  }
   \am@putlogo%
   \dodheader%
   \vspace*{1\baselineskip}
@@ -134,10 +134,8 @@
 \RequirePackage{graphicx}
 % for future use of colors in classification markings
 \RequirePackage{xcolor}
-% required for graphics placement
+% required for graphics placement, and for the classification-mark overlay
 \RequirePackage{tikz}
-% for overlay of classification markings without affecting layout
-\RequirePackage[pages=all,color=black]{background}
 % required to enable high-depth nested lists, and custom numbering
 \RequirePackage{enumitem}
 % AR 25-50 permits four levels of subdivision and no more, so four is what this
@@ -458,11 +456,47 @@
 
 
 
+% Positioned against the paper directly rather than against TikZ's "current page"
+% node. Inside shipout/background the origin IS the top-left corner of the sheet --
+% measured, not assumed: a rectangle drawn from (0pt,0pt) to (\paperwidth,-\paperheight)
+% emits exactly "0 0" to "612 -792" in the content stream of a letter page. So the
+% paper corners are already in hand, and these two nodes need neither
+% "remember picture" nor an aux-file round trip.
+%
+% inner sep=0pt is load-bearing, not tidiness. TikZ's default inner sep is 0.3333em,
+% so the padding -- and therefore the mark's distance from the paper edge -- follows
+% whatever font size happens to be current where the node is built. That differs
+% between the old `background` package context and this hook, which moved both marks
+% 4pt inward (top down, bottom up: symmetric, because each is padded away from its
+% own anchor edge) while leaving their widths identical. Pinning it to zero makes
+% the 24pt and 36pt offsets mean what they say, independent of ambient font size.
 \newcommand{\am@classmark}[1]{%
-  \begin{tikzpicture}[remember picture, overlay]
-    \node[align=center,anchor=north,yshift=-24pt] at (current page.north) {#1};
-    \node[align=center,anchor=south,yshift=36pt] at (current page.south) {#1};
-  \end{tikzpicture}
+  \begin{tikzpicture}[overlay]
+    \node[align=center,anchor=north,inner sep=0pt,yshift=-24pt] at (0.5\paperwidth,0pt) {#1};
+    \node[align=center,anchor=south,inner sep=0pt,yshift=36pt] at (0.5\paperwidth,-\paperheight) {#1};
+  \end{tikzpicture}%
+}
+
+% Classification marks, top and bottom of every page, through the kernel's own
+% shipout hook.
+%
+% This replaces \backgroundsetup{...}\BgThispage from the `background` package,
+% which was loaded solely to mean "run this on every page". The kernel has had a
+% hook for exactly that since 2020-10-01 (see \NeedsTeXFormat above), and
+% \am@classmark already did all the positioning, so the package earned nothing.
+% The pair it replaces also documented two contradictory intentions: the package
+% option [pages=all] says every page, while \BgThispage means this page only.
+%
+% \color{black} preserves the package's color=black option: the mark's colour must
+% not follow whatever colour happens to be current when the page is shipped out.
+%
+% The guard sits INSIDE the hook, so it is tested once per page rather than once at
+% \begin{document}. \documentmark{} therefore emits nothing on every page, and a
+% mark changed mid-document takes effect from that page on.
+\AddToHook{shipout/background}{%
+  \ifstrempty{\am@documentmark}{}{%
+    \color{black}\am@classmark{\am@documentmark}%
+  }%
 }
 
 \newcommand{\am@putlogo}{%

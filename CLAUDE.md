@@ -129,7 +129,7 @@ export PATH="$HOME/texlive/2026/bin/universal-darwin:$PATH"
 `latexrun` is not in the tree. The build used to branch on it and always fall through;
 that branch is gone, and `latexmk -lualatex` is simply what runs.
 
-**`make check` exits nonzero on `main`** — `chktex` reports 27 warnings against
+**`make check` exits nonzero on `main`** — `chktex` reports 26 warnings against
 `armymemo.cls` (spacing, dashes), none of them new. Compare counts rather than expecting
 a clean run.
 
@@ -194,8 +194,13 @@ mostly delegated to, and `check` was defined identically in both.
 
 The class loads KOMA-Script `scrartcl` and does nearly all its work in two hooks:
 
-- `\AtBeginDocument` — classification banner (`background` package), logo, and the
-  DOD letterhead block.
+- `\AtBeginDocument` — logo and the DOD letterhead block.
+- `shipout/background` (kernel hook, hence `\NeedsTeXFormat{LaTeX2e}[2020/10/01]`) —
+  the classification marks, top and bottom of every page. Inside that hook the origin
+  is the paper's top-left corner, so `\am@classmark` positions against
+  `\paperwidth`/`\paperheight` and needs no `remember picture`. Its `inner sep=0pt` is
+  load-bearing: TikZ's default is `0.3333em`, which would make the marks' distance from
+  the paper edge follow the ambient font size.
 - `\AtEndDocument` — authority line, signature block (drawn as a `tikzpicture` overlay
   positioned at `0.5\textwidth`), then enclosures, distribution, and copies-furnished.
 
