@@ -227,6 +227,12 @@ Any other option is passed through to KOMA-Script's `scrartcl`, which the class 
 | `example-grid.tex` | Layout and spacing against a measurement grid.                                                                                                             |
 | `example-sig.tex`  | The `digsig` option, with an alternate logo.                                                                                                               |
 
+The table covers the demonstration documents. The rest of `examples/` are regression
+fixtures, each added to pin down one behaviour that was previously untested — a wrapping
+subject, a single address, a memo with no enclosures, the active `"` character, and so on.
+The file's own header comment says what it asserts and which change would move it. `make
+test` builds all of them and diffs the rendered text against `examples/golden/`.
+
 `examples/armymemo.cls`, `examples/digsig.sty`, and `examples/DODb1.pdf` are symlinks to
 the repository root, so the examples always build against the live class.
 
