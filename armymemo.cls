@@ -275,10 +275,12 @@
 \newcommand{\am@domemoline}[1]{\vspace{\baselineskip}\noindent{}#1\\}
 \newcounter{am@memothru@count}
 \newcommand{\multimemothru}[1]{\stepcounter{am@memothru@count}\listadd{\am@list@memothru}{#1}}
-\newcommand{\am@do@memothru}[1]{\noindent{}\hangindent=0.25in{}#1\\}
+% One hanging-indent line, shared by the THRU and FOR lists, which had byte-identical
+% helpers. Not \am@do (below): that one is bare and lacks the hanging indent the AR
+% format needs, so it is precedent for the pattern, not a drop-in.
+\newcommand{\am@do@hangline}[1]{\noindent{}\hangindent=0.25in{}#1\\}
 \newcounter{am@memofor@count}
 \newcommand{\multimemofor}[1]{\stepcounter{am@memofor@count}\listadd{\am@list@memofor}{#1}}
-\newcommand{\am@do@memofor}[1]{\noindent{}\hangindent=0.25in{}#1\\}
 
 \newcommand{\am@memoline}{%
   % if there is nothing specified, add "memorandum for record"
@@ -297,7 +299,7 @@
     MEMORANDUM THRU\\
     \vspace{\baselineskip}
     % loop through the thru lines with hanging indent
-    \forlistloop{\am@do@memothru}{\am@list@memothru}}
+    \forlistloop{\am@do@hangline}{\am@list@memothru}}
   {}
   \ifnumcomp{\value{am@memofor@count}}{>}{0}{
     \ifnumcomp{\value{am@memothru@count}}{>}{0}{%
@@ -309,7 +311,7 @@
       MEMORANDUM FOR\\ % if there is no thru
       \vspace{\baselineskip}
     }
-    \forlistloop{\am@do@memofor}{\am@list@memofor}}
+    \forlistloop{\am@do@hangline}{\am@list@memofor}}
   {}
   \ifnumcomp{\value{am@memoline@count}}{>}{0}{
     % after dealing with special cases, add the other lines from \addmemoline or \memoline
@@ -348,28 +350,41 @@
 \newbool{am@encls@nocount}
 \newcommand{\enclsnocount}{\booltrue{am@encls@nocount}}
 \newcommand{\addencl}[1]{\stepcounter{am@encl@count}\listadd{\am@list@encls}{#1}}
+% The three cases wrap the same list in the same enumerate, and differ in exactly
+% two things: the heading, and the list options. \enclsnocount and the many-case
+% share their options outright.
+%
+% Two details are load-bearing. The nocount test comes FIRST, so \enclsnocount with
+% a single enclosure still prints "Encls" with numbered entries -- reordering these
+% would change that quietly, and no example covers it. And the one-enclosure case
+% genuinely OMITS leftmargin rather than zeroing it, inheriting 0pt from \setlist[1];
+% that absence has to be reproduced, not defaulted.
+\newcommand{\am@encls@numbered}{leftmargin=16pt,itemindent=0pt,align=left,label={\arabic*.}}
+\newcommand{\am@encls@list}[1]{%
+  \begin{enumerate}[topsep=0pt,itemsep=0pt,parsep=0pt,#1]
+    \forlistloop{\am@do@encl}{\am@list@encls}
+  \end{enumerate}%
+}
 \newcommand{\am@encls}{%
-  \ifnumcomp{\value{am@encl@count}}{=}{0}{%
-  }{%
+  \ifnumcomp{\value{am@encl@count}}{=}{0}{}{%
     \ifbool{am@encls@nocount}{%
-      \noindent{}Encls%
-      \begin{enumerate}[topsep=0pt,itemsep=0pt,parsep=0pt,leftmargin=16pt,itemindent=0pt,align=left,label={\arabic*.}]
-        \forlistloop{\am@do@encl}{\am@list@encls}
-      \end{enumerate}
+      \def\am@encl@head{Encls}%
+      \let\am@encl@opts\am@encls@numbered
     }{%
       \ifnumcomp{\value{am@encl@count}}{=}{1}{%
-        \noindent{}Encl%
-        \begin{enumerate}[topsep=0pt,itemsep=0pt,parsep=0pt,itemindent=0pt,align=left,label={}]
-          \forlistloop{\am@do@encl}{\am@list@encls}
-        \end{enumerate}
+        \def\am@encl@head{Encl}%
+        \def\am@encl@opts{itemindent=0pt,align=left,label={}}%
       }{%
-        \noindent\theam@encl@count{} Encls%
-        \begin{enumerate}[topsep=0pt,itemsep=0pt,parsep=0pt,leftmargin=16pt,itemindent=0pt,align=left,label={\arabic*.}]
-          \forlistloop{\am@do@encl}{\am@list@encls}
-        \end{enumerate}%
+        \def\am@encl@head{\theam@encl@count{} Encls}%
+        \let\am@encl@opts\am@encls@numbered
       }%
     }%
-  }
+    \noindent\am@encl@head%
+    % \expandafter, because enumitem's keyval parser does not expand a macro in the
+    % optional argument -- it would read the whole of \am@encl@opts as one key name.
+    % One expansion step hands it the option text while leaving \arabic* alone.
+    \expandafter\am@encls@list\expandafter{\am@encl@opts}%
+  }%
 }
 
 % add distribution, with an option for continuation on the next page
