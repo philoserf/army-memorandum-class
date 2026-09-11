@@ -321,7 +321,15 @@
 % header info
 \newcommand{\signaturedate}[1]{\def \am@signaturedate{#1}}\signaturedate{}
 \signaturedate{\am@MissingRequiredArg{warning}{signaturedate}{DRAFT}}
-\newcommand{\suspensedate}[1]{\def\am@suspensedate{\ifstrempty{#1}{}{\textbf{S: #1}}}}\suspensedate{}
+% \am@suspensedate@raw exists so the guard in \dodheader can be LIVE, and removing it
+% silently restores a bug that survived for years. \am@suspensedate's body is a
+% conditional, not the value, so it is never empty -- neither \ifstrempty nor
+% \ifdefempty applied to it can ever take the empty branch. Only a macro whose body IS
+% the value can be tested. Do not "simplify" this away.
+\newcommand{\suspensedate}[1]{%
+  \def\am@suspensedate@raw{#1}%
+  \def\am@suspensedate{\ifstrempty{#1}{}{\textbf{S: #1}}}%
+}\suspensedate{}
 \newcommand{\officesymbol}[1]{\def \am@officesymbol{#1}}
 \officesymbol{\am@MissingRequiredArg{error}{officesymbol}{OFFICE SYMBOL}}
 % allow replacing the logo
@@ -596,10 +604,15 @@
 % not follow whatever colour happens to be current when the page is shipped out.
 %
 % The guard sits INSIDE the hook, so it is tested once per page rather than once at
-% \begin{document}. \documentmark{} therefore emits nothing on every page, and a
-% mark changed mid-document takes effect from that page on.
+% \begin{document}: a mark changed mid-document takes effect from that page on.
+%
+% \ifdefempty, not \ifstrempty. \ifstrempty detokenizes without expanding, so
+% \ifstrempty{\am@documentmark} tested the 16-character string "\am@documentmark" and
+% never took the empty branch -- \documentmark{} drew two empty TikZ nodes on every page
+% instead of nothing (#15). \am@documentmark's body IS its value, so \ifdefempty is live
+% here; \suspensedate needs a separate raw macro because its body is a conditional.
 \AddToHook{shipout/background}{%
-  \ifstrempty{\am@documentmark}{}{%
+  \ifdefempty{\am@documentmark}{}{%
     \color{black}\am@classmark{\am@documentmark}%
   }%
 }
@@ -639,8 +652,11 @@
   \end{tikzpicture}%%
   \par%there must be a \par here, or things break!
   \vspace{-2\baselineskip}
-  %conditional block for optional suspense date:
-  \ifstrempty{\am@suspensedate}{}{%
+  % Conditional block for the optional suspense date. Tests \am@suspensedate@raw, not
+  % \am@suspensedate -- see \suspensedate for why testing the formatted macro cannot work.
+  % This guard was dead until #15: it always took the non-empty branch, so the spacing
+  % below applied to every memo whether or not it had a suspense date.
+  \ifdefempty{\am@suspensedate@raw}{}{%
     \vspace{-2\baselineskip}
     \noindent\,\hspace*{\fill}\am@suspensedate\\
     \vspace{\baselineskip}}
