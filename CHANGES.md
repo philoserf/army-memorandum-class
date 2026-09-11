@@ -105,6 +105,26 @@
 
 ---
 
+### Removed
+
+- **`DOW-Seal-BW.pdf` is no longer bundled, and `examples/example-sig.tex` uses the default
+  seal.** The file was a "Department of War" seal fetched from `war.gov`; it was the only
+  non-DoD seal in the tree and the only asset in the repository sourced from that branding.
+  AR 25-50 1-16b(1) is unambiguous that "all official letterhead stationery will bear the
+  DoD seal", and the statutory name of the department is unchanged, so a class implementing
+  AR 25-50 has no business shipping the alternative mark. Dropping it makes the fork more
+  conformant, not less.
+
+  `example-sig.tex` was the single consumer, via `\logo{../DOW-Seal-BW}`. That line is
+  removed rather than repointed: `\logo` already defaults to `DODb1`, so the example now
+  exercises the default path, and coverage of a _custom_ logo is unaffected because
+  `example-grid.tex` still overrides it with `imperialseal-536x536`.
+
+  Note that the harness cannot see this change. Goldens are extracted text plus a page
+  count, and the seal is an image in an absolutely positioned node, so all twenty examples
+  stay green either way. The swap was confirmed by rendering `example-sig` and looking at
+  the letterhead.
+
 ## [0.4.0] - 2026-09-11
 
 ### Fixed
@@ -225,15 +245,6 @@
 - Refactored `\am@encls` to proper if/else chain
 
 ---
-
-## Assets
-
-### DOW-Seal-BW.pdf
-
-- **Fetched:** 2026-03-28
-- **Source:** https://www.war.gov/Portals/1/Page-Assets/branding-guide/seals/DOW-Seal-BW.ai
-- **Conversion:** `pdftocairo -pdf orig-DOW-Seal-BW.ai DOW-Seal-BW.pdf`
-- **Result:** 2.2 MB → 392 KB (stripped embedded JPEG preview and ICC profile)
 
 ## Bundled Dependencies
 
