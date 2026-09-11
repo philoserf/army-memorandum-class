@@ -278,3 +278,6 @@ examples/example*.pdf
 
 # Harness scratch directory (diffs and per-build extractions).
 .test-work/
+
+# Army Regulation 25–50
+Army\ Regulation\ 25–50.pdf
