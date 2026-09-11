@@ -137,15 +137,37 @@ a clean run.
 
 ```sh
 make                # build every examples/*.pdf (delegates to examples/Makefile)
-make check          # chktex armymemo.cls  -- the only lint/test in the repo
+make test           # rendering regression harness -- the real check
+make golden         # recapture the golden files after an intended output change
+make check          # chktex armymemo.cls
 make clean          # remove built PDFs and aux files
 make proper         # clean + remove *.out
 
 cd examples && latexmk -lualatex example.tex     # build a single example
 ```
 
-There is no test suite; `make check` is the whole of it. (Issue #51 proposes a
-golden-file regression harness — that is a proposal, not something that exists.)
+**`make test` is the test suite.** It rebuilds every `examples/*.tex`, extracts
+`pdftotext -layout` text and a page count from each PDF, and diffs both against the
+committed goldens in `examples/golden/`. For a document class, rendered output *is* the
+behavior, so this is the assertion the examples previously lacked. It lives in
+`tools/run-tests.sh`, which drives `latexmk` directly and deliberately never invokes
+`examples/Makefile` -- that sub-make sets an unbounded `MAKEFLAGS=-j` and its `%.pdf`
+rule does not depend on the class, so delegating would compare stale PDFs and pass when
+it should fail.
+
+Two things to know before running it:
+
+- **`make golden` refuses to write** unless two independent builds extract byte-for-byte
+  identically. A golden is never hand-edited -- the `.txt` files carry one form feed per
+  page, and stripping those silently breaks page-break detection. See
+  `examples/golden/README.md` for provenance and the full rule.
+- **`chktex` folds into `make test` as a ratchet**, not a gate: it fails only when the
+  warning count rises above `CHKTEX_BASELINE` in `tools/run-tests.sh` (currently 29).
+  Lower the baseline in the same change that lowers the count.
+
+The harness finds TeX Live on its own when it is not on a non-interactive shell's `PATH`,
+probing the standard install layouts newest-first. Set `TEXBIN=/path/to/texlive/bin/<arch>`
+to override.
 
 The README shows `latexmk -pdf -pvc -lualatex example.tex`; `-pvc` is continuous-preview
 watch mode — drop it for one-shot builds.
@@ -158,16 +180,16 @@ watch mode — drop it for one-shot builds.
 - **Editing `armymemo.cls` does not trigger a rebuild.** The pattern rule is
   `%.pdf: %.tex` — the class is only a prerequisite of the phony `all`, not of the PDFs.
   After a class change run `make clean && make`, or invoke `latexmk` directly.
-- **`examples/*.pdf` are tracked.** Rebuilding dirties the working tree, and `make clean`
-  deletes tracked files rather than just build output. Upstream commits the regenerated
-  PDFs in the same commit as the class change (e.g. 9e6d5ef, 48e3c3b), so include them
-  when changing rendered output.
+- **`examples/*.pdf` are build output, not tracked files.** They were untracked in 2026-09
+  per the decision to remove generated artifacts; `examples/golden/` is the tracked
+  rendered reference now. `make clean` therefore deletes only build output. Do not commit
+  a rebuilt PDF, and do not look for one in a diff -- look at the golden.
 - **The README is stale on fonts.** It says the default is Arial; the class sets
-  `\setmainfont{Times New Roman}` (armymemo.cls:92) and `\setsansfont{Arial}` (:93), per
+  `\setmainfont{Times New Roman}` (armymemo.cls:117) and `\setsansfont{Arial}` (:126), per
   the 4 OCT 24 AR 25-50 update and DAIG guidance documented in `CHANGES.md`. Users
   override with `\setmainfont{Arial}`.
 - **Version lives in two places** — the `\ProvidesClass{armymemo}[YYYY/MM/DD X.Y.Z ...]`
-  line (armymemo.cls:5, currently `2026/03/29 0.3.0`) and `CHANGES.md`. Bump both.
+  line (armymemo.cls:24, currently `2026/03/29 0.3.0`) and `CHANGES.md`. Bump both.
 - `examples/armymemo.cls`, `examples/digsig.sty`, and `examples/DODb1.pdf` are symlinks to
   the repo root, so the examples always compile against the live class.
 

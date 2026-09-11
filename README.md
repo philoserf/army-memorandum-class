@@ -69,11 +69,18 @@ AR 25-50 5-10.b requires two spaces between the state and the ZIP code. Write th
 
 ```sh
 make                # build every examples/*.pdf
+make test           # rebuild the examples and diff against the golden files
+make golden         # recapture the golden files after an intended output change
 make check          # chktex armymemo.cls
 make clean          # remove built PDFs and aux files
 
 cd examples && latexmk -lualatex example.tex     # build one example
 ```
+
+`make test` is the regression check: it extracts the text and page count from every
+rendered example and compares them against `examples/golden/`. A class change that is
+meant to preserve output should leave it green; one that is meant to change output
+updates the goldens with `make golden`, and the resulting diff is the review evidence.
 
 Add `-pvc` to the `latexmk` invocation for continuous preview while drafting; leave it off
 for one-shot builds.
