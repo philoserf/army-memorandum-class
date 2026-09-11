@@ -120,8 +120,18 @@
 \RequirePackage[pages=all,color=black]{background}
 % required to enable high-depth nested lists, and custom numbering
 \RequirePackage{enumitem}
-\renewlist{enumerate}{enumerate}{9}
-\setlistdepth{9}
+% AR 25-50 permits four levels of subdivision and no more, so four is what this
+% class implements. It previously declared nine while defining labels for four, and
+% a fifth level crashed with an enumitem "Undefined label" error that never
+% mentioned the regulation and blamed the author's \setlist usage.
+%
+% Five are declared rather than four, deliberately: at a declared depth of four,
+% enumitem refuses a fifth level with its own "Too deeply nested" error -- the same
+% unhelpful crash, differently worded. Declaring five lets level 5 exist just long
+% enough to say which rule it breaks. Level 6 is still a hard enumitem error, which
+% is the right outcome for someone who ignored the warning at 5.
+\renewlist{enumerate}{enumerate}{5}
+\setlistdepth{5}
 % required for \setstretch used in header
 \RequirePackage{setspace}
 
@@ -199,6 +209,23 @@
 \setlist[2]{labelwidth=12pt,labelsep=4pt,leftmargin=0pt,itemindent=0.5in,align=left}
 \setlist[3]{labelwidth=12pt,labelsep=4pt,leftmargin=0pt,itemindent=0.75in,align=left}
 \setlist[4]{labelwidth=12pt,labelsep=4pt,leftmargin=0pt,itemindent=0.75in,align=left}
+% Level 5 is declared only so that it can report itself. AR 25-50 prohibits
+% subdividing beyond the third subdivision, so there is no correct rendering to
+% fall back to -- the label is a visible marker and the warning names the rule.
+%
+% This warns once per offending \item, NOT once per document, and that is intended:
+% each level-5 item is a separate violation of the regulation. Do not "fix" it with
+% the am@reported@ flag used by \am@MissingRequiredArg -- that exists because the
+% page header re-expands a single missing field on every page, which is a different
+% situation entirely.
+\DeclareRobustCommand{\am@toodeep}{%
+  \textcolor{red}{[AR 25-50]}% chktex 8
+  \ClassWarningNoLine{armymemo}{%
+    AR 25-50 prohibits subdivision beyond the third\MessageBreak% chktex 8
+    subdivision; level 5 is not supported}%
+}
+\setlist[5]{labelwidth=12pt,labelsep=4pt,leftmargin=0pt,itemindent=1.0in,align=left,
+  label={\am@toodeep}}
 
 % define superscripts for use in unit addresses, etc.
 % these may need to be followed by an '\ '

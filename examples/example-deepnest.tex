@@ -1,0 +1,48 @@
+% !TEX program = lualatex
+% Coverage example: nesting past level 4. See #3, #33 and #52.
+%
+% AR 25-50 prohibits subdividing beyond the third subdivision, so level 5 has no
+% correct rendering. The class declares it anyway, purely so it can report the
+% violation: each level-5 item prints a red [AR 25-50] marker and emits a class
+% warning. Its .diag golden records those warnings -- one per offending item, which
+% is deliberate.
+%
+% This example was written during #52 and held back, because before this fix level 5
+% raised two hard `! Package enumitem Error: Undefined label` errors and the document
+% could not build at all. #52 requires every example to build, so it waited for the
+% fix it tests.
+\documentclass{../armymemo}
+
+\address{Organizational Name/Title}
+\address{Standardized Street Address}
+\address{CITY, STATE~~12345-1234}
+
+\author{John W. Smith}\rank{CPT}\branch{CY}
+\officesymbol{ABC-DEF-GH}
+\signaturedate{10 April 2019}
+\memoline{MEMORANDUM FOR RECORD}
+\documentmark{UNCLASSIFIED//FOR OFFICIAL USE ONLY (EXAMPLE ONLY)}
+\subject{A memorandum nested past the fourth subdivision}
+\title{COMMANDING}
+\addencl{AR 25-50}
+
+\begin{document}
+
+\begin{enumerate}
+\item Level one.
+  \begin{enumerate}
+  \item Level two.
+    \begin{enumerate}
+    \item Level three.
+      \begin{enumerate}
+      \item Level four, the deepest level AR 25-50 permits.
+        \begin{enumerate}
+        \item Level five, past what the regulation allows.
+        \item A second level-five item, so the per-item warning is visible.
+        \end{enumerate}
+      \end{enumerate}
+    \end{enumerate}
+  \end{enumerate}
+\end{enumerate}
+
+\end{document}
