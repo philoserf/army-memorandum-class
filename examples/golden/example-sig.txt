@@ -46,7 +46,7 @@ AUTHORITY LINE:
 Encl                                                 JOHN W. SMITH
 AR 25-50                                             CPT, CY
                                                      COMMANDING
-DISTRIBUTION:
+
 
 
 
@@ -59,6 +59,7 @@ ABC-DEF-GH
 SUBJECT: The creation of memos using LATEX
 
 
+DISTRIBUTION:
 DISTRO 1
 DISTRO 2
 DISTRO 3
