@@ -227,10 +227,16 @@ same place, and before that an `examples/Makefile` as well — mostly delegated 
   per the decision to remove generated artifacts; `examples/golden/` is the tracked
   rendered reference now. `task clean` therefore deletes only build output. Do not commit
   a rebuilt PDF, and do not look for one in a diff -- look at the golden.
-- **The README is stale on fonts.** It says the default is Arial; the class sets
-  `\setmainfont{Times New Roman}` (armymemo.cls:117) and `\setsansfont{Arial}` (:126), per
-  the 4 OCT 24 AR 25-50 update and DAIG guidance documented in `CHANGES.md`. Users
-  override with `\setmainfont{Arial}`.
+- **Fonts: Times New Roman body, Arial letterhead.** The class sets
+  `\setmainfont{Times New Roman}` (armymemo.cls:96) and `\setsansfont{Arial}` (:105), per
+  the 4 OCT 24 AR 25-50 update and the DAIG guidance quoted in `CHANGES.md` — a local copy
+  of that guide now sits in `references/`. Users override with `\setmainfont{Arial}`.
+  An earlier revision of this file claimed the README was stale here and cited lines 117
+  and 126; both were wrong. The README (lines 13-14) states the split correctly, and 117 is
+  `\mildate` while 126 is a comment about subdivision depth. Verify a line reference before
+  repeating it. (Lines 96 and 105 specifically are unchanged by the latexindent reformat,
+  which was whitespace-only and left the file at 747 lines -- but it did alter the leading
+  whitespace of other lines, so verify rather than assume for any reference you find.)
 - **Version lives in two places** — the `\ProvidesClass{armymemo}[YYYY/MM/DD X.Y.Z ...]`
   line (armymemo.cls:28, currently `2026/09/11 0.4.0`) and `CHANGES.md`. Bump both.
 - `examples/armymemo.cls`, `examples/digsig.sty`, and `examples/DODb1.pdf` are symlinks to
