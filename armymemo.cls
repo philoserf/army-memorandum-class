@@ -167,6 +167,14 @@
   ]{geometry}
 % make sure the paragraph spacing matches the linespacing
 \setlength{\parskip}{\baselineskip}
+% Skip-separated paragraphs and a first-line indent are mutually redundant, so the indent
+% goes. This is deliberately explicit even though it changes nothing today: \RaggedRight
+% (ragged2e, loaded further down) already assigns \parindent\RaggedRightParindent, which
+% is zero, so the class has been relying on another package's side effect for a decision
+% of its own. Measured: \parindent is 12pt at class-load time and 0pt in the document
+% body. Removing \RaggedRight would silently restore a 12pt indent on every paragraph the
+% author starts; this line is what stops that. example-multipara.tex is the witness.
+\setlength{\parindent}{0pt}
 
 % setup page headers
 \RequirePackage{scrlayer-scrpage}
@@ -201,7 +209,7 @@
     % it is local to the box group.
     \everypar{}%
     \usekomafont{pagehead}%
-    \noindent\am@officesymbol\hspace*{\fill}\\\am@subject\par
+    \am@officesymbol\hspace*{\fill}\\\am@subject\par
   }%
   % Round UP to whole lines. Two reasons: the natural box height is a few points
   % short of what the head actually reserves (measured: it still overflowed by
@@ -322,7 +330,15 @@
 % header info
 \newcommand{\signaturedate}[1]{\def \am@signaturedate{#1}}\signaturedate{}
 \signaturedate{\am@MissingRequiredArg{warning}{signaturedate}{DRAFT}}
-\newcommand{\suspensedate}[1]{\def\am@suspensedate{\ifstrempty{#1}{}{\textbf{S: #1}}}}\suspensedate{}
+% \am@suspensedate@raw exists so the guard in \dodheader can be LIVE, and removing it
+% silently restores a bug that survived for years. \am@suspensedate's body is a
+% conditional, not the value, so it is never empty -- neither \ifstrempty nor
+% \ifdefempty applied to it can ever take the empty branch. Only a macro whose body IS
+% the value can be tested. Do not "simplify" this away.
+\newcommand{\suspensedate}[1]{%
+  \def\am@suspensedate@raw{#1}%
+  \def\am@suspensedate{\ifstrempty{#1}{}{\textbf{S: #1}}}%
+}\suspensedate{}
 \newcommand{\officesymbol}[1]{\def \am@officesymbol{#1}}
 \officesymbol{\am@MissingRequiredArg{error}{officesymbol}{OFFICE SYMBOL}}
 % allow replacing the logo
@@ -352,7 +368,7 @@
 \newcommand{\addmemoline}[1]{\listadd{\am@list@memolines}{#1}}
 \newcommand{\mfr}{\addmemoline{MEMORANDUM FOR RECORD}}
 \newcommand{\memoline}[1]{\addmemoline{#1}}
-\newcommand{\am@domemoline}[1]{\vspace{\baselineskip}\noindent{}#1\\}
+\newcommand{\am@domemoline}[1]{\vspace{\baselineskip}#1\\}
 \newcommand{\multimemothru}[1]{\listadd{\am@list@memothru}{#1}}
 % One hanging-indent line, shared by the THRU and FOR lists, which had byte-identical
 % helpers. Not \am@do (below): that one is bare and lacks the hanging indent the AR
@@ -464,7 +480,7 @@
         \let\am@encl@opts\am@encls@numbered
       }%
     }%
-    \noindent\am@encl@head%
+    \am@encl@head%
     % \expandafter, because enumitem's keyval parser does not expand a macro in the
     % optional argument -- it would read the whole of \am@encl@opts as one key name.
     % One expansion step hands it the option text while leaving \arabic* alone.
@@ -548,7 +564,7 @@
   \ifdefvoid{\am@list@distro}{}{%
     \vspace{\baselineskip}%
     \Needspace*{3\baselineskip}%
-    \noindent{}DISTRIBUTION:\\*%
+    DISTRIBUTION:\\*%
     \forlistloop{\am@do}{\am@list@distro}}}
 
 % add cf
@@ -557,7 +573,7 @@
   \ifdefvoid{\am@list@cf}{}{%
     \vspace{\baselineskip}%
     \Needspace*{3\baselineskip}%
-    \noindent{}CF:\\*%
+    CF:\\*%
     \forlistloop{\am@do}{\am@list@cf}}}
 
 
@@ -597,19 +613,52 @@
 % not follow whatever colour happens to be current when the page is shipped out.
 %
 % The guard sits INSIDE the hook, so it is tested once per page rather than once at
-% \begin{document}. \documentmark{} therefore emits nothing on every page, and a
-% mark changed mid-document takes effect from that page on.
+% \begin{document}: a mark changed mid-document takes effect from that page on.
+%
+% \ifdefempty, not \ifstrempty. \ifstrempty detokenizes without expanding, so
+% \ifstrempty{\am@documentmark} tested the 16-character string "\am@documentmark" and
+% never took the empty branch -- \documentmark{} drew two empty TikZ nodes on every page
+% instead of nothing (#15). \am@documentmark's body IS its value, so \ifdefempty is live
+% here; \suspensedate needs a separate raw macro because its body is a conditional.
 \AddToHook{shipout/background}{%
-  \ifstrempty{\am@documentmark}{}{%
+  \ifdefempty{\am@documentmark}{}{%
     \color{black}\am@classmark{\am@documentmark}%
   }%
 }
 
+% A missing logo file fails deep inside graphicx with a bare "File `DODb1' not found"
+% that names neither this class nor the fix. Probe first and say something useful --
+% the class is frequently copied out of this repo on its own, where the DODb1.pdf that
+% sits beside it here is simply absent (#16).
+%
+% \IfFileExists does NOT perform graphicx's extension search, so probing the bare name
+% alone would fire the error on the class's own default: \logo defaults to "DODb1" and
+% the file is "DODb1.pdf". Walk \Gin@extensions -- graphicx's own list, so it cannot
+% drift out of sync the way a hard-coded copy would.
+\newbool{am@logo@found}
+\newcommand{\am@findlogo}{%
+  \boolfalse{am@logo@found}%
+  \IfFileExists{\am@logo}{\booltrue{am@logo@found}}{%
+    \@for\am@logo@ext:=\Gin@extensions\do{%
+      \ifbool{am@logo@found}{}{%
+        \IfFileExists{\am@logo\am@logo@ext}{\booltrue{am@logo@found}}{}%
+      }%
+    }%
+  }%
+}
 \newcommand{\am@putlogo}{%
-  \begin{tikzpicture}[remember picture, overlay]%
-    \node[anchor=north west,inner sep=0pt,xshift=0.5in, yshift=-0.5in]%
-      at (current page.north west) {\includegraphics[width=1in]{\am@logo}};%
-  \end{tikzpicture}%
+  \am@findlogo
+  \ifbool{am@logo@found}{%
+    \begin{tikzpicture}[remember picture, overlay]%
+      \node[anchor=north west,inner sep=0pt,xshift=0.5in, yshift=-0.5in]%
+        at (current page.north west) {\includegraphics[width=1in]{\am@logo}};%
+    \end{tikzpicture}%
+  }{%
+    \ClassError{armymemo}{Logo file '\am@logo' not found}{%
+      armymemo draws a letterhead logo and could not find '\am@logo'.\MessageBreak%
+      The class ships DODb1.pdf; copy it beside your document, or point\MessageBreak%
+      \string\logo{} at your own image file.}%
+  }%
 }
 
 
@@ -660,14 +709,17 @@
   \end{tikzpicture}%%
   \par%there must be a \par here, or things break!
   \vspace{-2\baselineskip}
-  %conditional block for optional suspense date:
-  \ifstrempty{\am@suspensedate}{}{%
+  % Conditional block for the optional suspense date. Tests \am@suspensedate@raw, not
+  % \am@suspensedate -- see \suspensedate for why testing the formatted macro cannot work.
+  % This guard was dead until #15: it always took the non-empty branch, so the spacing
+  % below applied to every memo whether or not it had a suspense date.
+  \ifdefempty{\am@suspensedate@raw}{}{%
     \vspace{-2\baselineskip}
-    \noindent\,\hspace*{\fill}\am@suspensedate\\
+    \,\hspace*{\fill}\am@suspensedate\\
     \vspace{\baselineskip}}
-  \noindent\am@officesymbol\hspace*{\fill}\am@signaturedate\\
+  \am@officesymbol\hspace*{\fill}\am@signaturedate\\
   \am@memoline
   \vspace{\baselineskip}
-  \noindent\am@subject
+  \am@subject
   \par
 }
