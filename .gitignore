@@ -268,3 +268,10 @@ TSWLatexianTemp*
 *.glstex
 
 # End of https://www.gitignore.io/api/latex
+
+### army-memorandum-class ###
+# Built example PDFs. These are generated output, not sources: the golden files
+# under examples/golden/ are this repo's tracked rendered reference.
+# Note the narrow glob -- DODb1.pdf, DOW-Seal-BW.pdf and imperialseal-536x536.jpg
+# are build *inputs* and stay tracked.
+examples/example*.pdf
