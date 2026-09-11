@@ -135,7 +135,8 @@
 % is the right outcome for someone who ignored the warning at 5.
 \renewlist{enumerate}{enumerate}{5}
 \setlistdepth{5}
-% required for \setstretch used in header
+% required for \setstretch, which \dodheader relies on to set the letterhead's line
+% pitch -- indirectly, and not in the way the source looks like it does. See \dodheader.
 \RequirePackage{setspace}
 
 
@@ -618,7 +619,12 @@
 
 \newcommand{\department}[1]{\def\am@department{\ifstrempty{#1}{DEPARTMENT OF THE ARMY}{\MakeUppercase{#1}}}}\department{}
 \newcommand{\address}[1]{\listadd{\am@list@address}{#1}}
-\newcommand{\am@do@address}[1]{\fontsize{8pt}{5pt}\selectfont\textbf{\MakeUppercase{#1}}\\}
+% The second \fontsize argument is the declared leading, and it does NOT reach the page --
+% see the note on \setstretch in \dodheader. It is written equal to the type size, the
+% conventional "no special leading" idiom, rather than a specific-looking number that
+% would invite someone to tune it. Measured: changing it to 10.11pt, the pitch actually
+% observed, produces byte-identical output.
+\newcommand{\am@do@address}[1]{\fontsize{8pt}{8pt}\selectfont\textbf{\MakeUppercase{#1}}\\}
 \newcommand{\dodheader}{%
   % Defaults apply only when the document supplied no address at all. This used to
   % test {<}{2} on a counter, so a document supplying exactly ONE address fell below
@@ -631,6 +637,21 @@
   }{}
   \thispagestyle{plain}%
   \begin{tikzpicture}[remember picture, overlay]%
+    % \setstretch{0.7} is load-bearing, and by accident (#18). It scales every declared
+    % \baselineskip to 0.7x, which puts the letterhead's leading below the height+depth of
+    % the lines being set. TeX then abandons \baselineskip entirely and inserts \lineskip
+    % glue instead, so the pitch becomes height + depth + \lineskip -- nothing the source
+    % declares. That is why the two gaps differ: 11.54pt after the 10pt DEPARTMENT line and
+    % 10.11pt between the 8pt address lines, neither of them 5pt, 0.7x anything, or equal.
+    %
+    % Measured, so it is not guesswork: deleting \setstretch moves the address pitch to
+    % 14.45pt (the ambient 12pt \baselineskip), and changing the declared leading with
+    % \setstretch in place changes nothing at all.
+    %
+    % Do not "fix" this by deleting \setstretch or tuning a \fontsize leading. AR 25-50
+    % prescribes no letterhead geometry -- 1-16 delegates it to a template on APD's
+    % website, and 1-19 only recommends 12pt generally -- so there is no regulation figure
+    % to target, and today's geometry is preserved deliberately.
     \setstretch{0.7}\fontfamily\sfdefault\selectfont%
     \node[align=center,anchor=north,inner sep=0pt,yshift=-0.625in] at (current page.north) {%
       \fontsize{10pt}{10pt}\selectfont\textbf{\am@department}\\
