@@ -344,30 +344,48 @@
 % allow replacing the logo
 \newcommand{\logo}[1]{\def\am@logo{\ifstrempty{#1}{DODb1}{#1}}}\logo{}
 
-%%%%% Memolines:-------------------------------------------------------
+%%%%% Memorandum lines:-------------------------------------------------
 %
-% example 1:
-% nothing or just \mfr -- MEMORANDUM FOR RECORD
+% Four public commands build the address block. This matches the README's
+% "Memorandum lines" table; if the two ever disagree again, the README wins.
 %
-% example 2:
-% \addmemoline{MEMORANDUM FOR ...} % this is hopefully what most people need most of the time
+%   \mfr                 MEMORANDUM FOR RECORD. Also the default -- a memo
+%                        that sets no line at all gets this one.
 %
-% example 3:
-% \addmemoline{MEMORANDUM THRU ...}
-% \addmemoline{FOR ...}
-% This is the first method for doing THRU memorandums. It follows the previous pattern.
+%   \multimemofor{...}   One recipient of a MEMORANDUM FOR. Repeat per
+%                        recipient. \am@memoline emits the heading once and
+%                        hangs each addressee by 0.25in, per the AR.
 %
-% example 4:
-% \multimemothru{....}    % multi line memorandums break after MEMORANDUM THRU and have
-% \multimemothru{....}    % hanging indents after each THRU line, without spaces, followed by
-% \addmemoline{FOR ...}   % a space and the FOR line. FOR must be specified in the \addmemoline
+%   \multimemothru{...}  One THRU addressee. Repeat per addressee.
 %
-% This method deviates from examples 1-3, as it uses \multimemothru{...} to add multiple thru lines
-% with hanging indents per the AR, followed by an \addmemoline{} to complete the "FOR ..."
+%   \memoline{...}       Escape hatch: a literal line, emitted verbatim
+%                        after the generated ones. The author supplies the
+%                        whole line including its label. For anything the
+%                        three above do not produce.
 %
-\newcommand{\addmemoline}[1]{\listadd{\am@list@memolines}{#1}}
-\newcommand{\mfr}{\addmemoline{MEMORANDUM FOR RECORD}}
-\newcommand{\memoline}[1]{\addmemoline{#1}}
+% A THRU memorandum is \multimemothru per addressee plus \multimemofor per
+% recipient -- nothing else. \am@memoline detects the combination and emits
+% "FOR" rather than "MEMORANDUM FOR" for the second list. \memoline is not
+% needed for it.
+%
+% This note used to document a second, hand-built THRU workflow
+% (\multimemothru followed by \addmemoline{FOR ...}) and then apologise that
+% it "deviates" from the others. The README documented only the first, so
+% the class and the README described different APIs. The hand-built form
+% still works, and examples/example-grid.tex still shows it; it is a literal
+% line like any other, not a supported second route.
+%
+% \addmemoline is a retained alias for \memoline. It is the older name, so
+% documents in the wild may use it; it stays working, deliberately without a
+% deprecation warning, since firing one at an unbroken document buys nothing.
+% The irony is acknowledged: \addmemoline is the name that fits the \add*
+% list-adder family (\addencl, \adddistro, \addcf, \address) and \memoline is
+% the one that does not. \memoline is canonical anyway, because it is the
+% name the README documents and the name every example uses.
+%
+\newcommand{\memoline}[1]{\listadd{\am@list@memolines}{#1}}
+\newcommand{\addmemoline}[1]{\memoline{#1}}
+\newcommand{\mfr}{\memoline{MEMORANDUM FOR RECORD}}
 \newcommand{\am@domemoline}[1]{\vspace{\baselineskip}#1\\}
 \newcommand{\multimemothru}[1]{\listadd{\am@list@memothru}{#1}}
 % One hanging-indent line, shared by the THRU and FOR lists, which had byte-identical
@@ -406,7 +424,7 @@
     }
     \forlistloop{\am@do@hangline}{\am@list@memofor}}%
   \ifdefvoid{\am@list@memolines}{}{%
-    % after dealing with special cases, add the other lines from \addmemoline or \memoline
+    % after dealing with special cases, add the other lines from \memoline
     % these lines must begin with any labels such as "MEMORANDUM FOR" or "MEMORANDUM THRU" or "FOR"
     % allow for possibility of no multi lines.
     \forlistloop{\am@domemoline}{\am@list@memolines}

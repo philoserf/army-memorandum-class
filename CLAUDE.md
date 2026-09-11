@@ -223,14 +223,18 @@ not sections.
   invoking the setter immediately after definition. Required fields default to
   `\am@MissingRequiredArgError` / `...Warning`, which emit a build error or warning _and_
   substitute a visible placeholder (`OFFICE SYMBOL`, `DRAFT`) into the output.
-- _List_: `\address`, `\addencl`, `\adddistro`, `\addcf`, `\addmemoline` /
-  `\multimemofor` / `\multimemothru` use etoolbox `\listadd` into `\am@list@*` plus a
-  counter, rendered by an `\am@*` loop inside the appropriate hook.
+- _List_: `\address`, `\addencl`, `\adddistro`, `\addcf`, `\memoline` / `\multimemofor` /
+  `\multimemothru` use etoolbox `\listadd` into `\am@list@*`, rendered by an `\am@*` loop
+  inside the appropriate hook. Only enclosures still keep a counter (`am@encl@count`);
+  the rest test the list itself with `\ifdefvoid`. `\addmemoline` is a retained alias for
+  `\memoline` -- it is the name that matches this family, but `\memoline` is the one the
+  README documents and every example uses, so that is the canonical spelling.
 
 Adding a new field means: define the setter, store into an `am@`-prefixed internal, and
-render it from the correct hook. Counters exist so the renderers can vary output between
-zero, one, and many entries (e.g. `Encl` vs `2 Encls`; `\enclsnocount` suppresses the
-count per AR 25-50 Figure 4-4).
+render it from the correct hook. The renderers vary output between zero, one, and many
+entries; the enclosure counter survives because its output names the number (`Encl` vs
+`2 Encls`; `\enclsnocount` suppresses the count per AR 25-50 Figure 4-4), while the other
+lists only need to know whether they are empty.
 
 **Options.** `digsig` is the only class-specific option — it sets an etoolbox bool and
 loads the bundled `digsig.sty`, which adds an interactive PDF signature field to the
