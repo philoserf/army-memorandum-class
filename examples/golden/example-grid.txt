@@ -1,0 +1,210 @@
+                         GALACTIC CONFIDENTIAL//DEATHSTAR
+                                      GALACTIC FLEET
+                                         DEATH STAR
+                                      ALDERAAN SYSTEM
+                                        CORE WORLDS
+
+
+                                                                                  S: 1 JAN 2019
+
+DS-1-OBS                                                                           10 April 2019
+
+
+MEMORANDUM THRU
+
+U.S. Army Command and General Staff College (ATZL), 100 Stimson Avenue, Ft Leavenworth,
+   KS 66027-1352
+CHIEF OF STAFF, 501st Legion, Galactic Army, Grand Army of the Republic, Galactic Empire
+
+FOR General of the Grand Army of the Republic, Dark Lord of the Sith, Darth Vader
+
+SUBJECT: On the use and testing of LATEX for document production
+
+
+1. This document uses code from https://tex.stackexchange.com/q/159010 to display the baselines
+in order to confirm spacing between paragraph, list items, and other elements of the memo.
+
+2. This example-grid.tex document is for testing features of the class and validating layout.
+
+3. See paragraph 2-2 (of AR 25-50) for when to use a memorandum.
+
+4. Single space the text and double space between paragraphs and subparagraphs. Insert two blank
+spaces after ending punctuation (period and question mark). Insert two blank spaces after a colon.
+When numbering subparagraphs, insert two blank spaces after parentheses.
+
+5. When a memorandum has more than one paragraph, number the paragraphs consecutively.
+When paragraphs are subdivided, designate first subdivisions using lowercase letters of the
+alphabet and indent 1/4 inch as shown below.
+
+    a. When a paragraph is subdivided, it must have at least two subparagraphs.
+
+    b. If there is a subparagraph “a,” there must be a subparagraph “b.”
+
+       (1) Designate second subdivisions by numbers in parentheses; for example (1), (2), and (3)
+and indent by 1/2 inch as shown.
+
+        (2) Do not subdivide beyond the third subdivision.
+
+        (a) Do not indent any further than the second subdivision.
+
+
+
+
+                         GALACTIC CONFIDENTIAL//DEATHSTAR
+                           GALACTIC CONFIDENTIAL//DEATHSTAR
+
+
+
+DS-1-OBS
+SUBJECT: On the use and testing of LATEX for document production
+
+
+         (b) Use (a), (b), (c), and so forth at this level.
+
+6. Moby Dick, a classic American Novel, the text of which is public domain, follows in several
+paragraphs to make a longer example:
+
+     a. Call me Ishmael.1 Some years ago- never mind how long precisely- having little or no
+money in my purse2 , and nothing particular to interest me on shore, I thought I would sail about
+a little and see the watery part of the world.3 It is a way I have of driving off the spleen and
+regulating the circulation. Whenever I find myself growing grim about the mouth; whenever it
+is a damp, drizzly November in my soul; whenever I find myself involuntarily pausing before
+coffin warehouses, and bringing up the rear of every funeral I meet; and especially whenever
+my hypos get such an upper hand of me, that it requires a strong moral principle to prevent me
+from deliberately stepping into the street, and methodically knocking people’s hats off- then, I
+account it high time to get to sea as soon as I can. This is my substitute for pistol and ball. With
+a philosophical flourish Cato throws himself upon his sword; I quietly take to the ship. There is
+nothing surprising in this. If they but knew it, almost all men in their degree, some time or other,
+cherish very nearly the same feelings towards the ocean with me.
+
+     b. There now is your insular city of the Manhattoes, belted round by wharves as Indian isles
+by coral reefs- commerce surrounds it with her surf. Right and left, the streets take you waterward.
+Its extreme downtown is the battery, where that noble mole is washed by waves, and cooled by
+breezes, which a few hours previous were out of sight of land. Look at the crowds of water-gazers
+there.
+
+7. POC for this memo is John Doe, who can be reached at john@dev.null or (555) 555-1234.
+
+FOR THE COMMANDER:
+
+
+
+
+3 Encls                                               BOBA FETT
+1. LATEXHOWTO                                         Contractor, Independent
+2. StackExchange                                      Procurement of Prized Heads
+
+
+
+
+ 1
+   This is a footnote
+ 2
+   wallet
+ 3
+   aka the ocean
+
+                                                     2
+                           GALACTIC CONFIDENTIAL//DEATHSTAR
+                           GALACTIC CONFIDENTIAL//DEATHSTAR
+
+
+
+DS-1-OBS
+SUBJECT: On the use and testing of LATEX for document production
+
+
+The circle is at 1 inch from the top and left of the page. Dashed lines represent (\hoffset + 1 inch) and
+                           (\voffset + 1 inch) from the top and left of the page.
+
+
+
+                           e ?
+                              \headheight
+                              \topmargin        Header
+                              \headsep
+                             ?
+                             ?
+
+
+
+
+                            \oddsidemargin
+                       -
+
+
+
+
+                                                 Body
+
+
+
+                               \textwidth
+                                                                            -
+
+
+
+
+                              \textheight
+                              \footskip
+                             ?
+
+                             ?                  Footer
+
+
+                                       Lengths are to the nearest pt.
+                         page height = 795pt             page width = 614pt
+                         \hoffset = 0pt                  \voffset = 0pt
+                         \oddsidemargin = 0pt            \topmargin = 0pt
+                         \headheight = 29pt              \headsep = 29pt
+                         \textheight = 578pt             \textwidth = 470pt
+                         \footskip = 44pt                \marginparsep = 13pt
+                         \marginparpush = 7pt            \columnsep = 10pt
+                         \columnseprule = 0.0pt
+
+
+                                      Figure 1: Document layout
+                                                   3
+                           GALACTIC CONFIDENTIAL//DEATHSTAR
+                     GALACTIC CONFIDENTIAL//DEATHSTAR
+
+
+
+DS-1-OBS
+SUBJECT: On the use and testing of LATEX for document production
+
+
+3. armymemo.cls
+
+DISTRIBUTION:
+(CONTINUED)
+
+
+
+
+                                         4
+                     GALACTIC CONFIDENTIAL//DEATHSTAR
+                     GALACTIC CONFIDENTIAL//DEATHSTAR
+
+
+
+DS-1-OBS
+SUBJECT: On the use and testing of LATEX for document production
+
+
+DISTRIBUTION:
+G.M. Tarkin
+Adm. Ozzel
+Adm. Motti
+V.Adm. Piett
+
+CF:
+Galactic J3
+Fleet J3
+
+
+
+
+                                         5
+                     GALACTIC CONFIDENTIAL//DEATHSTAR
+
