@@ -162,7 +162,7 @@ Two things to know before running it:
   page, and stripping those silently breaks page-break detection. See
   `examples/golden/README.md` for provenance and the full rule.
 - **`chktex` folds into `make test` as a ratchet**, not a gate: it fails only when the
-  warning count rises above `CHKTEX_BASELINE` in `tools/run-tests.sh` (currently 29).
+  warning count rises above `CHKTEX_BASELINE` in `tools/run-tests.sh` (currently 26).
   Lower the baseline in the same change that lowers the count.
 
 The harness finds TeX Live on its own when it is not on a non-interactive shell's `PATH`,
