@@ -38,9 +38,14 @@ bundled `digsig.sty`, and the `examples/` that exercise them.
 - **GitHub still classifies this repo as a fork** (`isFork: true`, parent `glallen01`),
   and removing the remote did not change that — it is repo metadata, not a remote. PR and
   issue defaults still point at the parent, so the hazards below remain live.
-- **Divergence is documentation and tooling only.** The class itself is unchanged from
-  `ed2082e`. The substantive fork work is planned, not landed: it lives as ~49 open
-  issues (see Issue tracking).
+- **Divergence is now substantive and landed in the class itself.** This was not true
+  until 2026-09-11, and an earlier revision of this file said the opposite. `armymemo.cls`
+  is +515/-215 against `ed2082e`: the closing block, classification marks, head sizing,
+  option order, font fallback, list depth, several never-firing guards and the public API
+  surface have all changed, across six milestones released as `0.4.0`. The audit backlog
+  that described this work is closed — one open issue remains, `#48`, a `kind:upstream`
+  read-only mirror that is not this fork's to close. Treat `ed2082e` as a divergence point,
+  not as a description of the current class.
 
 ## Fork policy — do not contact upstream
 
@@ -186,7 +191,7 @@ mostly delegated to, and `check` was defined identically in both.
   the 4 OCT 24 AR 25-50 update and DAIG guidance documented in `CHANGES.md`. Users
   override with `\setmainfont{Arial}`.
 - **Version lives in two places** — the `\ProvidesClass{armymemo}[YYYY/MM/DD X.Y.Z ...]`
-  line (armymemo.cls:24, currently `2026/03/29 0.3.0`) and `CHANGES.md`. Bump both.
+  line (armymemo.cls:28, currently `2026/09/11 0.4.0`) and `CHANGES.md`. Bump both.
 - `examples/armymemo.cls`, `examples/digsig.sty`, and `examples/DODb1.pdf` are symlinks to
   the repo root, so the examples always compile against the live class.
 
