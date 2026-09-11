@@ -2,7 +2,7 @@
 
 ---
 
-## [Unreleased]
+## [0.4.0] - 2026-09-11
 
 ### Fixed
 
@@ -22,13 +22,6 @@
   worded identically so a divergence between the routes shows up as a difference between
   the goldens; today they render the line at the same position. Verified by mutation:
   emptying `\mfr` fails exactly these two examples and leaves the other nineteen passing.
-
----
-
-## [0.4.0] - 2026-09-11
-
-### Fixed
-
 - Two guards that could never fire now do. `\ifstrempty` detokenizes its argument without expanding it, so `\ifstrempty{\am@documentmark}` tested the 16-character string `\am@documentmark` — never empty — and both guards always took their non-empty branch. `\documentmark{}` therefore drew two empty TikZ nodes on every page instead of nothing, and the suspense-date block's spacing applied to every memo whether or not it had a suspense date. Both now use `\ifdefempty`. `\suspensedate` additionally stores its raw value in `\am@suspensedate@raw`, because `\am@suspensedate`'s body is a *conditional* rather than the value, so no emptiness test applied to it can ever succeed — the split is load-bearing, not cosmetic. **Rendered output is byte-identical across all 16 examples**: the dead branch emitted `\vspace{-2\baselineskip}`, a near-empty line and `\vspace{\baselineskip}`, which cancelled to zero. The repair is structural, and the guards were verified live by probe (a memo with no suspense date now skips the block; one with a mark still draws it).
 - A missing letterhead logo is now reported by name instead of failing inside `graphicx`. The class is frequently copied out of its repository on its own, where the bundled `DODb1.pdf` is simply absent; the result was a bare ``File `DODb1' not found`` naming neither the class nor the remedy. `\am@findlogo` probes first and raises a class error naming the file and pointing at `\logo{...}`. It walks graphicx's own `\Gin@extensions` rather than a hard-coded copy, because `\IfFileExists` performs no extension search and probing the bare name alone would have fired the error on the class's own default (`\logo` defaults to `DODb1`; the file is `DODb1.pdf`).
 - A SUBJECT long enough to wrap no longer overflows the continuation-page header. `geometry` reserved a fixed `headheight=2\baselineskip` while AR 25-50 requires the office symbol and the *full* subject on every continuation page, so a wrapping subject wanted three lines in a two-line box -- `Overfull \vbox (14.49998pt too high)`, exactly one line. The overflow grew the head *upward*, pushing it off the 1in top margin and toward the classification marking, rather than down. `\am@fitheadheight` now measures the head at `\AtEndPreamble` -- still the preamble, so `\geometry` is legal, but late enough that `\officesymbol` and `\subject` are both set in either order -- and asks `geometry` for the whole number of lines it needs. The head's top stays on the 1in margin and the body starts a line lower, which is what a two-line subject genuinely costs. Documents whose subject fits on one line are untouched.
