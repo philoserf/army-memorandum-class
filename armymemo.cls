@@ -289,12 +289,16 @@
 \setlist[5]{labelwidth=12pt,labelsep=4pt,leftmargin=0pt,itemindent=1.0in,align=left,
   label={\am@toodeep}}
 
-% define superscripts for use in unit addresses, etc.
-% these may need to be followed by an '\ '
+% Superscript ordinal for unit designations, as in 501\st\ Legion. It usually
+% needs a following '\ ' to keep the interword space.
+%
+% \nd, \rd and \thh were removed: nothing in the tree used them, and each spent
+% a short, generic name from the global namespace to save three characters.
+% \st stays because it has real call sites. This reduces the collision risk
+% rather than eliminating it -- \st remains a plausible name for a user macro
+% or another package's, and \thh was spelled with the doubled h only because
+% \th is already taken (thorn), which is the same problem seen from the inside.
 \newcommand{\st}{\textsuperscript{st}}
-\newcommand{\nd}{\textsuperscript{nd}}
-\newcommand{\rd}{\textsuperscript{rd}}
-\newcommand{\thh}{\textsuperscript{th}}
 
 % commands for error/warning messages for missing values
 % One diagnostic for a missing required field, with the severity as a parameter so
