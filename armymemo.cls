@@ -171,7 +171,7 @@
 % TODO: disable if using xelatex
 
 % do I need this later? https://tex.stackexchange.com/a/64615
-\usepackage[colorlinks=true,urlcolor=blue,citecolor=blue,breaklinks=true]{hyperref}
+\RequirePackage[colorlinks=true,urlcolor=blue,citecolor=blue,breaklinks=true]{hyperref}
 \ifbool{am@digsig}{\RequirePackage{digsig}}{}
 \urlstyle{same}
 
@@ -312,7 +312,7 @@
 \newcommand{\documentmark}[1]{\def \am@documentmark{#1}}\documentmark{}
 
 % authority line
-\newcommand{\authority}[1]{\def\am@authorityline{\ifstrempty{#1}{}{\uppercase{#1}:}}}
+\newcommand{\authority}[1]{\def\am@authorityline{\ifstrempty{#1}{}{\MakeUppercase{#1}:}}}
 \authority{}
 
 % signature block
@@ -400,9 +400,9 @@
 %    uses plain tex and picture environment
 
 \newcounter{am@address@count}
-\newcommand{\department}[1]{\def\am@department{\ifstrempty{#1}{DEPARTMENT OF THE ARMY}{\uppercase{#1}}}}\department{}
+\newcommand{\department}[1]{\def\am@department{\ifstrempty{#1}{DEPARTMENT OF THE ARMY}{\MakeUppercase{#1}}}}\department{}
 \newcommand{\address}[1]{\stepcounter{am@address@count}\listadd{\am@list@address}{#1}}
-\newcommand{\am@do@address}[1]{\fontsize{8pt}{5pt}\selectfont\textbf{\uppercase{#1}}\\}
+\newcommand{\am@do@address}[1]{\fontsize{8pt}{5pt}\selectfont\textbf{\MakeUppercase{#1}}\\}
 \newcommand{\dodheader}{%
   \ifnumcomp{\value{am@address@count}}{<}{2}{
     \address{Organizational Name/Title}
