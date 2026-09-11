@@ -111,9 +111,10 @@ tasks:
   # .Brewfile -- uvx fetches and caches it on first use. shellcheck and shfmt are
   # in the .Brewfile and are expected on PATH.
   #
-  # shfmt runs as `-d` (diff, non-zero on drift) with no -i/-ci flags on purpose:
-  # bare shfmt reads .editorconfig, and passing any formatting flag would make it
-  # ignore that file. See .editorconfig for the precedence rule.
+  # shfmt runs bare apart from -d (diff, non-zero on drift). There is no
+  # .editorconfig and no -i/-ci: tools/run-tests.sh is formatted to shfmt's own
+  # defaults, so the tool needs telling nothing. Adding flags here without
+  # reformatting the file would make this gate fail on correctly formatted code.
   lint:
     desc: Run every gating linter -- Python, shell and LaTeX
     cmds:

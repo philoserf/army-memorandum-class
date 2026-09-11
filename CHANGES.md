@@ -45,10 +45,11 @@
 - **`task lint` covers the repository's own tooling.** `chktex` lints the class; nothing
   previously looked at the Python and shell that build and test it. The task runs `ruff`
   (through `uvx` -- it is deliberately not installed) plus `shellcheck` and `shfmt -d`.
-  Rule selection lives in `ruff.toml`. `.editorconfig` exists so that a bare `shfmt` agrees
-  with the checked-in formatting: shfmt reads `.editorconfig` only when given no formatting
-  flags, and without the file a bare `shfmt -w` would rewrite `tools/run-tests.sh` to tabs
-  and flatten every `case` arm.
+  Rule selection lives in `ruff.toml`. shfmt is given no style flags, and
+  `tools/run-tests.sh` is formatted to its defaults accordingly -- tab indented, with `case`
+  arms at column zero. An earlier revision of this work carried an `.editorconfig` pinning
+  the file to 4-space with indented arms; it was removed, being a configuration file whose
+  only content was an override of the tool's own defaults.
 
   ruff runs with `select = ["ALL"]` -- the pedantic end of the dial -- against a short
   ignore list, and nothing in `ruff.toml` restates a ruff default (`line-length` and

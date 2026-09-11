@@ -132,10 +132,13 @@ deliberate decision, not a routine step.
   and since this repo's own instructions prepend the TeX Live bin directory to `PATH`, that
   broken copy comes *first*. The `LATEXINDENT` var in `Taskfile.yml` probes by `--version`
   and picks one that runs, the same way `tools/run-tests.sh` probes for TeX Live.
-- `ruff.toml` carries `select = ["ALL"]` with a short, justified ignore list; nothing in it
-  restates a ruff default. `.editorconfig` is the one remaining formatting override —
-  shfmt's defaults are tabs with flattened `case` arms, and it pins `tools/run-tests.sh` to
-  4-space with indented arms instead.
+- **Every formatter here runs on its own defaults.** `ruff.toml` carries
+  `select = ["ALL"]` with a short, justified ignore list and restates no ruff default;
+  latexindent and shfmt are given no style flags at all, so `tools/run-tests.sh` is tab
+  indented with `case` arms at column zero and the LaTeX is tab indented, because that is
+  what those tools do unprompted. There is deliberately no `.editorconfig`. If you add
+  style flags to either formatter without reformatting the files in the same change, the
+  `lint` gate will start failing on correct code.
 
 **The toolchain is installed** — TeX Live 2026 (`scheme-full`, no docs or sources) went in
 on 2026-09-09 under `~/texlive/2026`, user-owned, no sudo (#50). Times New Roman and Arial
