@@ -1,0 +1,34 @@
+             UNCLASSIFIED//FOR OFFICIAL USE ONLY (EXAMPLE ONLY)
+                               DEPARTMENT OF THE ARMY
+                                 ORGANIZATIONAL NAME/TITLE
+                               STANDARDIZED STREET ADDRESS
+                                   CITY, STATE 12345-1234
+
+
+
+
+ABC-DEF-GH                                                                     10 April 2019
+
+
+MEMORANDUM FOR RECORD
+
+SUBJECT: A memorandum with an uncounted enclosure list
+
+
+1. Two enclosures are declared, but \enclsnocount suppresses the leading count, so the block
+heading reads Encls rather than 2 Encls. The entries themselves stay numbered.
+
+2. A second paragraph, so the body is a well-formed AR 25-50 list.
+
+
+
+
+Encls                                          JOHN W. SMITH
+1. AR 25-50                                    CPT, CY
+2. DA Form 1234                                COMMANDING
+
+
+
+
+             UNCLASSIFIED//FOR OFFICIAL USE ONLY (EXAMPLE ONLY)
+

@@ -1,0 +1,33 @@
+% !TEX program = lualatex
+% Coverage example: \multimemofor. See #39 and #52.
+% Defined in the class with a dispatcher branch written for it, and called by no
+% example anywhere -- a wholly untested feature. It renders a MEMORANDUM FOR
+% header followed by hanging-indent addressee lines.
+%
+% Whatever this renders is captured as-is. If it is wrong, the golden records the
+% defect and a later fix has to change it.
+\documentclass{../armymemo}
+
+\address{Organizational Name/Title}
+\address{Standardized Street Address}
+\address{CITY, STATE~~12345-1234}
+
+\author{John W. Smith}\rank{CPT}\branch{CY}
+\officesymbol{ABC-DEF-GH}
+\signaturedate{10 April 2019}
+\multimemofor{COMMANDER, 1ST BATTALION, 501ST INFANTRY, FORT EXAMPLE, ST 12345-1234}
+\multimemofor{COMMANDER, 2D BATTALION, 501ST INFANTRY, FORT EXAMPLE, ST 12345-1234}
+\documentmark{UNCLASSIFIED//FOR OFFICIAL USE ONLY (EXAMPLE ONLY)}
+\subject{A memorandum addressed to several commands}
+\title{COMMANDING}
+\addencl{AR 25-50}
+
+\begin{document}
+
+\begin{enumerate}
+\item Two addressees are declared with \verb|\multimemofor|, which should render a
+  MEMORANDUM FOR header followed by both lines with hanging indents.
+\item A second paragraph, so the body is a well-formed AR 25-50 list.
+\end{enumerate}
+
+\end{document}

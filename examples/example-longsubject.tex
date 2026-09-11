@@ -1,0 +1,32 @@
+% !TEX program = lualatex
+% Coverage example: a subject long enough to wrap to two lines. See #13 and #52.
+% example-grid.tex carries a note-to-self calling this a known weak spot, but no
+% example actually exercised it.
+%
+% Whatever this renders is captured as-is; if the second line is mispositioned,
+% the golden records that and a later fix has to change it.
+\documentclass{../armymemo}
+
+\address{Organizational Name/Title}
+\address{Standardized Street Address}
+\address{CITY, STATE~~12345-1234}
+
+\author{John W. Smith}\rank{CPT}\branch{CY}
+\officesymbol{ABC-DEF-GH}
+\signaturedate{10 April 2019}
+\memoline{MEMORANDUM FOR RECORD}
+\documentmark{UNCLASSIFIED//FOR OFFICIAL USE ONLY (EXAMPLE ONLY)}
+\subject{Procedures for the Preparation, Staffing, Review, and Final Approval of
+  Correspondence Prepared Under the Provisions of Army Regulation 25-50}
+\title{COMMANDING}
+\addencl{AR 25-50}
+
+\begin{document}
+
+\begin{enumerate}
+\item The subject line above is long enough to wrap, which exercises the
+  continuation indent on the SUBJECT block and on the page-two header.
+\item A second paragraph, so the body is a well-formed AR 25-50 list.
+\end{enumerate}
+
+\end{document}
