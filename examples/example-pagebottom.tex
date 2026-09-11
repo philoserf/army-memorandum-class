@@ -1,0 +1,67 @@
+% !TEX program = lualatex
+% Coverage example: body text running to the very bottom of a page. See #1, #52.
+%
+% The filler below is TUNED, not arbitrary prose: it is sized so the body's last
+% line is the last thing on page one, which forces the entire closing block onto
+% page two. That is the page-break stress #1 lives in. Changing the filler length
+% changes what this example tests -- if you edit it, re-check where the break
+% falls.
+%
+% Note the related case is already covered elsewhere: example.tex baselines the
+% #1 orphan itself, with DISTRIBUTION: stranded as the last line of page one and
+% its entries on page two. This file covers the other side, where the body rather
+% than the closing block is what reaches the bottom.
+%
+% This is the most fragile golden in the set, deliberately. It is the one most
+% sensitive to a TeX Live or poppler upgrade -- which is also why it has value:
+% it fails first when page-breaking behaviour shifts.
+\documentclass{../armymemo}
+
+\address{Organizational Name/Title}
+\address{Standardized Street Address}
+\address{CITY, STATE~~12345-1234}
+
+\author{John W. Smith}\rank{CPT}\branch{CY}
+\officesymbol{ABC-DEF-GH}
+\signaturedate{10 April 2019}
+\memoline{MEMORANDUM FOR RECORD}
+\documentmark{UNCLASSIFIED//FOR OFFICIAL USE ONLY (EXAMPLE ONLY)}
+\subject{A memorandum whose body ends at the page bottom}
+\title{COMMANDING}
+\addencl{AR 25-50}
+\adddistro{DISTRO 1}
+\adddistro{DISTRO 2}
+
+\begin{document}
+
+\begin{enumerate}
+\item Call me Ishmael. Some years ago, never mind how long precisely, having
+  little or no money in my purse, and nothing particular to interest me on shore,
+  I thought I would sail about a little and see the watery part of the world.
+\item There now is your insular city of the Manhattoes, belted round by wharves
+  as Indian isles by coral reefs; commerce surrounds it with her surf. Right and
+  left, the streets take you waterward.
+\item Circumambulate the city of a dreamy Sabbath afternoon. Go from Corlears
+  Hook to Coenties Slip, and from thence, by Whitehall, northward. What do you
+  see? Posted like silent sentinels all around the town, stand thousands upon
+  thousands of mortal men fixed in ocean reveries.
+\item But look! Here come more crowds, pacing straight for the water, and
+  seemingly bound for a dive. Strange! Nothing will content them but the extremest
+  limit of the land; loitering under the shady lee of yonder warehouses will not
+  suffice. They must get just as nigh the water as they possibly can.
+\item But look! Here come more crowds, pacing straight for the water, and
+  seemingly bound for a dive. Strange! Nothing will content them but the extremest
+  limit of the land; loitering under the shady lee of yonder warehouses will not
+  suffice. They must get just as nigh the water as they possibly can.
+\item Once more. Say you are in the country, in some high land of lakes. Take
+  almost any path you please, and ten to one it carries you down in a dale, and
+  leaves you there by a pool in the stream.
+\item Once more. Say you are in the country, in some high land of lakes. Take
+  almost any path you please, and ten to one it carries you down in a dale, and
+  leaves you there by a pool in the stream.
+\item Once more. Say you are in the country, in some high land of lakes. Take
+  almost any path you please, and ten to one it carries you down in a dale, and
+  leaves you there by a pool in the stream.
+\end{enumerate}
+
+\end{document}

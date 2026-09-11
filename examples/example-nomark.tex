@@ -1,0 +1,28 @@
+% !TEX program = lualatex
+% Coverage example: no \documentmark. See #37 and #52.
+% The empty-mark case: all four original examples set a classification banner, so
+% the path where none is set -- and the banner machinery must render nothing --
+% had no exercise.
+\documentclass{../armymemo}
+
+\address{Organizational Name/Title}
+\address{Standardized Street Address}
+\address{CITY, STATE~~12345-1234}
+
+\author{John W. Smith}\rank{CPT}\branch{CY}
+\officesymbol{ABC-DEF-GH}
+\signaturedate{10 April 2019}
+\memoline{MEMORANDUM FOR RECORD}
+\subject{A memorandum with no classification mark}
+\title{COMMANDING}
+\addencl{AR 25-50}
+
+\begin{document}
+
+\begin{enumerate}
+\item No \verb|\documentmark| is declared, so no classification banner should
+  appear at the top or bottom of the page.
+\item A second paragraph, so the body is a well-formed AR 25-50 list.
+\end{enumerate}
+
+\end{document}

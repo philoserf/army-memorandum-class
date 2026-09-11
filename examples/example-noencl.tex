@@ -1,0 +1,33 @@
+% !TEX program = lualatex
+% Coverage example: zero enclosures. See #29 and #52.
+% No \addencl call at all -- the path where the enclosure list is empty.
+%
+% The golden for this file deliberately records the BUGGY rendering: with zero
+% enclosures, DISTRIBUTION lands beside the signature block instead of below it.
+% Do not hand-correct the golden. When #29 is fixed in milestone 4, `make golden`
+% will show the change, and that diff is the proof the fix did something.
+\documentclass{../armymemo}
+
+\address{Organizational Name/Title}
+\address{Standardized Street Address}
+\address{CITY, STATE~~12345-1234}
+
+\author{John W. Smith}\rank{CPT}\branch{CY}
+\officesymbol{ABC-DEF-GH}
+\signaturedate{10 April 2019}
+\memoline{MEMORANDUM FOR RECORD}
+\documentmark{UNCLASSIFIED//FOR OFFICIAL USE ONLY (EXAMPLE ONLY)}
+\subject{A memorandum with no enclosures}
+\title{COMMANDING}
+\adddistro{DISTRO 1}
+\adddistro{DISTRO 2}
+
+\begin{document}
+
+\begin{enumerate}
+\item This memorandum declares no enclosures. The closing block must still place
+  DISTRIBUTION below the signature block, not beside it.
+\item A second paragraph, so the body is a well-formed AR 25-50 list.
+\end{enumerate}
+
+\end{document}

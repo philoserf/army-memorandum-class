@@ -1,0 +1,33 @@
+             UNCLASSIFIED//FOR OFFICIAL USE ONLY (EXAMPLE ONLY)
+                                DEPARTMENT OF THE ARMY
+                                   ORGANIZATIONAL NAME/TITLE
+                                 STANDARDIZED STREET ADDRESS
+                                     CITY, STATE 12345-1234
+
+
+
+
+ABC-DEF-GH                                                                    10 April 2019
+
+
+MEMORANDUM FOR RECORD
+
+SUBJECT: A memorandum with no suspense date
+
+
+1. No suspense date is declared, so no S: line should appear in the header.
+
+2. A second paragraph, so the body is a well-formed AR 25-50 list.
+
+
+
+
+Encl                                             JOHN W. SMITH
+AR 25-50                                         CPT, CY
+                                                 COMMANDING
+
+
+
+
+             UNCLASSIFIED//FOR OFFICIAL USE ONLY (EXAMPLE ONLY)
+

@@ -1,0 +1,29 @@
+% !TEX program = lualatex
+% Coverage example: exactly one \address. See #26 and #52.
+% All other examples supply three address lines; this is the single-line path.
+%
+% The golden for this file deliberately records the BUGGY rendering: supplying one
+% address silently appends placeholder lines rather than printing just the one
+% given. Do not hand-correct the golden. When #26 is fixed in milestone 3,
+% `make golden` will show the change, and that diff is the proof.
+\documentclass{../armymemo}
+
+\address{Organizational Name/Title}
+
+\author{John W. Smith}\rank{CPT}\branch{CY}
+\officesymbol{ABC-DEF-GH}
+\signaturedate{10 April 2019}
+\memoline{MEMORANDUM FOR RECORD}
+\documentmark{UNCLASSIFIED//FOR OFFICIAL USE ONLY (EXAMPLE ONLY)}
+\subject{A memorandum with a single address line}
+\title{COMMANDING}
+\addencl{AR 25-50}
+
+\begin{document}
+
+\begin{enumerate}
+\item This memorandum supplies exactly one address line.
+\item A second paragraph, so the body is a well-formed AR 25-50 list.
+\end{enumerate}
+
+\end{document}

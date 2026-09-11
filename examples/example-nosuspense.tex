@@ -1,0 +1,27 @@
+% !TEX program = lualatex
+% Coverage example: no suspense date. See #15 and #52.
+% \suspensedate is never called, so the class default (empty) is what renders.
+% All four original examples set it, so this path had no exercise.
+\documentclass{../armymemo}
+
+\address{Organizational Name/Title}
+\address{Standardized Street Address}
+\address{CITY, STATE~~12345-1234}
+
+\author{John W. Smith}\rank{CPT}\branch{CY}
+\officesymbol{ABC-DEF-GH}
+\signaturedate{10 April 2019}
+\memoline{MEMORANDUM FOR RECORD}
+\documentmark{UNCLASSIFIED//FOR OFFICIAL USE ONLY (EXAMPLE ONLY)}
+\subject{A memorandum with no suspense date}
+\title{COMMANDING}
+\addencl{AR 25-50}
+
+\begin{document}
+
+\begin{enumerate}
+\item No suspense date is declared, so no S: line should appear in the header.
+\item A second paragraph, so the body is a well-formed AR 25-50 list.
+\end{enumerate}
+
+\end{document}
