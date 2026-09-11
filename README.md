@@ -192,6 +192,19 @@ defines its own `\st` will collide with it. The companions `\nd`, `\rd` and `\th
 removed for that reason -- nothing used them, and `\thh` had to be misspelled because
 `\th` (thorn) was already taken.
 
+Typed `"` is **active**. The class calls `\MakeOuterQuote{"}` (csquotes), so an ASCII
+double quote opens or closes a typographic pair depending on position -- `"correspondence"`
+renders as a left and right curly pair, not two typewriter marks. Two consequences worth
+knowing:
+
+- **Nested quotes do not nest.** One active character cannot tell an inner quote from an
+  outer one, so csquotes alternates and the inner pair comes out closing-then-opening.
+  Use `\enquote{outer \enquote{inner} text}` for anything nested; it produces the correct
+  double-then-single pairing.
+- **For a literal typewriter quote, write `\textquotedbl`.** It is unaffected by csquotes.
+
+`examples/example-quotes.tex` demonstrates all three cases.
+
 ### Class options
 
 `digsig` adds an interactive PDF signature field to the signature block, via the bundled
