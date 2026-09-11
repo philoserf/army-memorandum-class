@@ -20,11 +20,11 @@ markings, the signature block, and the enclosure/distribution/copies-furnished l
 
 The class is often copied out of this repository on its own. The full set is:
 
-| File           | When                                                                  |
-| -------------- | --------------------------------------------------------------------- |
-| `armymemo.cls` | always                                                                |
-| `DODb1.pdf`    | always, unless you point `\logo{...}` at your own image              |
-| `digsig.sty`   | only with the `digsig` class option                                   |
+| File           | When                                                    |
+| -------------- | ------------------------------------------------------- |
+| `armymemo.cls` | always                                                  |
+| `DODb1.pdf`    | always, unless you point `\logo{...}` at your own image |
+| `digsig.sty`   | only with the `digsig` class option                     |
 
 Put them beside your document, or anywhere TeX searches. A missing logo is reported by
 name with a class error rather than failing inside `graphicx`.

@@ -97,7 +97,10 @@ tasks:
       - chktex armymemo.cls
 
   # Every linter that can gate, in one place: ruff over the Python, shellcheck and
-  # shfmt over the shell, latexindent -k over the LaTeX.
+  # shfmt over the shell, latexindent -k over the LaTeX, prettier over the
+  # Markdown and YAML. All four run on their own defaults; the repo carries no
+  # prettier config, and prettier's default proseWrap is `preserve`, so it
+  # normalises structure without rewrapping the hand-wrapped prose.
   #
   # chktex is deliberately NOT here. It reports 26 warnings against armymemo.cls
   # on main, so including it would make `lint` permanently red and therefore
@@ -116,15 +119,17 @@ tasks:
   # defaults, so the tool needs telling nothing. Adding flags here without
   # reformatting the file would make this gate fail on correctly formatted code.
   lint:
-    desc: Run every gating linter -- Python, shell and LaTeX
+    desc: Run every gating linter -- Python, shell, LaTeX, Markdown and YAML
     cmds:
       - uvx ruff check tools/
       - uvx ruff format --check tools/
       - shellcheck tools/*.sh
       - shfmt -d tools/*.sh
-      - '{{.LATEXINDENT}} -k -s -c .latexindent armymemo.cls examples/*.tex'
+      - "{{.LATEXINDENT}} -k -s -c .latexindent armymemo.cls examples/*.tex"
+      - prettier --check .
 
-  # Formats armymemo.cls and the examples in place with latexindent's own
+  # Formats the Markdown and YAML with prettier, and armymemo.cls and the
+  # examples in place with latexindent's own
   # defaults -- no localSettings.yaml, so the indent character and width are
   # whatever the tool ships with. The reformat is whitespace-only (`diff -w` is
   # empty) and was verified against the goldens: every example still renders
@@ -142,9 +147,10 @@ tasks:
   # the TeX Live bin directory to PATH it is the one you will get. The working
   # one here came from `brew install latexindent`.
   format:
-    desc: Format armymemo.cls and the examples with latexindent
+    desc: Format the Markdown, YAML and LaTeX sources in place
     cmds:
-      - '{{.LATEXINDENT}} -w -s -c .latexindent armymemo.cls examples/*.tex'
+      - "{{.LATEXINDENT}} -w -s -c .latexindent armymemo.cls examples/*.tex"
+      - prettier --write .
 
   # Rendering regression harness: rebuilds every example and diffs the extracted
   # text, page count and class diagnostics against examples/golden/.

@@ -16,9 +16,9 @@ So: fetch what you need into this directory, and add a row here rather than a ne
 
 ## What is here now
 
-| Path                        | What it is                                              |
-| --------------------------- | ------------------------------------------------------- |
-| `Army Regulation 25–50.pdf` | The regulation, 10 Oct 2020 / 4 Oct 2024 revision       |
+| Path                        | What it is                                                     |
+| --------------------------- | -------------------------------------------------------------- |
+| `Army Regulation 25–50.pdf` | The regulation, 10 Oct 2020 / 4 Oct 2024 revision              |
 | `figures/`                  | 59 specimen figures named by caption, plus the title-page seal |
 
 ### Check currency before trusting the local copy
@@ -86,12 +86,12 @@ page numbers in the footer):
 
 | PDF pages | Content                                                         |
 | --------- | --------------------------------------------------------------- |
-| 4         | DoD seal on the title-page masthead, 220 dpi — the one non-96    |
-| 20–45     | Figures 2‑1 … 2‑19, memorandums — **the ones that matter here**  |
-| 48–53     | Figures 3‑1 … 3‑5, letters — not implemented by this class       |
-| 56        | Figure 4‑1, tabbing correspondence                               |
-| 70–71     | Figures B‑1, B‑2, protocol sequence                              |
-| 90–101    | Figures D‑1 … D‑24, authority lines and signature blocks         |
+| 4         | DoD seal on the title-page masthead, 220 dpi — the one non-96   |
+| 20–45     | Figures 2‑1 … 2‑19, memorandums — **the ones that matter here** |
+| 48–53     | Figures 3‑1 … 3‑5, letters — not implemented by this class      |
+| 56        | Figure 4‑1, tabbing correspondence                              |
+| 70–71     | Figures B‑1, B‑2, protocol sequence                             |
+| 90–101    | Figures D‑1 … D‑24, authority lines and signature blocks        |
 
 ## Worth acquiring, in order of value to this class
 

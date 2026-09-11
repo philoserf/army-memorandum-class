@@ -118,8 +118,11 @@ deliberate decision, not a routine step.
   `\setmainfont` / `\setsansfont` directly. pdflatex will not compile it.
 - **Times New Roman and Arial must be installed system-wide** or compilation fails.
 - **`task lint` is every linter that can gate**: `ruff` over the Python (via `uvx`; not
-  installed), `shellcheck` and `shfmt -d` over the shell, and `latexindent -k` over
-  `armymemo.cls` and the examples. `task format` is the writing half.
+  installed), `shellcheck` and `shfmt -d` over the shell, `latexindent -k` over
+  `armymemo.cls` and the examples, and `prettier --check .` over the Markdown and YAML.
+  `task format` is the writing half. `prettier` respects `.gitignore`, so `.` does not
+  wander into `.task/`, `.latexindent/` or `references/figures/`, and no `.prettierignore`
+  is needed.
 - **`chktex` is deliberately not in `lint`.** It reports 26 warnings on `main`, so it would
   make the gate permanently red. It lives in `check` (advisory) and in `test` (ratcheted
   against `CHKTEX_BASELINE`, failing only when the count rises).
@@ -130,15 +133,17 @@ deliberate decision, not a routine step.
 - **latexindent must come from Homebrew, not TeX Live.** TeX Live ships it as a Perl script
   without its dependencies (`YAML::Tiny`, `File::HomeDir`, …), so it aborts with exit 2 —
   and since this repo's own instructions prepend the TeX Live bin directory to `PATH`, that
-  broken copy comes *first*. The `LATEXINDENT` var in `Taskfile.yml` probes by `--version`
+  broken copy comes _first_. The `LATEXINDENT` var in `Taskfile.yml` probes by `--version`
   and picks one that runs, the same way `tools/run-tests.sh` probes for TeX Live.
 - **Every formatter here runs on its own defaults.** `ruff.toml` carries
   `select = ["ALL"]` with a short, justified ignore list and restates no ruff default;
-  latexindent and shfmt are given no style flags at all, so `tools/run-tests.sh` is tab
-  indented with `case` arms at column zero and the LaTeX is tab indented, because that is
-  what those tools do unprompted. There is deliberately no `.editorconfig`. If you add
-  style flags to either formatter without reformatting the files in the same change, the
-  `lint` gate will start failing on correct code.
+  latexindent, shfmt and prettier are given no style flags at all, so `tools/run-tests.sh`
+  is tab indented with `case` arms at column zero, the LaTeX is tab indented, and the
+  Markdown uses `_emphasis_`, because that is what those tools do unprompted. Prettier's
+  default `proseWrap` is `preserve`, which is why the hand-wrapped prose in these files
+  survived formatting unrewrapped. There is deliberately no `.editorconfig` and no
+  `.prettierrc`. If you add style flags to any of these formatters without reformatting
+  the files in the same change, the `lint` gate will start failing on correct code.
 
 **The toolchain is installed** — TeX Live 2026 (`scheme-full`, no docs or sources) went in
 on 2026-09-09 under `~/texlive/2026`, user-owned, no sudo (#50). Times New Roman and Arial
@@ -157,7 +162,7 @@ that branch is gone, and `latexmk -lualatex` is simply what runs.
 
 **`task check` exits nonzero on `main`** — `chktex` reports 26 warnings against
 `armymemo.cls` (spacing, dashes), none of them new. Compare counts rather than expecting
-a clean run. Note the exit *code* is 201, not chktex's own 2: go-task reports a failed
+a clean run. Note the exit _code_ is 201, not chktex's own 2: go-task reports a failed
 command with its own status. Nothing scripts on it — the ratchet in `tools/run-tests.sh`
 runs `chktex` itself — but do not assert on 2.
 
@@ -188,7 +193,7 @@ in `.task/`, which is ignored and safe to delete; doing so forces one full rebui
 
 **`task test` is the test suite.** It rebuilds every `examples/*.tex`, extracts
 `pdftotext -layout` text and a page count from each PDF, and diffs both against the
-committed goldens in `examples/golden/`. For a document class, rendered output *is* the
+committed goldens in `examples/golden/`. For a document class, rendered output _is_ the
 behavior, so this is the assertion the examples previously lacked. It lives in
 `tools/run-tests.sh`, which drives `latexmk` directly and deliberately never invokes
 the `Taskfile` at all, so a stale-PDF bug in the build could never make the tests pass
@@ -250,7 +255,7 @@ The class loads KOMA-Script `scrartcl` and does nearly all its work in two hooks
   `\parbox`, so it fits the whole closing or moves all of it, as AR 25-50 requires. It
   used to be a zero-height `tikzpicture` overlay at `0.5\textwidth`; occupying no
   vertical space, it could not be broken around, and the enclosure list merely happened
-  to land beside it. Distribution and copies-furnished stay *outside* the box — a
+  to land beside it. Distribution and copies-furnished stay _outside_ the box — a
   `\parbox` cannot break across a page and those lists must be able to; `\Needspace*`
   keeps each heading with its first entries instead.
 
@@ -259,11 +264,11 @@ The document body itself is just a relabeled `enumerate`: `enumitem` re-declares
 Authors write nested lists, not sections.
 
 Five, not four, is deliberate and not a typo for the AR's limit. AR 25-50 figure 2-1 says
-"do not subdivide beyond the third subdivision" — four usable levels — but at a *declared*
+"do not subdivide beyond the third subdivision" — four usable levels — but at a _declared_
 depth of four, enumitem answers a fifth level with its own "Too deeply nested" error, which
 names nothing useful. Declaring five lets level 5 exist just long enough for the class to
 say which rule was broken; level 6 is a hard enumitem error again, which is the right
-answer for someone who ignored the warning. Figure 2-1 also caps the *indent* — "do not
+answer for someone who ignored the warning. Figure 2-1 also caps the _indent_ — "do not
 indent any further than the second subdivision" — which is why `\setlist[3]` and
 `\setlist[4]` share `itemindent=0.75in` rather than stepping.
 

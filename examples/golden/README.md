@@ -32,8 +32,8 @@ Both fixes have now landed and the diffs are the proof:
 
 - **#26**, milestone 3 — `example-oneaddress.txt` lost the three boilerplate lines that
   had been appended to the single real address.
-- **#29**, milestone 4 — `example-noencl.txt` had `DISTRIBUTION:` printed on the *same
-  line* as the signer's name; it now sits below the closing block.
+- **#29**, milestone 4 — `example-noencl.txt` had `DISTRIBUTION:` printed on the _same
+  line_ as the signer's name; it now sits below the closing block.
 
 The technique is the point, not those two files: when a milestone is expected to change
 output, capture the broken baseline first so the fix has something to diff against.
