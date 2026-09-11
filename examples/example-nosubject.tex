@@ -1,0 +1,79 @@
+% !TEX program = lualatex
+% Coverage example: a required field left unset, over more than one page.
+% See #5, #22, #36 and #52.
+%
+% This is the harness's fixture for CLASS DIAGNOSTICS, which the PDF goldens
+% cannot see. Its `.diag` golden records what the class says to the log, so a
+% change in severity, wording, or repetition shows up as a diff.
+%
+% Why \subject specifically, and why multi-page:
+%
+%   - \subject and \signaturedate raise a WARNING; \officesymbol raises an
+%     ERROR. An error makes latexmk exit nonzero, which the harness treats as a
+%     failed build -- so an officesymbol fixture could never be green. The
+%     \officesymbol path is verified by hand instead.
+%   - \am@subject is expanded in \lohead, which runs at every continuation-page
+%     shipout. On a multi-page document an unguarded diagnostic therefore fires
+%     once per page rather than once per document. That is #22, and this file is
+%     what makes it visible.
+%
+% The red DRAFT placeholder where SUBJECT: would be -- on the continuation page
+% too -- is correct, not a regression. The class substitutes a visible
+% placeholder deliberately. Do not "fix" the golden.
+\documentclass{../armymemo}
+
+\address{Organizational Name/Title}
+\address{Standardized Street Address}
+\address{CITY, STATE~~12345-1234}
+
+\author{John W. Smith}\rank{CPT}\branch{CY}
+\officesymbol{ABC-DEF-GH}
+\signaturedate{10 April 2019}
+\memoline{MEMORANDUM FOR RECORD}
+\documentmark{UNCLASSIFIED//FOR OFFICIAL USE ONLY (EXAMPLE ONLY)}
+\title{COMMANDING}
+\addencl{AR 25-50}
+
+\begin{document}
+
+\begin{enumerate}
+\item No \verb|\subject| is declared. The class substitutes a red placeholder and
+  reports the missing field to the log.
+\item Call me Ishmael. Some years ago, never mind how long precisely, having
+  little or no money in my purse, and nothing particular to interest me on shore,
+  I thought I would sail about a little and see the watery part of the world.
+\item There now is your insular city of the Manhattoes, belted round by wharves
+  as Indian isles by coral reefs; commerce surrounds it with her surf. Right and
+  left, the streets take you waterward.
+\item Circumambulate the city of a dreamy Sabbath afternoon. Go from Corlears
+  Hook to Coenties Slip, and from thence, by Whitehall, northward. What do you
+  see? Posted like silent sentinels all around the town, stand thousands upon
+  thousands of mortal men fixed in ocean reveries.
+\item But look! Here come more crowds, pacing straight for the water, and
+  seemingly bound for a dive. Strange! Nothing will content them but the extremest
+  limit of the land; loitering under the shady lee of yonder warehouses will not
+  suffice. They must get just as nigh the water as they possibly can.
+\item Once more. Say you are in the country, in some high land of lakes. Take
+  almost any path you please, and ten to one it carries you down in a dale, and
+  leaves you there by a pool in the stream.
+\item Now, when I say that I am in the habit of going to sea whenever I begin to
+  grow hazy about the eyes, and begin to be over conscious of my lungs, I do not
+  mean to have it inferred that I ever go to sea as a passenger. For to go as a
+  passenger you must needs have a purse, and a purse is but a rag unless you have
+  something in it.
+\item Besides, passengers get sea-sick, grow quarrelsome, do not sleep of nights,
+  do not enjoy themselves much, as a general thing; no, I never go as a passenger;
+  nor, though I am something of a salt, do I ever go to sea as a commodore, or a
+  captain, or a cook.
+\item Now, when I say that I am in the habit of going to sea whenever I begin to
+  grow hazy about the eyes, and begin to be over conscious of my lungs, I do not
+  mean to have it inferred that I ever go to sea as a passenger. For to go as a
+  passenger you must needs have a purse, and a purse is but a rag unless you have
+  something in it.
+\item Besides, passengers get sea-sick, grow quarrelsome, do not sleep of nights,
+  do not enjoy themselves much, as a general thing; no, I never go as a passenger;
+  nor, though I am something of a salt, do I ever go to sea as a commodore, or a
+  captain, or a cook.
+\end{enumerate}
+
+\end{document}
