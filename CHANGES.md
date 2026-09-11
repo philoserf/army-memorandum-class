@@ -19,6 +19,21 @@
 
 ### Changed
 
+- The active `"` character is documented and covered by a test. The class calls
+  `\MakeOuterQuote{"}` (csquotes), which makes `"` **active in every document built with this
+  class** and silently converts a typed ASCII quote into a typographic one. Nothing in the
+  README said so, and nothing tested it: the only `"` characters in the repository sat inside
+  `%` comments, where csquotes never sees them, so the behaviour was invisible from both
+  directions. `examples/example-quotes.tex` is added as the sole witness -- `pdftotext`
+  extracts U+201C/U+201D as distinct bytes from U+0022, so the golden genuinely asserts the
+  conversion rather than merely appearing to. Writing the example surfaced a limitation worth
+  documenting on its own: **nested quotes do not nest.** A single active character cannot
+  distinguish an inner quote from an outer one, so csquotes alternates and the inner pair
+  renders closing-then-opening; `\enquote{outer \enquote{inner}}` is the correct route and
+  produces proper double-then-single pairing. `\textquotedbl` remains available for a literal
+  typewriter quote. The behaviour itself is unchanged -- this is documentation and coverage
+  for something that was already shipping.
+
 - The letterhead's line pitch is documented where it is actually set, and the misleading declared leading is gone. `\am@do@address` asked for 8pt type on a 5pt baseline, which taken at face value would overlap the glyphs badly; it did not, because that number never reached the page. The real mechanism is `\setstretch{0.7}`: it scales every declared `\baselineskip` to 0.7x, putting the letterhead's leading below the height-plus-depth of the lines being set, so TeX abandons `\baselineskip` and inserts `\lineskip` glue instead. The pitch is therefore height + depth + `\lineskip` — which is why the gaps differ (11.54pt after the 10pt DEPARTMENT line, 10.11pt between the 8pt address lines) and match nothing the source declares. Contrary to the issue, `\setstretch{0.7}` is **not** inert: deleting it moves the address pitch to 14.45pt. It is load-bearing by accident, and now says so. The declared leading is written equal to the type size, the conventional "no special leading" idiom, instead of a specific-looking number inviting someone to tune something that does nothing. No rendered output changes. AR 25-50 prescribes no letterhead geometry — 1-16 delegates it to a template on APD's website and 1-19 only recommends 12pt generally — so there is no regulation figure to target and the current geometry is preserved deliberately.
 - `\parindent` is now set to `0pt` explicitly, and eight `\noindent` calls that no longer earn their keep are gone. The class had been relying on a side effect of another package for a decision of its own: `\RaggedRight` (ragged2e) assigns `\parindent\RaggedRightParindent`, which is zero, so the indent was already suppressed document-wide — measured at 12pt when the class loads and 0pt in the document body. Removing `\RaggedRight` would silently restore a 12pt indent on every paragraph an author starts; the explicit setting is what stops that. Six `\noindent` calls remain because they force *horizontal mode* rather than suppress an indent — deleting the one before `\rlap` in the signature block demonstrably moves `example-sig`'s output. No rendered output changes. `examples/example-multipara.tex` is added as the regression witness: a continuation paragraph inside a body item is the only paragraph in a memo the class does not start itself, so it is the only place a stray `\parindent` could reach the page.
 

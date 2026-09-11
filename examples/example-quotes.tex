@@ -1,0 +1,50 @@
+% !TEX program = lualatex
+% Coverage example: the active double-quote character. See #42.
+%
+% The class loads csquotes and calls \MakeOuterQuote{"} (armymemo.cls:84-85), which makes
+% " an ACTIVE character in every document built with this class. A typed " no longer
+% produces a typewriter quote -- it opens or closes a typographic pair depending on
+% position. That is a document-visible behaviour with no test and, until now, no mention
+% in the README.
+%
+% Nothing else in the tree contains a live " -- the only ones were inside % comments,
+% where csquotes never sees them. This file is therefore the sole witness: if
+% \MakeOuterQuote is ever removed or csquotes is dropped, the golden here changes and
+% nothing else does.
+%
+% The quotes below must stay in body text. A " inside \verb or a comment is not seen by
+% csquotes and asserts nothing -- which is exactly why this behaviour went untested.
+%
+% Item 2 records a real limitation found while writing this file: a single active
+% character cannot distinguish an inner quote from an outer one, so nested " alternate
+% and the inner pair renders closing-then-opening. \enquote handles nesting properly and
+% is shown beside it for contrast.
+\documentclass{../armymemo}
+
+\address{Organizational Name/Title}
+\address{Standardized Street Address}
+\address{CITY, STATE~~12345-1234}
+
+\author{John W. Smith}\rank{CPT}\branch{CY}
+\officesymbol{ABC-DEF-GH}
+\signaturedate{10 April 2019}
+\memoline{MEMORANDUM FOR RECORD}
+\documentmark{UNCLASSIFIED//FOR OFFICIAL USE ONLY (EXAMPLE ONLY)}
+\subject{A memorandum containing quoted text}
+\title{COMMANDING}
+
+\begin{document}
+
+\begin{enumerate}
+\item The regulation calls this "correspondence" and the class turns the typed ASCII
+  quotes around it into a typographic pair.
+\item Nesting does NOT work, and this item is the record of that. One active character
+  cannot tell an inner quote from an outer one, so csquotes simply alternates: the
+  reviewer wrote "the term "correspondence" is defined in paragraph 1-1" here, and the
+  inner pair comes out closing-then-opening. Use \verb!\enquote! for anything nested:
+  \enquote{the term \enquote{correspondence} is defined in paragraph 1-1}.
+\item To get a literal typewriter quote instead, write \verb!\textquotedbl!, which
+  renders as \textquotedbl{} and is unaffected by csquotes.
+\end{enumerate}
+
+\end{document}
