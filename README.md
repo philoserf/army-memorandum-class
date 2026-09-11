@@ -89,7 +89,7 @@ for one-shot builds.
 
 ### Required fields
 
-Three fields are required. Each substitutes a visible red placeholder into the output so
+Six fields are required. Each substitutes a visible red placeholder into the output so
 a missing value is obvious in the PDF rather than only in the log.
 
 | Field                 | Missing behavior | Placeholder     |
@@ -97,6 +97,13 @@ a missing value is obvious in the PDF rather than only in the log.
 | `\officesymbol{...}`  | build **error**  | `OFFICE SYMBOL` |
 | `\subject{...}`       | build warning    | `DRAFT`         |
 | `\signaturedate{...}` | build warning    | `DRAFT`         |
+| `\author{...}`        | build warning    | `AUTHOR NAME`   |
+| `\rank{...}`          | build warning    | `RANK`          |
+| `\branch{...}`        | build warning    | `BRANCH`        |
+
+AR 25-50 requires the signature block, so its three name fields are required too.
+`\title` is the exception: a memo may genuinely have no duty title, so it defaults to
+empty and reports nothing.
 
 `\subject` takes **one mandatory argument and no optional argument.**
 
@@ -124,10 +131,10 @@ recipient and a list are both formatted correctly without further markup.
 
 | Command           | Purpose                                                                                   |
 | ----------------- | ----------------------------------------------------------------------------------------- |
-| `\author{...}`    | Signer's name.                                                                            |
-| `\rank{...}`      | Rank.                                                                                     |
-| `\branch{...}`    | Branch.                                                                                   |
-| `\title{...}`     | Duty title.                                                                               |
+| `\author{...}`    | Signer's name. Required.                                                                  |
+| `\rank{...}`      | Rank. Required.                                                                           |
+| `\branch{...}`    | Branch. Required. Set `\branch{}` to drop it and its comma deliberately.                  |
+| `\title{...}`     | Duty title. Optional.                                                                     |
 | `\authority{...}` | Authority line above the block, upcased automatically (e.g. `BY ORDER OF THE COMMANDER`). |
 
 ### Closing lists
