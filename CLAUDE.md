@@ -43,9 +43,9 @@ bundled `digsig.sty`, and the `examples/` that exercise them.
   is +515/-215 against `ed2082e`: the closing block, classification marks, head sizing,
   option order, font fallback, list depth, several never-firing guards and the public API
   surface have all changed, across six milestones released as `0.4.0`. The audit backlog
-  that described this work is closed — one open issue remains, `#48`, a `kind:upstream`
-  read-only mirror that is not this fork's to close. Treat `ed2082e` as a divergence point,
-  not as a description of the current class.
+  that described this work is closed. Treat `ed2082e` as a divergence point, not as a
+  description of the current class — and count open issues with `gh` rather than trusting a
+  number written here, which is how the previous "~49 open issues" went stale.
 
 ## Fork policy — do not contact upstream
 
