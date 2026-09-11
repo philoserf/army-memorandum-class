@@ -10,13 +10,24 @@ markings, the signature block, and the enclosure/distribution/copies-furnished l
 
 - **LuaLaTeX or XeLaTeX.** The class uses `fontspec` and calls `\setmainfont` /
   `\setsansfont` directly, so **pdflatex will not compile it.**
-- **Times New Roman and Arial installed system-wide.** Both are needed: Times New Roman
-  is the body font and Arial is used for the letterhead. A missing font is a hard failure,
-  not a substitution.
-- `latexmk` to drive builds, `chktex` to lint. [`latexrun`][latexrun] is optional; the
-  example Makefile prefers it when present and falls back to `latexmk` otherwise.
+- **Times New Roman and Arial installed system-wide.** Times New Roman is the body font,
+  Arial the letterhead font. If either is missing the class falls back to the
+  metric-compatible TeX Gyre face and says so loudly — AR 25-50 names the typeface, so a
+  silent substitution would hand you a memo that looks finished and is not compliant.
+- `latexmk` to drive builds, `chktex` to lint.
 
-[latexrun]: https://github.com/aclements/latexrun
+### Files you need
+
+The class is often copied out of this repository on its own. The full set is:
+
+| File           | When                                                                  |
+| -------------- | --------------------------------------------------------------------- |
+| `armymemo.cls` | always                                                                |
+| `DODb1.pdf`    | always, unless you point `\logo{...}` at your own image              |
+| `digsig.sty`   | only with the `digsig` class option                                   |
+
+Put them beside your document, or anywhere TeX searches. A missing logo is reported by
+name with a class error rather than failing inside `graphicx`.
 
 ### A note on fonts
 
