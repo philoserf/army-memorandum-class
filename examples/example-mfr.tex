@@ -1,0 +1,40 @@
+% !TEX program = lualatex
+% Coverage example: \mfr called explicitly by the author. See #90.
+%
+% \mfr is public API -- the README's Memorandum lines table lists it first -- and until
+% this file nothing in the tree called it. Its only occurrence was inside a % comment at
+% examples/example-grid.tex:34.
+%
+% This is NOT redundant with example-nomemoline.tex. That file reaches \mfr through
+% \am@memoline's default branch, which runs at \AtEndDocument. This one calls \mfr from
+% the preamble, so the \listadd happens before \begin{document} rather than during the
+% render. Both routes must work, and only the timing distinguishes them; a change that
+% made \mfr safe in one context and not the other would pass with a single example.
+%
+% Rendered output is expected to be identical to example-nomemoline's, which is the point:
+% declaring nothing and declaring \mfr mean the same thing.
+\documentclass{../armymemo}
+
+\address{Organizational Name/Title}
+\address{Standardized Street Address}
+\address{CITY, STATE~~12345-1234}
+
+\author{John W. Smith}\rank{CPT}\branch{CY}
+\officesymbol{ABC-DEF-GH}
+\signaturedate{10 April 2019}
+\mfr
+\documentmark{UNCLASSIFIED//FOR OFFICIAL USE ONLY (EXAMPLE ONLY)}
+\subject{A memorandum declaring its line with the record shorthand}
+\title{COMMANDING}
+
+\begin{document}
+
+\begin{enumerate}
+\item This memorandum calls \verb!\mfr! in its preamble. The class renders MEMORANDUM FOR
+  RECORD from the list, not from the default branch.
+\item Compare example-nomemoline.tex, which declares nothing and reaches the same text
+  through \verb!\am@memoline!'s default. The two bodies are worded identically so that any
+  divergence between the routes shows up as a difference between the goldens.
+\end{enumerate}
+
+\end{document}

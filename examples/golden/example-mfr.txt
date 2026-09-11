@@ -1,0 +1,36 @@
+            UNCLASSIFIED//FOR OFFICIAL USE ONLY (EXAMPLE ONLY)
+                              DEPARTMENT OF THE ARMY
+                                ORGANIZATIONAL NAME/TITLE
+                              STANDARDIZED STREET ADDRESS
+                                  CITY, STATE 12345-1234
+
+
+
+
+ABC-DEF-GH                                                                    10 April 2019
+
+
+MEMORANDUM FOR RECORD
+
+SUBJECT: A memorandum declaring its line with the record shorthand
+
+
+1. This memorandum calls \mfr in its preamble. The class renders MEMORANDUM FOR
+RECORD from the list, not from the default branch.
+
+2. Compare example-nomemoline.tex, which declares nothing and reaches the same text through
+\am@memoline’s default. The two bodies are worded identically so that any divergence between
+the routes shows up as a difference between the goldens.
+
+
+
+
+JOHN W. SMITH
+CPT, CY
+COMMANDING
+
+
+
+
+            UNCLASSIFIED//FOR OFFICIAL USE ONLY (EXAMPLE ONLY)
+
