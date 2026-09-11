@@ -108,8 +108,29 @@
 \RequirePackage{fontspec}
 \RequirePackage[english]{babel}
 % AR 25-50 allows command direction of font selection, defaulting to Times New Roman
-\setmainfont{Times New Roman}
-\setsansfont{Arial}
+% Both are non-free and ship with no TeX distribution, so an unguarded
+% \setmainfont aborts the build entirely on a machine that lacks them -- no PDF
+% at all, not a degraded one. Fall back to the metric-compatible TeX Gyre faces,
+% but never silently: AR 25-50 is the specification, and a quiet substitution
+% hands the author a memo that looks finished and is not compliant.
+\IfFontExistsTF{Times New Roman}{%
+  \setmainfont{Times New Roman}%
+}{%
+  \ClassWarningNoLine{army-memo}{%
+    Times New Roman not found;\MessageBreak%
+    falling back to TeX Gyre Termes.\MessageBreak%
+    Metrics match but this is NOT the AR 25-50 font}% chktex 8
+  \setmainfont{TeX Gyre Termes}%
+}
+\IfFontExistsTF{Arial}{%
+  \setsansfont{Arial}%
+}{%
+  \ClassWarningNoLine{army-memo}{%
+    Arial not found;\MessageBreak%
+    falling back to TeX Gyre Heros.\MessageBreak%
+    Metrics match but this is NOT the AR 25-50 letterhead font}% chktex 8
+  \setsansfont{TeX Gyre Heros}%
+}
 \defaultfontfeatures{Mapping=tex-text} % To support LaTeX ``" quotes.
 
 % used to change date format
