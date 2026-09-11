@@ -2,6 +2,59 @@
 
 ---
 
+## [Unreleased]
+
+### Changed
+
+- **The build is driven by `Taskfile.yml` (go-task 3) instead of `Makefile`, which is
+  removed.** Targets map one-for-one -- `make test` is `task test`, and the bare default
+  still builds every example -- so the only change for a reader following the README is the
+  command name. Three differences are not cosmetic and are worth knowing before trusting a
+  green run. **Up-to-date checks are by checksum, not mtime**: `touch armymemo.cls` no
+  longer forces a rebuild, though a real edit still does. **`task check` exits 201, not
+  chktex's own 2**, because go-task reports a failed command with its own status; nothing
+  scripts on it, since the ratchet in `tools/run-tests.sh` invokes `chktex` itself, but do
+  not assert on 2. **The build is serial** where the Makefile asked for `-j4`: that bound
+  existed because examples built under unlimited parallelism can race on a cold luaotfload
+  font-names cache, and a `for` loop in `cmds:` is strictly safer at the cost of wall clock
+  (about 55s cold for twenty examples). The hazard is recorded in the `build` task so the
+  bound is not reintroduced as unbounded `deps:` fan-out.
+
+  Per-example incrementality is preserved rather than flattened: `armymemo.cls` and
+  `digsig.sty` are `sources:` of a per-example `build:one` task, so editing either rebuilds
+  all twenty PDFs while editing one `.tex` rebuilds exactly one. That is the #12/#38 fix,
+  and collapsing the loop into a single coarse task would silently restore the bug it
+  closed. `tools/run-tests.sh` still drives `latexmk` directly and never invokes the
+  Taskfile, exactly as it never invoked the Makefile.
+
+### Added
+
+- **`task lint` covers the repository's own tooling.** `chktex` lints the class; nothing
+  previously looked at the Python and shell that build and test it. The task runs `ruff`
+  (through `uvx` -- it is deliberately not installed) plus `shellcheck` and `shfmt -d`.
+  Rule selection lives in `ruff.toml`. `.editorconfig` exists so that a bare `shfmt` agrees
+  with the checked-in formatting: shfmt reads `.editorconfig` only when given no formatting
+  flags, and without the file a bare `shfmt -w` would rewrite `tools/run-tests.sh` to tabs
+  and flatten every `case` arm.
+
+  One ruff finding is suppressed by configuration rather than fixed. AR 25-50 prints en
+  dashes in its own figure captions and in its title, so `tools/extract-ar-figures.py` must
+  contain real en dashes in both its caption regex and its default path; `RUF001` flags each
+  as a confusable. `allowed-confusables` accepts the two dash characters and leaves the rule
+  live for everything else. Rewriting them to hyphens breaks caption matching against the
+  regulation.
+
+- **`references/`, an ignored directory with a tracked index.** AR 25-50's specimen figures
+  are 96 dpi screenshots, so `pdftotext` recovers their captions and nothing else -- and
+  those pictures are the only place the regulation states its vertical spacing (figure 2-1
+  numbers the blank lines between elements down its left gutter) and its subparagraph
+  indents. `tools/extract-ar-figures.py` pulls all 60 out, named from each page's own
+  caption so a repaginated reissue still yields correct names. `references/README.md` is the
+  only tracked file there: it records what the figures can and cannot settle, how to check
+  the local copy is still current, and which further publications are worth fetching.
+
+---
+
 ## [0.4.0] - 2026-09-11
 
 ### Fixed

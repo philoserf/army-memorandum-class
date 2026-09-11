@@ -13,7 +13,7 @@ Each example has two:
 
 ## Never hand-edit these files
 
-Regenerate with `make golden`, which refuses to write unless two independent builds
+Regenerate with `task golden`, which refuses to write unless two independent builds
 extract byte-for-byte identically.
 
 The `.txt` files contain **one form feed per page**. An editor that strips or
@@ -54,5 +54,5 @@ fires.
 
 A poppler or TeX Live major upgrade can shift `-layout` column reconstruction. The
 signature of that is **every golden diffing at once, with column-only changes** — which
-is how you tell it from a real regression. The response is `make golden` plus a bump to
+is how you tell it from a real regression. The response is `task golden` plus a bump to
 the versions above, not a code fix.

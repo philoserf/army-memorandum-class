@@ -1,0 +1,22 @@
+# Ruff configuration for the repo's Python tooling under tools/.
+#
+# There is no Python in the deliverable -- the class file, digsig.sty and the
+# examples are the product. Python appears only in build/reference tooling, so
+# this config is deliberately small.
+
+line-length = 88
+target-version = "py311"
+
+[lint]
+# Ruff's default (E4, E7, E9, F) is narrow enough to pass almost anything. These
+# add import ordering, modern idioms, common bug patterns, and pathlib usage.
+select = ["E", "W", "F", "I", "UP", "B", "SIM", "C4", "RUF", "PTH", "ARG"]
+
+# AR 25-50 prints en dashes, not hyphens: its figures are captioned "Figure 2–1"
+# and the downloaded PDF is named "Army Regulation 25–50.pdf". The extractor's
+# regex and default path must therefore contain real en dashes, and RUF001 flags
+# each one as a confusable. Allowing the two dash characters keeps the rule live
+# for genuinely suspicious lookalikes (Cyrillic а, Greek ο) while accepting the
+# ones this repo cannot avoid. Do not "fix" these to hyphens -- it silently
+# breaks caption matching against the regulation.
+allowed-confusables = ["–", "—"]

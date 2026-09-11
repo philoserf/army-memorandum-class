@@ -1,0 +1,25 @@
+# Scoped deliberately to shell only.
+#
+# This file exists to make `shfmt` reproducible, not to impose an editor style on
+# the repo at large -- the class file, digsig.sty and the examples are left to
+# whatever their authors and chktex already settle, so there is no [*] section.
+#
+# Precedence, which is the opposite of what you might guess: shfmt reads
+# .editorconfig only when invoked with no formatting flags. Passing any of them
+# (-i, -ci, ...) makes it skip this file entirely. So bare `shfmt -w` is the
+# supported invocation here, and `shfmt -i 4 -ci -w` happens to agree with it
+# only because the settings below were chosen to match.
+#
+# Without this file, that bare invocation silently rewrites the script to tabs
+# and flattens every `case` arm to column zero -- a large, purely cosmetic diff
+# that undoes the current formatting for no behavior change. With it, bare shfmt
+# is a no-op on an already-formatted file, which is the point.
+
+root = true
+
+[*.sh]
+indent_style = space
+indent_size = 4
+# shfmt's -ci: keep `case` arms indented inside the case block rather than
+# flattened against the left margin.
+switch_case_indent = true

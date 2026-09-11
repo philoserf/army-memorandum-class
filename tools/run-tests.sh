@@ -34,10 +34,13 @@ FALLBACK_TOKEN='falling back to TeX Gyre'
 
 MODE=compare
 case "${1:-}" in
-    --update)      MODE=update ;;
+    --update) MODE=update ;;
     --determinism) MODE=determinism ;;
-    "")            ;;
-    *)             echo "usage: $0 [--update|--determinism]" >&2; exit 2 ;;
+    "") ;;
+    *)
+        echo "usage: $0 [--update|--determinism]" >&2
+        exit 2
+        ;;
 esac
 
 # ---------------------------------------------------------------- toolchain ---
@@ -83,7 +86,7 @@ examples() {
 }
 
 # ----------------------------------------------------------------- building ---
-# latexmk is driven directly, one file at a time, and the Makefile is never invoked.
+# latexmk is driven directly, one file at a time, and the Taskfile is never invoked.
 # Keeping the harness independent of the build means a bug in the build cannot make
 # the tests pass when they should fail -- which was not hypothetical: until #12/#38
 # the class was not a prerequisite of the PDF rule, so a class change rebuilt nothing.
@@ -153,11 +156,20 @@ check_determinism() {
     drift=0
     for b in $(examples); do
         cmp -s "$WORK/a/$b.txt" "$WORK/b/$b.txt" ||
-            { echo "NONDETERMINISTIC $b: extracted text differs between builds"; drift=1; }
+            {
+                echo "NONDETERMINISTIC $b: extracted text differs between builds"
+                drift=1
+            }
         cmp -s "$WORK/a/$b.pages" "$WORK/b/$b.pages" ||
-            { echo "NONDETERMINISTIC $b: page count differs between builds"; drift=1; }
+            {
+                echo "NONDETERMINISTIC $b: page count differs between builds"
+                drift=1
+            }
         cmp -s "$WORK/a/$b.diag" "$WORK/b/$b.diag" ||
-            { echo "NONDETERMINISTIC $b: class diagnostics differ between builds"; drift=1; }
+            {
+                echo "NONDETERMINISTIC $b: class diagnostics differ between builds"
+                drift=1
+            }
     done
     return $drift
 }

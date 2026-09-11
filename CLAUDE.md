@@ -117,7 +117,11 @@ deliberate decision, not a routine step.
 - **LuaLaTeX or XeLaTeX is required** — the class uses `fontspec` and calls
   `\setmainfont` / `\setsansfont` directly. pdflatex will not compile it.
 - **Times New Roman and Arial must be installed system-wide** or compilation fails.
-- `chktex` is the only linter; `latexmk` drives builds; `latexrun` is optional.
+- `chktex` is the only linter for the LaTeX, and `latexmk` drives builds. The Python and
+  shell under `tools/` are linted separately by `task lint` — ruff (via `uvx`, not
+  installed), plus `shellcheck` and `shfmt`, both in the global `.Brewfile`. Rule
+  selection lives in `ruff.toml`; `.editorconfig` is what makes bare `shfmt` agree with
+  the checked-in formatting.
 
 **The toolchain is installed** — TeX Live 2026 (`scheme-full`, no docs or sources) went in
 on 2026-09-09 under `~/texlive/2026`, user-owned, no sudo (#50). Times New Roman and Arial
@@ -134,39 +138,51 @@ export PATH="$HOME/texlive/2026/bin/universal-darwin:$PATH"
 `latexrun` is not in the tree. The build used to branch on it and always fall through;
 that branch is gone, and `latexmk -lualatex` is simply what runs.
 
-**`make check` exits nonzero on `main`** — `chktex` reports 26 warnings against
+**`task check` exits nonzero on `main`** — `chktex` reports 26 warnings against
 `armymemo.cls` (spacing, dashes), none of them new. Compare counts rather than expecting
-a clean run.
+a clean run. Note the exit *code* is 201, not chktex's own 2: go-task reports a failed
+command with its own status. Nothing scripts on it — the ratchet in `tools/run-tests.sh`
+runs `chktex` itself — but do not assert on 2.
 
 ## Commands
 
+Builds are driven by **go-task** (`Taskfile.yml`, version 3), not make — the Makefile was
+removed in the conversion. `task --list` prints the current set.
+
 ```sh
-make                # build every examples/*.pdf
-make test           # rendering regression harness -- the real check
-make golden         # recapture the golden files after an intended output change
-make check          # chktex armymemo.cls
-make clean          # remove built PDFs and aux files
-make proper         # clean + remove *.out
+task                # build every examples/*.pdf (alias: task build)
+task test           # rendering regression harness -- the real check
+task golden         # recapture the golden files after an intended output change
+task check          # chktex armymemo.cls
+task clean          # remove built PDFs and aux files
+task proper         # clean + remove *.out
 
 cd examples && latexmk -lualatex example.tex     # build a single example
 ```
 
-**`make test` is the test suite.** It rebuilds every `examples/*.tex`, extracts
+**Up-to-date checks are by checksum, not mtime.** `make` rebuilt on a newer timestamp;
+`task` compares file contents, so `touch armymemo.cls` no longer forces a rebuild while a
+real edit still does. `armymemo.cls` and `digsig.sty` are listed as `sources:` of the
+per-example `build:one` task, so editing either rebuilds all twenty PDFs — that is the
+#12/#38 fix, and dropping them from that list silently restores the bug. Fingerprints live
+in `.task/`, which is ignored and safe to delete; doing so forces one full rebuild.
+
+**`task test` is the test suite.** It rebuilds every `examples/*.tex`, extracts
 `pdftotext -layout` text and a page count from each PDF, and diffs both against the
 committed goldens in `examples/golden/`. For a document class, rendered output *is* the
 behavior, so this is the assertion the examples previously lacked. It lives in
 `tools/run-tests.sh`, which drives `latexmk` directly and deliberately never invokes
-the `Makefile` at all, so a stale-PDF bug in the build could never make the tests pass
+the `Taskfile` at all, so a stale-PDF bug in the build could never make the tests pass
 when they should fail. (That was not hypothetical: until #12/#38 the class was not a
-prerequisite of the PDF rule.)
+prerequisite of the PDF rule.) Do not "simplify" `test` into a dependency on `build`.
 
 Two things to know before running it:
 
-- **`make golden` refuses to write** unless two independent builds extract byte-for-byte
+- **`task golden` refuses to write** unless two independent builds extract byte-for-byte
   identically. A golden is never hand-edited -- the `.txt` files carry one form feed per
   page, and stripping those silently breaks page-break detection. See
   `examples/golden/README.md` for provenance and the full rule.
-- **`chktex` folds into `make test` as a ratchet**, not a gate: it fails only when the
+- **`chktex` folds into `task test` as a ratchet**, not a gate: it fails only when the
   warning count rises above `CHKTEX_BASELINE` in `tools/run-tests.sh` (currently 26).
   Lower the baseline in the same change that lowers the count.
 
@@ -177,14 +193,15 @@ to override.
 The README shows `latexmk -pdf -pvc -lualatex example.tex`; `-pvc` is continuous-preview
 watch mode — drop it for one-shot builds.
 
-There is one `Makefile`, at the repo root. `examples/Makefile` was removed — it was
-mostly delegated to, and `check` was defined identically in both.
+There is one `Taskfile.yml`, at the repo root. Before it there was one `Makefile` in the
+same place, and before that an `examples/Makefile` as well — mostly delegated to, with
+`check` defined identically in both.
 
 ## Gotchas
 
 - **`examples/*.pdf` are build output, not tracked files.** They were untracked in 2026-09
   per the decision to remove generated artifacts; `examples/golden/` is the tracked
-  rendered reference now. `make clean` therefore deletes only build output. Do not commit
+  rendered reference now. `task clean` therefore deletes only build output. Do not commit
   a rebuilt PDF, and do not look for one in a diff -- look at the golden.
 - **The README is stale on fonts.** It says the default is Arial; the class sets
   `\setmainfont{Times New Roman}` (armymemo.cls:117) and `\setsansfont{Arial}` (:126), per
@@ -219,8 +236,17 @@ The class loads KOMA-Script `scrartcl` and does nearly all its work in two hooks
   keeps each heading with its first entries instead.
 
 The document body itself is just a relabeled `enumerate`: `enumitem` re-declares it to
-depth 9 with AR-style labels `1.` / `a.` / `(1)` / `(a)`. Authors write nested lists,
-not sections.
+**depth 5** with AR-style labels `1.` / `a.` / `(1)` / `(a)` (armymemo.cls:136-137).
+Authors write nested lists, not sections.
+
+Five, not four, is deliberate and not a typo for the AR's limit. AR 25-50 figure 2-1 says
+"do not subdivide beyond the third subdivision" — four usable levels — but at a *declared*
+depth of four, enumitem answers a fifth level with its own "Too deeply nested" error, which
+names nothing useful. Declaring five lets level 5 exist just long enough for the class to
+say which rule was broken; level 6 is a hard enumitem error again, which is the right
+answer for someone who ignored the warning. Figure 2-1 also caps the *indent* — "do not
+indent any further than the second subdivision" — which is why `\setlist[3]` and
+`\setlist[4]` share `itemindent=0.75in` rather than stepping.
 
 **Metadata pattern.** Every user-facing field follows one of two shapes:
 
