@@ -40,17 +40,12 @@
   \vspace*{1\baselineskip}
 }
 
-% \typeout{===========>}\show\@enddocumenthook
-% https://tex.stackexchange.com/a/212214
-% BUG: something is messing with this, so for now moving it to the top
 \AtEndDocument{%
   \setlength{\parskip}{0pt}
   \vspace*{\baselineskip}
   \noindent\am@authorityline\\
   \vspace*{4\baselineskip}%
   \begin{tikzpicture}[overlay]
-    %% to draw a grid for debugging
-    % \draw[style=help lines] (0,0) grid (15,5);
     \node [align=left, anchor=west, inner sep=0, outer sep=0] at (0.5\textwidth,-10pt){% TODO BUG - why a 10pt offset? I don't know.
       {\MakeUppercase \am@author}\\
       \am@rank, \am@branch\\
@@ -65,26 +60,6 @@
   \am@encls%
   \am@distro%
   \am@cf%
-%
-%   % since minipages can't break, and this may happen near the bottom of a page,
-%   % only encls and signature block go in the first mini-page
-%   \begin{minipage}[t]{0.49\textwidth}
-%     \am@encls
-%   \end{minipage}
-%   % signatureblock
-% %  % \begin{minipage}[t]{0.49\textwidth}
-%   %   % consider changing this to an \addtosig{}
-%   %   % \am@author\\ 
-%   %   % \am@rank, \am@branch\\
-%   %   % \am@title
-% %  % \end{minipage}
-%   % \filbreak % if a break must happen, do it here, rather than orphaning the signature
-%   % spacing issues w/ minipage: https://tex.stackexchange.com/q/349178/6648
-%   % TODO: figure out continuations of Distro and CF across pagebreaks
-%   \begin{minipage}[t]{0.49\textwidth}\am@distro\end{minipage}%
-%   \begin{minipage}[t]{0.49\textwidth}\ \end{minipage}
-%   \begin{minipage}[t]{0.49\textwidth}\am@cf\end{minipage}%
-%   \begin{minipage}[t]{0.49\textwidth}\ \end{minipage}
 }
 
 
@@ -100,7 +75,6 @@
 % required for conditionals (already implied)
 \RequirePackage{etoolbox}
 % Setup fonts:
-\RequirePackage[utf8]{inputenc}
 % allow automatic quote expansion
 \RequirePackage{csquotes}
 \MakeOuterQuote{"}
@@ -131,7 +105,6 @@
     Metrics match but this is NOT the AR 25-50 letterhead font}% chktex 8
   \setsansfont{TeX Gyre Heros}%
 }
-\defaultfontfeatures{Mapping=tex-text} % To support LaTeX ``" quotes.
 
 % used to change date format
 \RequirePackage{datetime}
@@ -140,14 +113,13 @@
 % for logo and other includes
 \RequirePackage{graphicx}
 % for future use of colors in classification markings
-\RequirePackage[dvipsnames]{xcolor}
+\RequirePackage{xcolor}
 % required for graphics placement
 \RequirePackage{tikz}
 % for overlay of classification markings without affecting layout
 \RequirePackage[pages=all,color=black]{background}
 % required to enable high-depth nested lists, and custom numbering
 \RequirePackage{enumitem}
-\setlist{topsep=0pt,itemsep=0pt,parsep=0pt}
 \renewlist{enumerate}{enumerate}{9}
 \setlistdepth{9}
 % required for \setstretch used in header
@@ -193,19 +165,6 @@
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{scrartcl}}
 \ProcessOptions\relax
 
-% TODO probably not needed ?
-%---------------------------
-% \RequirePackage{hanging}
-
-% \RequirePackage[normalem]{ulem}
-
-% we don't always do tables, but when we do:
-\RequirePackage{booktabs}
-\RequirePackage{longtable}
-% for additional paragraph column types in tables
-\RequirePackage{array}
-\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}
-
 % \RaggedRight is a bit more compact, but allows lots of hyphens
 % reduce hyphens with a combination of \hypenpenalty and microtype
 \RequirePackage{microtype}
@@ -223,15 +182,6 @@
 % and we want less hyphenation than more
 \hyphenpenalty=5000
 \brokenpenalty=10000
-% \RequirePackage[none]{hyphenat}
-% https://tex.stackexchange.com/a/134318
-% https://tex.stackexchange.com/a/249335
-% https://tex.stackexchange.com/a/134342
-% https://tex.stackexchange.com/a/291688
-% TODO - experiment with the lengths until the effect works
-% \RaggedRightRightskip doesn't have the intended effect on lists, apparently:
-% \setlength\RaggedRightRightskip{\z@ plus 0.02\hsize} % from tufte
-% \setlength\RaggedRightRightskip{1pt plus 4em minus 1pt} % default is: 0pt plus 2em
 
 
 
@@ -249,11 +199,6 @@
 \setlist[2]{labelwidth=12pt,labelsep=4pt,leftmargin=0pt,itemindent=0.5in,align=left}
 \setlist[3]{labelwidth=12pt,labelsep=4pt,leftmargin=0pt,itemindent=0.75in,align=left}
 \setlist[4]{labelwidth=12pt,labelsep=4pt,leftmargin=0pt,itemindent=0.75in,align=left}
-%% TODO - change to an option - uncomment to go deeper
-% \renewcommand{\theenumv}{\arabic{enumv}}\renewcommand{\labelenumv}{(\theenumv)}
-% \renewcommand{\theenumvi}{\alph{enumivi}}\renewcommand{\labelenumvi}{(\theenumvi)}
-% \setlist[5]{labelwidth=12pt,labelsep=4pt,leftmargin=0pt,itemindent=1.00in,align=left}
-% \setlist[6]{labelwidth=12pt,labelsep=4pt,leftmargin=0pt,itemindent=1.25in,align=left}
 
 % define superscripts for use in unit addresses, etc.
 % these may need to be followed by an '\ '
