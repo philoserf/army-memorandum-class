@@ -90,7 +90,7 @@
 \IfFontExistsTF{Times New Roman}{%
   \setmainfont{Times New Roman}%
 }{%
-  \ClassWarningNoLine{army-memo}{%
+  \ClassWarningNoLine{armymemo}{%
     Times New Roman not found;\MessageBreak%
     falling back to TeX Gyre Termes.\MessageBreak%
     Metrics match but this is NOT the AR 25-50 font}% chktex 8
@@ -99,7 +99,7 @@
 \IfFontExistsTF{Arial}{%
   \setsansfont{Arial}%
 }{%
-  \ClassWarningNoLine{army-memo}{%
+  \ClassWarningNoLine{armymemo}{%
     Arial not found;\MessageBreak%
     falling back to TeX Gyre Heros.\MessageBreak%
     Metrics match but this is NOT the AR 25-50 letterhead font}% chktex 8
@@ -208,23 +208,42 @@
 \newcommand{\thh}{\textsuperscript{th}}
 
 % commands for error/warning messages for missing values
-\newcommand{\am@MissingRequiredArgError}[2]{%
-  \textcolor{red}{#2}
-  \ClassError{army-memo}{%
-    #1{} is a required field\MessageBreak
-    press enter to continue}{}}
-\newcommand{\am@MissingRequiredArgWarning}[2]{%
-  \textcolor{red}{#2}%
-  \ClassWarningNoLine{army-memo}{%
-    #1{} is a required field\MessageBreak
-    press enter to continue}}
+% One diagnostic for a missing required field, with the severity as a parameter so
+% the two forms cannot drift apart in wording the way they had.
+%
+% Each field reports at most once per document. The required fields are expanded in
+% \lohead, which runs at every continuation-page shipout, so an unguarded diagnostic
+% fires once per page -- a five-page memo with no office symbol stopped five times.
+% The flag is set globally because \lohead's content is expanded inside a group.
+%
+% One flag per field, not one shared flag: \lohead expands two required fields, and
+% a shared flag would silently swallow the second field's report once the first had
+% fired.
+%
+%   #1 severity: error or warning   #2 field name   #3 visible placeholder
+\newcommand{\am@MissingRequiredArg}[3]{%
+  \textcolor{red}{#3}%
+  \ifcsdef{am@reported@#2}{}{%
+    \csgdef{am@reported@#2}{}%
+    \ifstrequal{#1}{error}{%
+      \ClassError{armymemo}{%
+        #2 is a required field}{%
+        Set it in the preamble.\MessageBreak%
+        A red placeholder has been substituted in the output.}%
+    }{%
+      \ClassWarningNoLine{armymemo}{%
+        #2 is a required field;\MessageBreak%
+        a red placeholder has been substituted in the output}%
+    }%
+  }%
+}
 
 % header info
 \newcommand{\signaturedate}[1]{\def \am@signaturedate{#1}}\signaturedate{}
-\signaturedate{\am@MissingRequiredArgWarning{signaturedate}{DRAFT}}
+\signaturedate{\am@MissingRequiredArg{warning}{signaturedate}{DRAFT}}
 \newcommand{\suspensedate}[1]{\def\am@suspensedate{\ifstrempty{#1}{}{\textbf{S: #1}}}}\suspensedate{}
 \newcommand{\officesymbol}[1]{\def \am@officesymbol{#1}}
-\officesymbol{\am@MissingRequiredArgError{officesymbol}{OFFICE SYMBOL}}
+\officesymbol{\am@MissingRequiredArg{error}{officesymbol}{OFFICE SYMBOL}}
 % allow replacing the logo
 \newcommand{\logo}[1]{\def\am@logo{\ifstrempty{#1}{DODb1}{#1}}}\logo{}
 
@@ -305,7 +324,7 @@
 %%%%% ----------------------------------------------------------------
 
 \renewcommand{\subject}[1]{\def\am@subject{SUBJECT:~~#1}}
-\subject{\am@MissingRequiredArgWarning{subject}{DRAFT}}
+\subject{\am@MissingRequiredArg{warning}{subject}{DRAFT}}
 
 % top and bottom of page classification markings
 % TODO should be highest of any portion marking (how to track/test)?

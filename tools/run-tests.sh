@@ -25,10 +25,10 @@ WORK="$ROOT/.test-work"
 # chktex reports this many warnings on a clean tree. The harness fails only when
 # the count *rises*, so new lint is caught without demanding the backlog be fixed
 # first. Milestone 2 cleanups should ratchet this down.
-CHKTEX_BASELINE=29
+CHKTEX_BASELINE=27
 
 # The distinctive token emitted by the font fallback guard (#14). Deliberately not
-# a generic "Class army-memo Warning" match: \am@MissingRequiredArgWarning emits
+# a generic "Class armymemo Warning" match: \am@MissingRequiredArg emits
 # that same prefix for legitimately missing optional fields.
 FALLBACK_TOKEN='falling back to TeX Gyre'
 
@@ -113,6 +113,23 @@ build_and_extract() {
 
         pdftotext -layout "$EX/$b.pdf" "$dest/$b.txt"
         pdfinfo "$EX/$b.pdf" | awk '/^Pages:/ { print $2 }' >"$dest/$b.pages"
+
+        # Class diagnostics, filtered. The goldens capture PDF text, so a change to
+        # what the class *says* -- its severity, its wording, or how often it repeats
+        # -- is invisible to them. This closes that gap. It has to happen here, inside
+        # the loop: the aux cleanup below deletes every .log.
+        #
+        # Filtering is not optional. A raw log carries absolute paths, timestamps and
+        # engine versions and would never be byte-stable. An empty result is written
+        # as an empty file so present-vs-absent is never ambiguous.
+        if [ -f "$EX/$b.log" ]; then
+            awk '/^Class army-?memo (Error|Warning)/ { p = 1 }
+                 p && /^[[:space:]]*$/            { p = 0 }
+                 p                                { print }' \
+                "$EX/$b.log" >"$dest/$b.diag"
+        else
+            : >"$dest/$b.diag"
+        fi
     done
 
     # latexmk leaves auxiliary files beside the sources; the PDFs themselves are
@@ -138,6 +155,8 @@ check_determinism() {
             { echo "NONDETERMINISTIC $b: extracted text differs between builds"; drift=1; }
         cmp -s "$WORK/a/$b.pages" "$WORK/b/$b.pages" ||
             { echo "NONDETERMINISTIC $b: page count differs between builds"; drift=1; }
+        cmp -s "$WORK/a/$b.diag" "$WORK/b/$b.diag" ||
+            { echo "NONDETERMINISTIC $b: class diagnostics differ between builds"; drift=1; }
     done
     return $drift
 }
@@ -182,6 +201,12 @@ case "$MODE" in
         for b in $(examples); do
             cp "$WORK/a/$b.txt" "$GOLDEN/$b.txt"
             cp "$WORK/a/$b.pages" "$GOLDEN/$b.pages"
+            # Only examples that actually emit diagnostics get a .diag golden.
+            if [ -s "$WORK/a/$b.diag" ]; then
+                cp "$WORK/a/$b.diag" "$GOLDEN/$b.diag"
+            else
+                rm -f "$GOLDEN/$b.diag"
+            fi
         done
         echo "goldens updated in $GOLDEN"
         echo "review 'git diff examples/golden/' before committing"
@@ -216,6 +241,17 @@ for b in $(examples); do
         echo "FAIL $b: rendered text changed"
         sed -n '1,40p' "$WORK/$b.diff" | sed 's/^/    /'
         echo "    (full diff: .test-work/$b.diff)"
+        bad=1
+    fi
+
+    # Class diagnostics. Most examples emit none, so both sides are usually empty.
+    # A missing golden is treated as "emitted nothing", which is what it means.
+    [ -f "$GOLDEN/$b.diag" ] || : >"$WORK/run/$b.diag.empty"
+    want="$GOLDEN/$b.diag"
+    [ -f "$want" ] || want="$WORK/run/$b.diag.empty"
+    if ! diff -u "$want" "$WORK/run/$b.diag" >"$WORK/$b.diag.diff"; then
+        echo "FAIL $b: class diagnostics changed"
+        sed -n '1,30p' "$WORK/$b.diag.diff" | sed 's/^/    /'
         bad=1
     fi
 
