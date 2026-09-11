@@ -20,7 +20,6 @@
 - `\enclsnocount`: new command for unnumbered enclosure list (AR 25-50 Figure 4-4)
 
 ### Fixed
-- `\enclsnocount` command -- suppresses enclosure count per AR 25-50 Figure 4-4
 - `SUBJECT:` line now uses double-space per AR 25-50 1-17
 - Added `\brokenpenalty=10000` to prevent hyphenation across page breaks
 
