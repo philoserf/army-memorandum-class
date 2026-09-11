@@ -1,0 +1,41 @@
+             UNCLASSIFIED//FOR OFFICIAL USE ONLY (EXAMPLE ONLY)
+                                DEPARTMENT OF THE ARMY
+                                   ORGANIZATIONAL NAME/TITLE
+                                 STANDARDIZED STREET ADDRESS
+                                     CITY, STATE 12345-1234
+
+
+
+
+ABC-DEF-GH                                                                          10 April 2019
+
+
+MEMORANDUM FOR RECORD
+
+SUBJECT: A memorandum whose items carry more than one paragraph
+
+
+1. This item has two paragraphs. The first one starts the item, so enumitem places it and no indent
+applies.
+
+This second paragraph is started by the author, not by the class – the only text in a memo that no
+\noindent precedes. It renders flush, and that is the assertion: if \parindent ever stops being
+zero, this line moves right by 12pt.
+
+2. A second item, also with two paragraphs.
+
+Its continuation paragraph is the same assertion a second time, so a single stray indent cannot be
+mistaken for a one-off.
+
+
+
+
+JOHN W. SMITH
+CPT, CY
+COMMANDING
+
+
+
+
+             UNCLASSIFIED//FOR OFFICIAL USE ONLY (EXAMPLE ONLY)
+

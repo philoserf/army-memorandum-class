@@ -166,6 +166,14 @@
   ]{geometry}
 % make sure the paragraph spacing matches the linespacing
 \setlength{\parskip}{\baselineskip}
+% Skip-separated paragraphs and a first-line indent are mutually redundant, so the indent
+% goes. This is deliberately explicit even though it changes nothing today: \RaggedRight
+% (ragged2e, loaded further down) already assigns \parindent\RaggedRightParindent, which
+% is zero, so the class has been relying on another package's side effect for a decision
+% of its own. Measured: \parindent is 12pt at class-load time and 0pt in the document
+% body. Removing \RaggedRight would silently restore a 12pt indent on every paragraph the
+% author starts; this line is what stops that. example-multipara.tex is the witness.
+\setlength{\parindent}{0pt}
 
 % setup page headers
 \RequirePackage{scrlayer-scrpage}
@@ -200,7 +208,7 @@
     % it is local to the box group.
     \everypar{}%
     \usekomafont{pagehead}%
-    \noindent\am@officesymbol\hspace*{\fill}\\\am@subject\par
+    \am@officesymbol\hspace*{\fill}\\\am@subject\par
   }%
   % Round UP to whole lines. Two reasons: the natural box height is a few points
   % short of what the head actually reserves (measured: it still overflowed by
@@ -351,7 +359,7 @@
 \newcommand{\addmemoline}[1]{\listadd{\am@list@memolines}{#1}}
 \newcommand{\mfr}{\addmemoline{MEMORANDUM FOR RECORD}}
 \newcommand{\memoline}[1]{\addmemoline{#1}}
-\newcommand{\am@domemoline}[1]{\vspace{\baselineskip}\noindent{}#1\\}
+\newcommand{\am@domemoline}[1]{\vspace{\baselineskip}#1\\}
 \newcommand{\multimemothru}[1]{\listadd{\am@list@memothru}{#1}}
 % One hanging-indent line, shared by the THRU and FOR lists, which had byte-identical
 % helpers. Not \am@do (below): that one is bare and lacks the hanging indent the AR
@@ -463,7 +471,7 @@
         \let\am@encl@opts\am@encls@numbered
       }%
     }%
-    \noindent\am@encl@head%
+    \am@encl@head%
     % \expandafter, because enumitem's keyval parser does not expand a macro in the
     % optional argument -- it would read the whole of \am@encl@opts as one key name.
     % One expansion step hands it the option text while leaving \arabic* alone.
@@ -547,7 +555,7 @@
   \ifdefvoid{\am@list@distro}{}{%
     \vspace{\baselineskip}%
     \Needspace*{3\baselineskip}%
-    \noindent{}DISTRIBUTION:\\*%
+    DISTRIBUTION:\\*%
     \forlistloop{\am@do}{\am@list@distro}}}
 
 % add cf
@@ -556,7 +564,7 @@
   \ifdefvoid{\am@list@cf}{}{%
     \vspace{\baselineskip}%
     \Needspace*{3\baselineskip}%
-    \noindent{}CF:\\*%
+    CF:\\*%
     \forlistloop{\am@do}{\am@list@cf}}}
 
 
@@ -670,11 +678,11 @@
   %conditional block for optional suspense date:
   \ifstrempty{\am@suspensedate}{}{%
     \vspace{-2\baselineskip}
-    \noindent\,\hspace*{\fill}\am@suspensedate\\
+    \,\hspace*{\fill}\am@suspensedate\\
     \vspace{\baselineskip}}
-  \noindent\am@officesymbol\hspace*{\fill}\am@signaturedate\\
+  \am@officesymbol\hspace*{\fill}\am@signaturedate\\
   \am@memoline
   \vspace{\baselineskip}
-  \noindent\am@subject
+  \am@subject
   \par
 }
