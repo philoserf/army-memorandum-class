@@ -27,6 +27,7 @@ Roughly 17 MB, none of it tracked.
 | `DoDI-5200.48.pdf`                               | Controlled Unclassified Information (CUI)         | 2026-09-11 |
 | `DoDI-4000.19.pdf`                               | Support Agreements (MOU/MOA content)              | 2026-09-11 |
 | `figures/`                                       | 59 specimen figures + the AR title-page seal      | —          |
+| `letterhead/`                                    | APD `DALetterhead.dotm` + `DAMemoPad.dotm`        | 2026-09-11 |
 
 ### Currency: verified, not assumed
 
@@ -119,15 +120,60 @@ page numbers in the footer):
 | 70–71     | Figures B‑1, B‑2, protocol sequence                             |
 | 90–101    | Figures D‑1 … D‑24, authority lines and signature blocks        |
 
+## The letterhead template — recovered, and what it settles
+
+`AR 25-50` 1-16b delegates letterhead to "the letterhead template provided on APD's
+website". That page is now behind Army SSO, but the **Internet Archive holds captures from
+before it was gated**. The 2022-09-29 capture lists the template files, and two still
+resolve:
+
+```sh
+TS=20220929205504
+curl -sSL -o DALetterhead.dotm \
+  "https://web.archive.org/web/$TS/https://armypubs.army.mil/Tools/Letterhead/DALetterhead.dotm"
+curl -sSL -o DAMemoPad.dotm \
+  "https://web.archive.org/web/$TS/https://armypubs.army.mil/Tools/Letterhead/DAMemoPad.dotm"
+```
+
+(`LetterheadInstructions.docx` and `LetterheadKW60.dotm` are listed on that page but 404 in
+the archive. A 2016 capture exists too, but predates the template entirely.)
+
+A `.dotm` is OOXML — a zip of XML — so the geometry reads out directly rather than having
+to be measured off a screenshot. **This is the primary source the repository had never
+been able to consult**, and it confirms the numbers the class had been carrying on its own
+authority:
+
+| Quantity            | `DALetterhead.dotm`                              | `armymemo.cls`                  |
+| ------------------- | ------------------------------------------------ | ------------------------------- |
+| Seal size           | `wp:extent` 914400 × 914400 EMU = 1.000×1.000 in | `\includegraphics[width=1in]`   |
+| Seal anchor         | `relativeFrom="page"`, both axes                 | `at (current page.north west)`  |
+| Seal offset         | `posOffset` 457200 EMU = 0.500 in, H and V       | `xshift=0.5in, yshift=-0.5in`   |
+| Left/right/bottom   | 1440 twips = 1.000 in                            | `margin=1in`                    |
+| Department line     | 10 pt                                            | `\fontsize{10pt}{10pt}`         |
+| Letterhead typeface | document default Arial; `CompanyName` Arial Bold | `\fontfamily\sfdefault` (Arial) |
+| The mark itself     | `media/image1.jpeg` — the **DoD** seal           | `DODb1.pdf` default             |
+
+Every one matches. Two caveats worth keeping honest:
+
+- The template's **address lines inherit** their size (style `CompanyName`, itself
+  inheriting), so they do not resolve to a single number. The class's 8 pt for those lines
+  remains its own choice, not something the template confirms.
+- The template's **top margin is 1.5 in**; the class reaches an equivalent text start
+  through `margin=1in` plus `includehead` and a computed `headheight`, so those are not
+  directly comparable figures.
+
+`DAMemoPad.dotm` is a different product — a 5.5 × 8.5 in memo pad with a 0.75 in seal — not
+the letter-size memorandum this class sets. Keep it for reference, do not take numbers from
+it.
+
+The template also carries legacy art it no longer uses: a Korean War 50th Anniversary
+commemorative seal (`media/image4.png`), which dates the file to the early 2000s. The
+header references only `image1.jpeg`, the DoD seal.
+
 ## Still wanted, and why each is hard
 
-1. **APD computer-generated letterhead template** — still the highest-value missing item,
-   and now known to be **unobtainable without a CAC**. AR 1‑16b cites
-   `armypubs.army.mil/tools/pubsresources.aspx`, which `302`s to
-   `federation.eams.army.mil/sso/authenticate`. It is the only primary source for seal size
-   and position and for letterhead font sizing — precisely the numbers the AR prose
-   withholds and the 96 dpi screenshots cannot settle. The class hardcodes that geometry,
-   so it remains unverified against its source.
+1. ~~APD computer-generated letterhead template~~ — **obtained**, see below. The live page
+   is SSO-gated, but the Internet Archive has it.
 2. **DoDM 5110.04 Volume 1**, _Correspondence Management_ — Volume 2 was retrieved and
    cites "Volume 1 of this manual" repeatedly, so it exists, but it is not published at the
    path its sibling occupies (`511004vol1.pdf` is a 404, as is a `cancelled/` variant).
@@ -152,5 +198,7 @@ unavailable rather than pending:
   where font size and type decisions now formally live.
 - **ARIMS / Army Addresses and Office Symbols Online** — `arims.army.mil`. The source of
   the record numbers AR 2‑4a(2) requires after the office symbol.
-- **The APD letterhead template**, per item 1 above — confirmed SSO-gated on 2026-09-11,
-  not merely unreachable.
+- **The APD letterhead template** — the _live_ page at
+  `armypubs.army.mil/tools/pubsresources.aspx` is SSO-gated (it `302`s to
+  `federation.eams.army.mil/sso/authenticate`), confirmed 2026-09-11. The template itself
+  was recovered from the Internet Archive anyway; see "The letterhead template" above.

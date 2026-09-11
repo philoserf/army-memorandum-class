@@ -672,6 +672,11 @@
 	\am@findlogo
 	\ifbool{am@logo@found}{%
 		\begin{tikzpicture}[remember picture, overlay]%
+			% These four numbers are no longer unverified. APD's DALetterhead.dotm anchors the
+			% seal to the *page* at a 0.5in horizontal and 0.5in vertical offset and gives it a
+			% 1.000 x 1.000 in extent -- exactly the anchor, the two shifts and the width below.
+			% The template also confirms the mark is the DoD seal. Recovered from an Internet
+			% Archive capture; the live APD page is behind Army SSO. See references/README.md.
 			\node[anchor=north west,inner sep=0pt,xshift=0.5in, yshift=-0.5in]%
 			at (current page.north west) {\includegraphics[width=1in]{\am@logo}};%
 		\end{tikzpicture}%
@@ -721,8 +726,17 @@
 		%
 		% Do not "fix" this by deleting \setstretch or tuning a \fontsize leading. AR 25-50
 		% prescribes no letterhead geometry -- 1-16 delegates it to a template on APD's
-		% website, and 1-19 only recommends 12pt generally -- so there is no regulation figure
-		% to target, and today's geometry is preserved deliberately.
+		% website, and 1-19 only recommends 12pt generally -- so the regulation itself gives
+		% no figure to target, and today's geometry is preserved deliberately.
+		%
+		% The template AR 1-16 delegates to has since been recovered (DALetterhead.dotm, from
+		% an Internet Archive capture of APD's resources page; the live page is behind Army
+		% SSO). It is a Word .dotm, so it reads as OOXML, and it settles two of these numbers
+		% rather than leaving them to taste: the department line is 10pt, which is what is set
+		% below, and the template's default font is Arial, which is what \sfdefault resolves
+		% to here. The address lines' size is left inheriting in the template and does not
+		% resolve cleanly, so the 8pt used here remains this class's own choice.
+		% See references/README.md.
 		\setstretch{0.7}\fontfamily\sfdefault\selectfont%
 		\node[align=center,anchor=north,inner sep=0pt,yshift=-0.625in] at (current page.north) {%
 			\fontsize{10pt}{10pt}\selectfont\textbf{\am@department}\\

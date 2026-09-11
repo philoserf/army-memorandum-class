@@ -283,6 +283,12 @@ examples/example*.pdf
 # `-c` in the format/lint tasks so they do not land in the repo root.
 .latexindent/
 
+# Local review notes. POST-0.4.0-REVIEW.md is a working document for the
+# maintainer's own later review, not part of the repository's documentation and
+# deliberately not part of any PR. Ignored so that a `git add -A` cannot sweep it
+# in -- which is exactly what happened once before this rule existed.
+POST-*-REVIEW.md
+
 # go-task's fingerprint cache. `task` stores a checksum per task here to decide
 # what is up to date; it is derived state and rebuilds itself. Deleting it just
 # forces one full rebuild.
