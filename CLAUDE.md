@@ -126,17 +126,17 @@ directory first:
 export PATH="$HOME/texlive/2026/bin/universal-darwin:$PATH"
 ```
 
-`latexrun` is genuinely not in the tree, so `examples/Makefile` always takes its
-`latexmk -lualatex` fallback branch.
+`latexrun` is not in the tree. The build used to branch on it and always fall through;
+that branch is gone, and `latexmk -lualatex` is simply what runs.
 
-**`make check` exits nonzero on `main`** — `chktex` reports 29 warnings against
+**`make check` exits nonzero on `main`** — `chktex` reports 27 warnings against
 `armymemo.cls` (spacing, dashes), none of them new. Compare counts rather than expecting
 a clean run.
 
 ## Commands
 
 ```sh
-make                # build every examples/*.pdf (delegates to examples/Makefile)
+make                # build every examples/*.pdf
 make test           # rendering regression harness -- the real check
 make golden         # recapture the golden files after an intended output change
 make check          # chktex armymemo.cls
@@ -151,9 +151,9 @@ cd examples && latexmk -lualatex example.tex     # build a single example
 committed goldens in `examples/golden/`. For a document class, rendered output *is* the
 behavior, so this is the assertion the examples previously lacked. It lives in
 `tools/run-tests.sh`, which drives `latexmk` directly and deliberately never invokes
-`examples/Makefile` -- that sub-make sets an unbounded `MAKEFLAGS=-j` and its `%.pdf`
-rule does not depend on the class, so delegating would compare stale PDFs and pass when
-it should fail.
+the `Makefile` at all, so a stale-PDF bug in the build could never make the tests pass
+when they should fail. (That was not hypothetical: until #12/#38 the class was not a
+prerequisite of the PDF rule.)
 
 Two things to know before running it:
 
@@ -172,14 +172,11 @@ to override.
 The README shows `latexmk -pdf -pvc -lualatex example.tex`; `-pvc` is continuous-preview
 watch mode — drop it for one-shot builds.
 
-`examples/Makefile` prefers `../latexrun` if that executable exists, else falls back to
-`latexmk -lualatex`.
+There is one `Makefile`, at the repo root. `examples/Makefile` was removed — it was
+mostly delegated to, and `check` was defined identically in both.
 
 ## Gotchas
 
-- **Editing `armymemo.cls` does not trigger a rebuild.** The pattern rule is
-  `%.pdf: %.tex` — the class is only a prerequisite of the phony `all`, not of the PDFs.
-  After a class change run `make clean && make`, or invoke `latexmk` directly.
 - **`examples/*.pdf` are build output, not tracked files.** They were untracked in 2026-09
   per the decision to remove generated artifacts; `examples/golden/` is the tracked
   rendered reference now. `make clean` therefore deletes only build output. Do not commit
