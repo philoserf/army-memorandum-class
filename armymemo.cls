@@ -604,11 +604,39 @@
   }%
 }
 
+% A missing logo file fails deep inside graphicx with a bare "File `DODb1' not found"
+% that names neither this class nor the fix. Probe first and say something useful --
+% the class is frequently copied out of this repo on its own, where the DODb1.pdf that
+% sits beside it here is simply absent (#16).
+%
+% \IfFileExists does NOT perform graphicx's extension search, so probing the bare name
+% alone would fire the error on the class's own default: \logo defaults to "DODb1" and
+% the file is "DODb1.pdf". Walk \Gin@extensions -- graphicx's own list, so it cannot
+% drift out of sync the way a hard-coded copy would.
+\newbool{am@logo@found}
+\newcommand{\am@findlogo}{%
+  \boolfalse{am@logo@found}%
+  \IfFileExists{\am@logo}{\booltrue{am@logo@found}}{%
+    \@for\am@logo@ext:=\Gin@extensions\do{%
+      \ifbool{am@logo@found}{}{%
+        \IfFileExists{\am@logo\am@logo@ext}{\booltrue{am@logo@found}}{}%
+      }%
+    }%
+  }%
+}
 \newcommand{\am@putlogo}{%
-  \begin{tikzpicture}[remember picture, overlay]%
-    \node[anchor=north west,inner sep=0pt,xshift=0.5in, yshift=-0.5in]%
-      at (current page.north west) {\includegraphics[width=1in]{\am@logo}};%
-  \end{tikzpicture}%
+  \am@findlogo
+  \ifbool{am@logo@found}{%
+    \begin{tikzpicture}[remember picture, overlay]%
+      \node[anchor=north west,inner sep=0pt,xshift=0.5in, yshift=-0.5in]%
+        at (current page.north west) {\includegraphics[width=1in]{\am@logo}};%
+    \end{tikzpicture}%
+  }{%
+    \ClassError{armymemo}{Logo file '\am@logo' not found}{%
+      armymemo draws a letterhead logo and could not find '\am@logo'.\MessageBreak%
+      The class ships DODb1.pdf; copy it beside your document, or point\MessageBreak%
+      \string\logo{} at your own image file.}%
+  }%
 }
 
 
