@@ -1,0 +1,50 @@
+% !TEX program = lualatex
+% Coverage example: a signature block missing one of its required fields.
+% See #24 and #52.
+%
+% \branch is omitted entirely; \author and \rank are supplied. Before #24 the
+% signature block rendered
+%
+%     JOHN W. SMITH
+%     CPT,                      <- trailing comma with nothing after it
+%     COMMANDING
+%
+% silently: no error, no warning, no marker. Small enough to survive a skim of the
+% PDF, which is how it went unnoticed -- no example omitted any signature field.
+%
+% It now renders "CPT, BRANCH" with BRANCH in red, and reports the missing field to
+% the log. That is the intended composition of #24's two halves, and it is worth
+% being precise about which half this file exercises:
+%
+%   - OMITTING \branch leaves it holding the missing-required-field default, which
+%     is NOT empty -- so the comma stays and the red placeholder follows it. The
+%     author is told what is wrong instead of being handed a stray comma. That is
+%     this file.
+%   - Setting \branch{} explicitly IS empty, so the conditional punctuation drops
+%     the comma and the line reads "CPT". That is a deliberate omission rather than
+%     a forgotten field, so nothing is reported. Verified by hand; not baselined,
+%     because it is a variant of the same code path.
+\documentclass{../armymemo}
+
+\address{Organizational Name/Title}
+\address{Standardized Street Address}
+\address{CITY, STATE~~12345-1234}
+
+\author{John W. Smith}\rank{CPT}
+\officesymbol{ABC-DEF-GH}
+\signaturedate{10 April 2019}
+\memoline{MEMORANDUM FOR RECORD}
+\documentmark{UNCLASSIFIED//FOR OFFICIAL USE ONLY (EXAMPLE ONLY)}
+\subject{A memorandum with no branch in the signature block}
+\title{COMMANDING}
+\addencl{AR 25-50}
+
+\begin{document}
+
+\begin{enumerate}
+\item This memorandum declares no \verb|\branch|, so the signature block must not
+  leave a trailing comma after the rank.
+\item A second paragraph, so the body is a well-formed AR 25-50 list.
+\end{enumerate}
+
+\end{document}

@@ -48,7 +48,7 @@
   \begin{tikzpicture}[overlay]
     \node [align=left, anchor=west, inner sep=0, outer sep=0] at (0.5\textwidth,-10pt){% TODO BUG - why a 10pt offset? I don't know.
       {\MakeUppercase \am@author}\\
-      \am@rank, \am@branch\\
+      \ifdefempty{\am@branch}{\am@rank}{\am@rank, \am@branch}\\
       \am@title
     };
     \ifbool{am@digsig}{%
@@ -359,9 +359,19 @@
 \authority{}
 
 % signature block
-\renewcommand{\author}[1]{\def \am@author{#1}}\author{}
-\newcommand{\rank}[1]{\def \am@rank{#1}}\rank{}
-\newcommand{\branch}[1]{\def \am@branch{#1}}\branch{}
+% AR 25-50 requires the signature block; it identifies the memo's author. These
+% three follow the same convention as \officesymbol and \subject -- report the
+% missing field and substitute something visible -- rather than defaulting to
+% empty and rendering a bare comma between two blank lines.
+%
+% \title stays optional and defaults to empty: a memo may genuinely have no duty
+% title, so there is nothing to report.
+\renewcommand{\author}[1]{\def \am@author{#1}}
+\author{\am@MissingRequiredArg{warning}{author}{AUTHOR NAME}}
+\newcommand{\rank}[1]{\def \am@rank{#1}}
+\rank{\am@MissingRequiredArg{warning}{rank}{RANK}}
+\newcommand{\branch}[1]{\def \am@branch{#1}}
+\branch{\am@MissingRequiredArg{warning}{branch}{BRANCH}}
 \renewcommand{\title}[1]{\def \am@title{#1}}\title{}
 
 

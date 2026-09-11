@@ -1,0 +1,34 @@
+             UNCLASSIFIED//FOR OFFICIAL USE ONLY (EXAMPLE ONLY)
+                               DEPARTMENT OF THE ARMY
+                                 ORGANIZATIONAL NAME/TITLE
+                               STANDARDIZED STREET ADDRESS
+                                   CITY, STATE 12345-1234
+
+
+
+
+ABC-DEF-GH                                                                     10 April 2019
+
+
+MEMORANDUM FOR RECORD
+
+SUBJECT: A memorandum with no branch in the signature block
+
+
+1. This memorandum declares no \branch, so the signature block must not leave a trailing
+comma after the rank.
+
+2. A second paragraph, so the body is a well-formed AR 25-50 list.
+
+
+
+
+Encl                                           JOHN W. SMITH
+AR 25-50                                       CPT, BRANCH
+                                               COMMANDING
+
+
+
+
+             UNCLASSIFIED//FOR OFFICIAL USE ONLY (EXAMPLE ONLY)
+

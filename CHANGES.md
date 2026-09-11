@@ -6,6 +6,7 @@
 
 ### Fixed
 
+- The signature block no longer emits a bare comma when a field is missing. `\author`, `\rank` and `\branch` now report themselves and substitute a visible red placeholder, the same way `\officesymbol` and `\subject` already did; previously all four signature fields defaulted to empty and the block rendered a blank line, a line containing only `,`, and another blank line, with no diagnostic at all. The comma between rank and branch is now conditional, so `\branch{}` renders `CPT` rather than `CPT,`. `\title` remains optional -- a memo may genuinely have no duty title.
 - A memorandum supplying exactly one `\address` now renders that one line. It previously had three placeholder lines appended to it -- `ORGANIZATIONAL NAME/TITLE`, `STANDARDIZED STREET ADDRESS` and `CITY, STATE 12345-1234` -- producing a four-line letterhead that began with the real address and continued with boilerplate, silently, in the most prominent part of the page. Supplying no address still yields the three placeholders, unchanged.
 
 ### Changed
