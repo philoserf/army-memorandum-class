@@ -25,7 +25,7 @@ WORK="$ROOT/.test-work"
 # chktex reports this many warnings on a clean tree. The harness fails only when
 # the count *rises*, so new lint is caught without demanding the backlog be fixed
 # first. Milestone 2 cleanups should ratchet this down.
-CHKTEX_BASELINE=27
+CHKTEX_BASELINE=26
 
 # The distinctive token emitted by the font fallback guard (#14). Deliberately not
 # a generic "Class armymemo Warning" match: \am@MissingRequiredArg emits

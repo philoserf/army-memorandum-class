@@ -129,7 +129,7 @@ export PATH="$HOME/texlive/2026/bin/universal-darwin:$PATH"
 `latexrun` is not in the tree. The build used to branch on it and always fall through;
 that branch is gone, and `latexmk -lualatex` is simply what runs.
 
-**`make check` exits nonzero on `main`** — `chktex` reports 27 warnings against
+**`make check` exits nonzero on `main`** — `chktex` reports 26 warnings against
 `armymemo.cls` (spacing, dashes), none of them new. Compare counts rather than expecting
 a clean run.
 
@@ -162,7 +162,7 @@ Two things to know before running it:
   page, and stripping those silently breaks page-break detection. See
   `examples/golden/README.md` for provenance and the full rule.
 - **`chktex` folds into `make test` as a ratchet**, not a gate: it fails only when the
-  warning count rises above `CHKTEX_BASELINE` in `tools/run-tests.sh` (currently 29).
+  warning count rises above `CHKTEX_BASELINE` in `tools/run-tests.sh` (currently 26).
   Lower the baseline in the same change that lowers the count.
 
 The harness finds TeX Live on its own when it is not on a non-interactive shell's `PATH`,
@@ -194,8 +194,13 @@ mostly delegated to, and `check` was defined identically in both.
 
 The class loads KOMA-Script `scrartcl` and does nearly all its work in two hooks:
 
-- `\AtBeginDocument` — classification banner (`background` package), logo, and the
-  DOD letterhead block.
+- `\AtBeginDocument` — logo and the DOD letterhead block.
+- `shipout/background` (kernel hook, hence `\NeedsTeXFormat{LaTeX2e}[2020/10/01]`) —
+  the classification marks, top and bottom of every page. Inside that hook the origin
+  is the paper's top-left corner, so `\am@classmark` positions against
+  `\paperwidth`/`\paperheight` and needs no `remember picture`. Its `inner sep=0pt` is
+  load-bearing: TikZ's default is `0.3333em`, which would make the marks' distance from
+  the paper edge follow the ambient font size.
 - `\AtEndDocument` — `\am@closing` (authority line, the reserved signing space, and a
   two-column `\parbox` row: enclosures left, signature right), then distribution and
   copies-furnished in normal flow.
