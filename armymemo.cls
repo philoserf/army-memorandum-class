@@ -64,22 +64,7 @@
 
 \AtEndDocument{%
   \setlength{\parskip}{0pt}
-  \vspace*{\baselineskip}
-  \noindent\am@authorityline\\
-  \vspace*{4\baselineskip}%
-  \begin{tikzpicture}[overlay]
-    \node [align=left, anchor=west, inner sep=0, outer sep=0] at (0.5\textwidth,-10pt){% TODO BUG - why a 10pt offset? I don't know.
-      {\MakeUppercase \am@author}\\
-      \ifdefempty{\am@branch}{\am@rank}{\am@rank, \am@branch}\\
-      \am@title
-    };
-    \ifbool{am@digsig}{%
-      \node [align=left, anchor=south west, inner sep=0, outer sep=0] at (0.5\textwidth,\baselineskip){%
-        \begin{Form}\digsigfield{3in}{3\baselineskip}{signature}\end{Form}%
-      };
-    }{}
-  \end{tikzpicture}%
-  \am@encls%
+  \am@closing%
   \am@distro%
   \am@cf%
 }
@@ -157,6 +142,9 @@
 
 % for margins
 \RequirePackage{calc}
+% \Needspace keeps a heading with its first entries. The closing block itself is
+% held together by box structure, not penalties -- see \am@closing.
+\RequirePackage{needspace}
 \RequirePackage[letterpaper
   ,margin=1in
   % in order to get 2-line offset between bottom of text and page number
@@ -169,8 +157,10 @@
   ,includefoot
   ,footskip=3\baselineskip
   ,footnotesep=\baselineskip
-  % assume two lines for headers
-  % TODO: test with longer subject lines, assuming it will break
+  % Two lines is the common case: office symbol, then a SUBJECT that fits on one
+  % line. A longer subject wraps and needs a third, which \am@fitheadheight
+  % measures and asks geometry for -- see it for why growing the head is the
+  % regulation-correct direction.
   ,headheight=2\baselineskip
   ,headsep=2\baselineskip
   ]{geometry}
@@ -182,6 +172,51 @@
 \setlength{\footheight}{2\baselineskip}
 \clearpairofpagestyles%
 \lohead[]{\am@officesymbol\hspace*{\fill}\\\am@subject}
+
+% AR 25-50 requires the office symbol and the FULL subject on every continuation
+% page, and \am@subject is arbitrary user text, so the head is only sometimes two
+% lines tall. Declared at a fixed 2\baselineskip, a subject that wraps overflowed
+% it -- measured as "Overfull \vbox (14.49998pt too high) while \output is active",
+% exactly one line.
+%
+% The overflow grew the head UPWARD, leaving the body untouched: the office symbol
+% moved from 1in below the paper edge to 1in minus one line. That is the wrong
+% direction. The head's top sits on the 1in margin AR 25-50 requires, so growing up
+% pushes it into that margin (and, with a subject long enough, eventually into the
+% classification marking). Growing down is correct: the head keeps its top at 1in
+% and the body starts a line lower, which is what a memo with a two-line subject
+% genuinely costs.
+%
+% So measure the head and ask geometry for what it actually needs. This runs at
+% \AtEndPreamble, which is still the preamble -- \geometry is legal there and
+% recalculates cleanly -- but late enough that \officesymbol and \subject have both
+% been set, in either order. Documents whose subject fits on one line measure at or
+% below 2\baselineskip and are left completely alone.
+\newcommand{\am@fitheadheight}{%
+  \setbox\z@=\vbox{%
+    \hsize=\textwidth
+    % The preamble parks \@nodocument in \everypar, so starting a paragraph here --
+    % even sealed inside this box -- would raise "Missing \begin{document}". Clearing
+    % it is local to the box group.
+    \everypar{}%
+    \usekomafont{pagehead}%
+    \noindent\am@officesymbol\hspace*{\fill}\\\am@subject\par
+  }%
+  % Round UP to whole lines. Two reasons: the natural box height is a few points
+  % short of what the head actually reserves (measured: it still overflowed by
+  % 3.24pt when asked for the exact height), and whole lines are the unit this
+  % class lays out in -- headheight and headsep are both declared in \baselineskip.
+  \@tempdima=\dimexpr\ht\z@+\dp\z@\relax
+  \@tempcnta=\@tempdima
+  \@tempcntb=\dimexpr\baselineskip\relax
+  \divide\@tempcnta by \@tempcntb
+  \advance\@tempcnta by \@ne
+  \@tempdimb=\@tempcnta\baselineskip\relax
+  \ifdim\@tempdimb>\headheight
+    \geometry{headheight=\the\@tempdimb}%
+  \fi
+}
+\AtEndPreamble{\am@fitheadheight}
 \cofoot[]{\thepage}
 \pagestyle{scrheadings}
 \setkomafont{pagehead}{\sffamily\upshape}
@@ -216,6 +251,12 @@
 \renewcommand{\theenumiv}{\alph{enumiv}}\renewcommand{\labelenumiv}{(\theenumiv)}
 % these \setlist provide the layout for each indentation level
 % the after={} on level[1] prevents orphaned signature-blocks without the preceding final paragraph.
+% after={\nopagebreak\@nobreaktrue} enforces the OTHER half of the AR 25-50 page-break
+% rule. \am@closing is an unbreakable box, so the closing can never be split; this
+% forbids a break immediately after the body list, so the closing can never be pushed
+% onto a page of its own either. The regulation requires both: the signature block must
+% stay whole AND must be accompanied by at least two lines of the body. Removing this
+% would satisfy one half by violating the other.
 \setlist[1]{labelwidth=12pt,labelsep=4pt,leftmargin=0pt,itemindent=16pt,align=left,
   after={\nopagebreak\@nobreaktrue}}
 \setlist[2]{labelwidth=12pt,labelsep=4pt,leftmargin=0pt,itemindent=0.5in,align=left}
@@ -352,8 +393,7 @@
     % these lines must begin with any labels such as "MEMORANDUM FOR" or "MEMORANDUM THRU" or "FOR"
     % allow for possibility of no multi lines.
     \forlistloop{\am@domemoline}{\am@list@memolines}
-  }
-  {}
+  }%
 }
 
 
@@ -431,28 +471,93 @@
   }%
 }
 
-% add distribution, with an option for continuation on the next page
+% The closing block: authority line, the reserved signing space, and a two-column
+% row with enclosures left and the signature right.
+%
+% It is ONE UNBREAKABLE UNIT by construction. The page builder can measure a
+% \parbox, so it either fits the whole closing on the page or moves all of it --
+% which is what AR 25-50 requires. The previous implementation drew the signature
+% as a zero-height tikz overlay at absolute page coordinates; because the overlay
+% occupied no vertical space, LaTeX could not break around something it could not
+% measure, and the enclosure list flowing at the left margin merely happened to
+% land beside it. Issues #1, #6, #25 and #29 were all that one decision.
+%
+% Both columns are \parbox[t], so their first baselines align: "Encl" sits level
+% with the author's name, as AR 25-50 Figure 4-4 shows. With no enclosures the
+% left box is empty and has no height, so the row's height comes from the
+% signature alone and nothing can slide into the vacant column (#29).
+%
+% DISTRIBUTION and CF are deliberately left OUT of this box. A \parbox cannot
+% break across a page, exactly as a minipage cannot -- an earlier attempt at this
+% layout was abandoned for precisely that reason:
+%
+%     since minipages can't break, and this may happen near the bottom of a page,
+%     only encls and signature block go in the first mini-page
+%     spacing issues w/ minipage: https://tex.stackexchange.com/q/349178/6648
+%
+% Enclosures and the signature are short and must not break, so being unbreakable
+% is the point there. A distribution list can be arbitrarily long and must be
+% allowed to break; boxing it would reproduce the failure that stopped the first
+% attempt.
+\newcommand{\am@sigblock}{%
+  \ifbool{am@digsig}{%
+    % A pure overlay on the signing space already reserved above the row, anchored
+    % at the left edge of this column. Three details, each load-bearing:
+    %   \rlap      -- zero width. Without it the field keeps its 3in width and the
+    %                 author's name starts after it and wraps.
+    %   [0pt][0pt] -- zero height and depth, so the field does not add a second gap.
+    %   \noindent  -- \rlap is an \hbox, and an \hbox in vertical mode joins the
+    %                 vertical list as its own box rather than the name's line.
+    %                 digsig.sty documents exactly this ("the macro does not change
+    %                 TeX's mode").
+    \noindent\rlap{\raisebox{\baselineskip}[0pt][0pt]{%
+      \begin{Form}\digsigfield{3in}{3\baselineskip}{signature}\end{Form}%
+    }}%
+  }{}%
+  {\MakeUppercase\am@author}\\
+  \ifdefempty{\am@branch}{\am@rank}{\am@rank, \am@branch}\\
+  \am@title
+}
+\newcommand{\am@closing}{%
+  \vspace*{\baselineskip}%
+  \noindent\parbox[t]{\textwidth}{%
+    % The signature column sits at exactly 0.5\textwidth, which AR 25-50 fixes.
+    % Character protrusion would drag the first glyph of each line a fraction of a
+    % point out of that column -- correct for justified prose, wrong for a block
+    % aligned to a rule. Off for the closing only.
+    \microtypesetup{protrusion=false}%
+    \noindent\am@authorityline\par
+    \vspace*{4\baselineskip}%
+    \noindent
+    \parbox[t]{0.5\textwidth}{\am@encls}%
+    \parbox[t]{0.5\textwidth}{\am@sigblock}%
+  }\par
+}
+
+% add distribution
+%
+% \Needspace* reserves the heading plus two entries, so a list can still break --
+% it just cannot leave its heading stranded (#1). \\* after the heading is belt
+% and braces: \clubpenalty is set to 10000 by this class and is silently NOT
+% applied here (measured: the page builder reports p=0 at the break), so the
+% explicit penalty is what actually holds.
 \newcommand{\am@do}[1]{#1\\}
 \newcommand{\adddistro}[1]{\listadd{\am@list@distro}{#1}}
 \newcommand{\am@distro}{%
   \ifdefvoid{\am@list@distro}{}{%
     \vspace{\baselineskip}%
-    \noindent{}DISTRIBUTION:\\%
-    \forlistloop{\am@do}{\am@list@distro}}{}}
-% insert \continuedistro at the beginning of an \adddistro list in order to push it to the next page
-\newcommand{\continuedistro}{\adddistro{(CONTINUED)\clearpage
-    DISTRIBUTION:}}
+    \Needspace*{3\baselineskip}%
+    \noindent{}DISTRIBUTION:\\*%
+    \forlistloop{\am@do}{\am@list@distro}}}
 
-% add cf, with an option for continuation on the next page
+% add cf
 \newcommand{\addcf}[1]{\listadd{\am@list@cf}{#1}}
 \newcommand{\am@cf}{%
   \ifdefvoid{\am@list@cf}{}{%
     \vspace{\baselineskip}%
-    \noindent{}CF:\\
-    \forlistloop{\am@do}{\am@list@cf}}{}}
-% insert \continuecf at the beginning of an \addcf list in order to push it to the next page
-\newcommand{\continuecf}{\addcf{(CONTINUED)\clearpage
-    CF:}}
+    \Needspace*{3\baselineskip}%
+    \noindent{}CF:\\*%
+    \forlistloop{\am@do}{\am@list@cf}}}
 
 
 

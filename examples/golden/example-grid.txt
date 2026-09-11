@@ -93,8 +93,7 @@ FOR THE COMMANDER:
 3 Encls                                               BOBA FETT
 1. LATEXHOWTO                                         Contractor, Independent
 2. StackExchange                                      Procurement of Prized Heads
-
-
+3. armymemo.cls
 
 
  1
@@ -174,24 +173,6 @@ DS-1-OBS
 SUBJECT: On the use and testing of LATEX for document production
 
 
-3. armymemo.cls
-
-DISTRIBUTION:
-(CONTINUED)
-
-
-
-
-                                         4
-                     GALACTIC CONFIDENTIAL//DEATHSTAR
-                     GALACTIC CONFIDENTIAL//DEATHSTAR
-
-
-
-DS-1-OBS
-SUBJECT: On the use and testing of LATEX for document production
-
-
 DISTRIBUTION:
 G.M. Tarkin
 Adm. Ozzel
@@ -205,6 +186,6 @@ Fleet J3
 
 
 
-                                         5
+                                         4
                      GALACTIC CONFIDENTIAL//DEATHSTAR
 

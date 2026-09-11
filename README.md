@@ -144,9 +144,15 @@ recipient and a list are both formatted correctly without further markup.
 | `\addencl{...}`   | Add an enclosure. Repeat per enclosure; the count is generated (`Encl` vs `2 Encls`). |
 | `\enclsnocount`   | Suppress the enclosure count, per AR 25-50 Figure 4-4.                                |
 | `\adddistro{...}` | Add a distribution entry.                                                             |
-| `\continuedistro` | Continue the distribution list onto a new page.                                       |
 | `\addcf{...}`     | Add a copies-furnished entry.                                                         |
-| `\continuecf`     | Continue the copies-furnished list onto a new page.                                   |
+
+The closing block — authority line, enclosures and signature — is typeset as a single
+unbreakable box, so it is never split across a page. Distribution and copies-furnished
+lists flow normally and may break, but never leave their heading stranded.
+
+`\continuedistro` and `\continuecf` were removed: they required the author to predict
+where the page would break and insert a manual `(CONTINUED)` marker. Delete any calls to
+them — the class now keeps headings with their entries automatically.
 
 ### Marking and dates
 

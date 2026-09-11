@@ -201,8 +201,17 @@ The class loads KOMA-Script `scrartcl` and does nearly all its work in two hooks
   `\paperwidth`/`\paperheight` and needs no `remember picture`. Its `inner sep=0pt` is
   load-bearing: TikZ's default is `0.3333em`, which would make the marks' distance from
   the paper edge follow the ambient font size.
-- `\AtEndDocument` — authority line, signature block (drawn as a `tikzpicture` overlay
-  positioned at `0.5\textwidth`), then enclosures, distribution, and copies-furnished.
+- `\AtEndDocument` — `\am@closing` (authority line, the reserved signing space, and a
+  two-column `\parbox` row: enclosures left, signature right), then distribution and
+  copies-furnished in normal flow.
+
+  **The closing is one unbreakable box on purpose.** The page builder can measure a
+  `\parbox`, so it fits the whole closing or moves all of it, as AR 25-50 requires. It
+  used to be a zero-height `tikzpicture` overlay at `0.5\textwidth`; occupying no
+  vertical space, it could not be broken around, and the enclosure list merely happened
+  to land beside it. Distribution and copies-furnished stay *outside* the box — a
+  `\parbox` cannot break across a page and those lists must be able to; `\Needspace*`
+  keeps each heading with its first entries instead.
 
 The document body itself is just a relabeled `enumerate`: `enumitem` re-declares it to
 depth 9 with AR-style labels `1.` / `a.` / `(1)` / `(a)`. Authors write nested lists,
