@@ -1,7 +1,11 @@
 % !TEX program = lualatex
-% Coverage example: a subject long enough to wrap to two lines. See #13 and #52.
-% example-grid.tex carries a note-to-self calling this a known weak spot, but no
-% example actually exercised it.
+% Coverage example: a subject long enough to wrap to two lines, in the BODY.
+% See #52. example-grid.tex carries a note-to-self calling this a known weak spot,
+% but no example actually exercised it.
+%
+% This does NOT cover #13. This memo is one page, so it never produces a running
+% head at all -- #13 is about \lohead, which only runs on page two onward.
+% example-longsubjecthead.tex is the fixture for that.
 %
 % Whatever this renders is captured as-is; if the second line is mispositioned,
 % the golden records that and a later fix has to change it.

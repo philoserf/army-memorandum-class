@@ -159,8 +159,10 @@
   ,includefoot
   ,footskip=3\baselineskip
   ,footnotesep=\baselineskip
-  % assume two lines for headers
-  % TODO: test with longer subject lines, assuming it will break
+  % Two lines is the common case: office symbol, then a SUBJECT that fits on one
+  % line. A longer subject wraps and needs a third, which \am@fitheadheight
+  % measures and asks geometry for -- see it for why growing the head is the
+  % regulation-correct direction.
   ,headheight=2\baselineskip
   ,headsep=2\baselineskip
   ]{geometry}
@@ -172,6 +174,51 @@
 \setlength{\footheight}{2\baselineskip}
 \clearpairofpagestyles%
 \lohead[]{\am@officesymbol\hspace*{\fill}\\\am@subject}
+
+% AR 25-50 requires the office symbol and the FULL subject on every continuation
+% page, and \am@subject is arbitrary user text, so the head is only sometimes two
+% lines tall. Declared at a fixed 2\baselineskip, a subject that wraps overflowed
+% it -- measured as "Overfull \vbox (14.49998pt too high) while \output is active",
+% exactly one line.
+%
+% The overflow grew the head UPWARD, leaving the body untouched: the office symbol
+% moved from 1in below the paper edge to 1in minus one line. That is the wrong
+% direction. The head's top sits on the 1in margin AR 25-50 requires, so growing up
+% pushes it into that margin (and, with a subject long enough, eventually into the
+% classification marking). Growing down is correct: the head keeps its top at 1in
+% and the body starts a line lower, which is what a memo with a two-line subject
+% genuinely costs.
+%
+% So measure the head and ask geometry for what it actually needs. This runs at
+% \AtEndPreamble, which is still the preamble -- \geometry is legal there and
+% recalculates cleanly -- but late enough that \officesymbol and \subject have both
+% been set, in either order. Documents whose subject fits on one line measure at or
+% below 2\baselineskip and are left completely alone.
+\newcommand{\am@fitheadheight}{%
+  \setbox\z@=\vbox{%
+    \hsize=\textwidth
+    % The preamble parks \@nodocument in \everypar, so starting a paragraph here --
+    % even sealed inside this box -- would raise "Missing \begin{document}". Clearing
+    % it is local to the box group.
+    \everypar{}%
+    \usekomafont{pagehead}%
+    \noindent\am@officesymbol\hspace*{\fill}\\\am@subject\par
+  }%
+  % Round UP to whole lines. Two reasons: the natural box height is a few points
+  % short of what the head actually reserves (measured: it still overflowed by
+  % 3.24pt when asked for the exact height), and whole lines are the unit this
+  % class lays out in -- headheight and headsep are both declared in \baselineskip.
+  \@tempdima=\dimexpr\ht\z@+\dp\z@\relax
+  \@tempcnta=\@tempdima
+  \@tempcntb=\dimexpr\baselineskip\relax
+  \divide\@tempcnta by \@tempcntb
+  \advance\@tempcnta by \@ne
+  \@tempdimb=\@tempcnta\baselineskip\relax
+  \ifdim\@tempdimb>\headheight
+    \geometry{headheight=\the\@tempdimb}%
+  \fi
+}
+\AtEndPreamble{\am@fitheadheight}
 \cofoot[]{\thepage}
 \pagestyle{scrheadings}
 \setkomafont{pagehead}{\sffamily\upshape}

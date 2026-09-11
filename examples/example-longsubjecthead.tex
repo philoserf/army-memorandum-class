@@ -1,0 +1,58 @@
+% !TEX program = lualatex
+% Coverage example: a subject long enough to wrap, on a memo long enough to have a
+% continuation page. See #13.
+%
+% example-longsubject.tex was supposed to cover this and does not: it is one page, so
+% it never produces a running head at all. It exercises the SUBJECT block in the body,
+% which is a different thing. #13 is about \lohead, which only runs on page two onward.
+%
+% \lohead sets the office symbol and the subject on two lines into a head box that
+% geometry sizes at headheight=2\baselineskip. A subject that wraps therefore wants
+% three lines in a two-line box.
+\documentclass{../armymemo}
+
+\address{Organizational Name/Title}
+\address{Standardized Street Address}
+\address{CITY, STATE~~12345-1234}
+
+\author{John W. Smith}\rank{CPT}\branch{CY}
+\officesymbol{ABC-DEF-GH}
+\signaturedate{10 April 2019}
+\memoline{MEMORANDUM FOR RECORD}
+\documentmark{UNCLASSIFIED//FOR OFFICIAL USE ONLY (EXAMPLE ONLY)}
+\subject{Procedures for the Preparation, Staffing, Review, and Final Approval of
+  Correspondence Prepared Under the Provisions of Army Regulation 25-50}
+\title{COMMANDING}
+\addencl{AR 25-50}
+
+\begin{document}
+
+\begin{enumerate}
+\item The subject line above is long enough to wrap. This memorandum is long enough
+  to reach a second page, so the wrapped subject also has to fit the running head.
+\item Call me Ishmael. Some years ago, never mind how long precisely, having little
+  or no money in my purse, and nothing particular to interest me on shore, I thought
+  I would sail about a little and see the watery part of the world. It is a way I
+  have of driving off the spleen and regulating the circulation.
+\item Circumambulate the city of a dreamy Sabbath afternoon. Go from Corlears Hook
+  to Coenties Slip, and from thence, by Whitehall, northward. What do you see? Posted
+  like silent sentinels all around the town, stand thousands upon thousands of mortal
+  men fixed in ocean reveries.
+\item Once more. Say you are in the country, in some high land of lakes. Take almost
+  any path you please, and ten to one it carries you down in a dale, and leaves you
+  there by a pool in the stream.
+\item Once more. Say you are in the country, in some high land of lakes. Take almost
+  any path you please, and ten to one it carries you down in a dale, and leaves you
+  there by a pool in the stream.
+\item Once more. Say you are in the country, in some high land of lakes. Take almost
+  any path you please, and ten to one it carries you down in a dale, and leaves you
+  there by a pool in the stream.
+\item Once more. Say you are in the country, in some high land of lakes. Take almost
+  any path you please, and ten to one it carries you down in a dale, and leaves you
+  there by a pool in the stream.
+\item Once more. Say you are in the country, in some high land of lakes. Take almost
+  any path you please, and ten to one it carries you down in a dale, and leaves you
+  there by a pool in the stream.
+\end{enumerate}
+
+\end{document}
