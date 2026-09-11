@@ -2,10 +2,13 @@
 % Coverage example: exactly one \address. See #26 and #52.
 % All other examples supply three address lines; this is the single-line path.
 %
-% The golden for this file deliberately records the BUGGY rendering: supplying one
-% address silently appends placeholder lines rather than printing just the one
-% given. Do not hand-correct the golden. When #26 is fixed in milestone 3,
-% `make golden` will show the change, and that diff is the proof.
+% #26 is fixed. This file's golden used to record the bug deliberately -- supplying
+% one address appended three placeholder lines to it, producing a four-line
+% letterhead that began with the real address and continued with boilerplate. The
+% `make golden` diff that removed those three lines is the proof the fix worked,
+% which is exactly why the baseline was captured wrong on purpose.
+%
+% The golden now shows one address line, which is what the document asks for.
 \documentclass{../armymemo}
 
 \address{Organizational Name/Title}

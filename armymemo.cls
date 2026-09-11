@@ -295,25 +295,22 @@
 % This method deviates from examples 1-3, as it uses \multimemothru{...} to add multiple thru lines
 % with hanging indents per the AR, followed by an \addmemoline{} to complete the "FOR ..."
 %
-\newcounter{am@memoline@count}
-\newcommand{\addmemoline}[1]{\stepcounter{am@memoline@count}\listadd{\am@list@memolines}{#1}}
+\newcommand{\addmemoline}[1]{\listadd{\am@list@memolines}{#1}}
 \newcommand{\mfr}{\addmemoline{MEMORANDUM FOR RECORD}}
 \newcommand{\memoline}[1]{\addmemoline{#1}}
 \newcommand{\am@domemoline}[1]{\vspace{\baselineskip}\noindent{}#1\\}
-\newcounter{am@memothru@count}
-\newcommand{\multimemothru}[1]{\stepcounter{am@memothru@count}\listadd{\am@list@memothru}{#1}}
+\newcommand{\multimemothru}[1]{\listadd{\am@list@memothru}{#1}}
 % One hanging-indent line, shared by the THRU and FOR lists, which had byte-identical
 % helpers. Not \am@do (below): that one is bare and lacks the hanging indent the AR
 % format needs, so it is precedent for the pattern, not a drop-in.
 \newcommand{\am@do@hangline}[1]{\noindent{}\hangindent=0.25in{}#1\\}
-\newcounter{am@memofor@count}
-\newcommand{\multimemofor}[1]{\stepcounter{am@memofor@count}\listadd{\am@list@memofor}{#1}}
+\newcommand{\multimemofor}[1]{\listadd{\am@list@memofor}{#1}}
 
 \newcommand{\am@memoline}{%
   % if there is nothing specified, add "memorandum for record"
-  \ifnumcomp{\value{am@memoline@count}}{=}{0}{%
-    \ifnumcomp{\value{am@memothru@count}}{=}{0}{
-      \ifnumcomp{\value{am@memofor@count}}{=}{0}{
+  \ifdefvoid{\am@list@memolines}{%
+    \ifdefvoid{\am@list@memothru}{
+      \ifdefvoid{\am@list@memofor}{
         \mfr
       }{}
     }{}
@@ -321,26 +318,24 @@
   % otherwise, skip a space and begin
   \vspace{\baselineskip}
   % if there are multimemothru lines:
-  \ifnumcomp{\value{am@memothru@count}}{>}{0}{%
+  \ifdefvoid{\am@list@memothru}{}{%
     \vspace{\baselineskip}
     MEMORANDUM THRU\\
     \vspace{\baselineskip}
     % loop through the thru lines with hanging indent
-    \forlistloop{\am@do@hangline}{\am@list@memothru}}
-  {}
-  \ifnumcomp{\value{am@memofor@count}}{>}{0}{
-    \ifnumcomp{\value{am@memothru@count}}{>}{0}{%
-      \vspace{\baselineskip}
-      FOR\\ % if there is a thru, it should just be for, not memorandum for
-      \vspace{\baselineskip}
-    }{%
+    \forlistloop{\am@do@hangline}{\am@list@memothru}}%
+  \ifdefvoid{\am@list@memofor}{}{%
+    \ifdefvoid{\am@list@memothru}{%
       \vspace{\baselineskip}
       MEMORANDUM FOR\\ % if there is no thru
       \vspace{\baselineskip}
+    }{%
+      \vspace{\baselineskip}
+      FOR\\ % if there is a thru, it should just be for, not memorandum for
+      \vspace{\baselineskip}
     }
-    \forlistloop{\am@do@hangline}{\am@list@memofor}}
-  {}
-  \ifnumcomp{\value{am@memoline@count}}{>}{0}{
+    \forlistloop{\am@do@hangline}{\am@list@memofor}}%
+  \ifdefvoid{\am@list@memolines}{}{%
     % after dealing with special cases, add the other lines from \addmemoline or \memoline
     % these lines must begin with any labels such as "MEMORANDUM FOR" or "MEMORANDUM THRU" or "FOR"
     % allow for possibility of no multi lines.
@@ -416,10 +411,9 @@
 
 % add distribution, with an option for continuation on the next page
 \newcommand{\am@do}[1]{#1\\}
-\newcounter{am@distro@count}
-\newcommand{\adddistro}[1]{\stepcounter{am@distro@count}\listadd{\am@list@distro}{#1}}
+\newcommand{\adddistro}[1]{\listadd{\am@list@distro}{#1}}
 \newcommand{\am@distro}{%
-  \ifnumcomp{\value{am@distro@count}}{>}{0}{%
+  \ifdefvoid{\am@list@distro}{}{%
     \vspace{\baselineskip}%
     \noindent{}DISTRIBUTION:\\%
     \forlistloop{\am@do}{\am@list@distro}}{}}
@@ -428,10 +422,9 @@
     DISTRIBUTION:}}
 
 % add cf, with an option for continuation on the next page
-\newcounter{am@cf@count}
-\newcommand{\addcf}[1]{\stepcounter{am@cf@count}\listadd{\am@list@cf}{#1}}
+\newcommand{\addcf}[1]{\listadd{\am@list@cf}{#1}}
 \newcommand{\am@cf}{%
-  \ifnumcomp{\value{am@cf@count}}{>}{0}{%
+  \ifdefvoid{\am@list@cf}{}{%
     \vspace{\baselineskip}%
     \noindent{}CF:\\
     \forlistloop{\am@do}{\am@list@cf}}{}}
@@ -460,12 +453,15 @@
 %    https://www.ntg.nl/maps/31/15.pdf "Exact layout with LaTeX" Siep Kroonenberg
 %    uses plain tex and picture environment
 
-\newcounter{am@address@count}
 \newcommand{\department}[1]{\def\am@department{\ifstrempty{#1}{DEPARTMENT OF THE ARMY}{\MakeUppercase{#1}}}}\department{}
-\newcommand{\address}[1]{\stepcounter{am@address@count}\listadd{\am@list@address}{#1}}
+\newcommand{\address}[1]{\listadd{\am@list@address}{#1}}
 \newcommand{\am@do@address}[1]{\fontsize{8pt}{5pt}\selectfont\textbf{\MakeUppercase{#1}}\\}
 \newcommand{\dodheader}{%
-  \ifnumcomp{\value{am@address@count}}{<}{2}{
+  % Defaults apply only when the document supplied no address at all. This used to
+  % test {<}{2} on a counter, so a document supplying exactly ONE address fell below
+  % the threshold and had all three placeholders appended to its real line -- a
+  % four-line letterhead beginning with the truth and continuing with boilerplate.
+  \ifdefvoid{\am@list@address}{%
     \address{Organizational Name/Title}
 	 \address{Standardized Street Address}
 	 \address{City, State~~12345-1234}

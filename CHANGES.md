@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- A memorandum supplying exactly one `\address` now renders that one line. It previously had three placeholder lines appended to it -- `ORGANIZATIONAL NAME/TITLE`, `STANDARDIZED STREET ADDRESS` and `CITY, STATE 12345-1234` -- producing a four-line letterhead that began with the real address and continued with boilerplate, silently, in the most prominent part of the page. Supplying no address still yields the three placeholders, unchanged.
+
 ### Changed
 
 - Nesting a list past the fourth level now reports the rule it breaks instead of crashing. AR 25-50 prohibits subdividing beyond the third subdivision, and the class implements four levels; it previously *declared* nine, so a fifth level died with an `enumitem` "Undefined label" error that never mentioned the regulation. A fifth level now prints a red `[AR 25-50]` marker and emits a class warning naming the rule, once per offending item, and the document still builds.
