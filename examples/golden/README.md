@@ -21,16 +21,22 @@ normalizes them silently breaks page-break detection, and page breaks are where 
 class's most serious bug lives (#1). Hand-editing is the single most likely way to
 corrupt this harness without anyone noticing.
 
-## Two goldens deliberately record buggy output
+## Two goldens were deliberately captured buggy — and both have since paid off
 
-Once the coverage examples land (#52), the baselines for the zero-enclosure (#29) and
-one-address (#26) cases will show the defects **as they render today** — not the
-intended output. That is the point: a baseline that already contains the corrected
-rendering cannot demonstrate that a later fix changed anything. When those bugs are
-fixed in milestones 3 and 4, `make golden` will show the change, and that diff is the
-proof.
+The baselines for the one-address (#26) and zero-enclosure (#29) cases were captured
+showing the defects **as they rendered at the time**, not the intended output. A
+baseline that already contains the corrected rendering cannot demonstrate that a later
+fix changed anything.
 
-Do not "correct" them.
+Both fixes have now landed and the diffs are the proof:
+
+- **#26**, milestone 3 — `example-oneaddress.txt` lost the three boilerplate lines that
+  had been appended to the single real address.
+- **#29**, milestone 4 — `example-noencl.txt` had `DISTRIBUTION:` printed on the *same
+  line* as the signer's name; it now sits below the closing block.
+
+The technique is the point, not those two files: when a milestone is expected to change
+output, capture the broken baseline first so the fix has something to diff against.
 
 ## Provenance
 
