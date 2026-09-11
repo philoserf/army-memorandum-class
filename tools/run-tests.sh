@@ -83,10 +83,11 @@ examples() {
 }
 
 # ----------------------------------------------------------------- building ---
-# latexmk is driven directly, one file at a time, and examples/Makefile is never
-# invoked: it sets an unbounded MAKEFLAGS=-j, and its %.pdf rule does not list the
-# class as a prerequisite, so it would happily compare stale PDFs and pass when it
-# should fail. -g forces a rebuild regardless of timestamps.
+# latexmk is driven directly, one file at a time, and the Makefile is never invoked.
+# Keeping the harness independent of the build means a bug in the build cannot make
+# the tests pass when they should fail -- which was not hypothetical: until #12/#38
+# the class was not a prerequisite of the PDF rule, so a class change rebuilt nothing.
+# -g forces a rebuild regardless of timestamps.
 build_and_extract() {
     dest=$1
     mkdir -p "$dest"
