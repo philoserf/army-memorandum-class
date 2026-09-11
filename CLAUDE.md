@@ -114,10 +114,24 @@ deliberate decision, not a routine step.
 - **Times New Roman and Arial must be installed system-wide** or compilation fails.
 - `chktex` is the only linter; `latexmk` drives builds; `latexrun` is optional.
 
-**None of these are installed on this machine** — `lualatex`, `xelatex`, `latexmk`,
-`chktex`, and `latexrun` were all absent as of 2026-09-09. Check before promising a
-build; changes to the class cannot be verified by compiling here without installing a
-TeX distribution first.
+**The toolchain is installed** — TeX Live 2026 (`scheme-full`, no docs or sources) went in
+on 2026-09-09 under `~/texlive/2026`, user-owned, no sudo (#50). Times New Roman and Arial
+both resolve from `/System/Library/Fonts/Supplemental/`, and all four examples build.
+
+**Its binaries are not on a non-interactive shell's `PATH`**, so `command -v lualatex`
+comes back empty from a tool shell and the toolchain looks absent. Prepend the bin
+directory first:
+
+```sh
+export PATH="$HOME/texlive/2026/bin/universal-darwin:$PATH"
+```
+
+`latexrun` is genuinely not in the tree, so `examples/Makefile` always takes its
+`latexmk -lualatex` fallback branch.
+
+**`make check` exits nonzero on `main`** — `chktex` reports 29 warnings against
+`armymemo.cls` (spacing, dashes), none of them new. Compare counts rather than expecting
+a clean run.
 
 ## Commands
 
