@@ -275,3 +275,6 @@ TSWLatexianTemp*
 # Note the narrow glob -- DODb1.pdf, DOW-Seal-BW.pdf and imperialseal-536x536.jpg
 # are build *inputs* and stay tracked.
 examples/example*.pdf
+
+# Harness scratch directory (diffs and per-build extractions).
+.test-work/
