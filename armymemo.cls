@@ -24,6 +24,28 @@
 \ProvidesClass{armymemo}[2026/03/29 0.3.0 Army Memorandum Class]
 \NeedsTeXFormat{LaTeX2e}
 
+% Canonical LaTeX2e order is \ProvidesClass -> \DeclareOption -> \ProcessOptions
+% -> \LoadClass. This file used to process options 140 lines after loading the
+% class, which made \DeclareOption* dead: it forwarded to a class already loaded.
+%
+% The fix moves the option block UP rather than moving \LoadClass down. Moving the
+% class down would put fourteen \RequirePackage calls ahead of it, including
+% scrlayer-scrpage, which requires a KOMA class to already be loaded. etoolbox comes
+% along because \newbool needs it; it has no class dependency of its own.
+%
+% \DeclareOption* is deleted rather than revived. Reviving it would make
+% pass-through options reach scrartcl via \PassOptionsToClass *in addition to* the
+% kernel's global-option rule, which already delivers them -- potentially twice, or
+% in a different order. Deleting leaves the kernel rule doing what it does today.
+\RequirePackage{etoolbox}  % required for conditionals (already implied)
+\newbool{am@digsig}
+\DeclareOption{digsig}{\booltrue{am@digsig}}
+\ProcessOptions\relax
+
+% 12pt and oneside are mandated by AR 25-50 and are deliberately not overridable.
+% They are passed here rather than exposed as options so that a document cannot
+% silently produce a non-compliant memo. headings=small and DIV=15 are layout
+% choices this class makes on the author's behalf.
 \LoadClass[
   12pt,
   oneside,
@@ -72,8 +94,6 @@
 \widowpenalty=10000
 \clubpenalty=10000
 
-% required for conditionals (already implied)
-\RequirePackage{etoolbox}
 % Setup fonts:
 % allow automatic quote expansion
 \RequirePackage{csquotes}
@@ -168,12 +188,6 @@
 \pagestyle{scrheadings}
 \setkomafont{pagehead}{\sffamily\upshape}
 
-
-% process class options
-\newbool{am@digsig}
-\DeclareOption{digsig}{\booltrue{am@digsig}}
-\DeclareOption*{\PassOptionsToClass{\CurrentOption}{scrartcl}}
-\ProcessOptions\relax
 
 % \RaggedRight is a bit more compact, but allows lots of hyphens
 % reduce hyphens with a combination of \hypenpenalty and microtype
