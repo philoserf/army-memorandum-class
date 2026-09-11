@@ -1,0 +1,43 @@
+% !TEX program = lualatex
+% Coverage example: a list item containing more than one paragraph. See #20.
+%
+% A continuation paragraph inside a body item is the only paragraph in a memo that the
+% AUTHOR starts and the class never wraps in \noindent. It is therefore the only place a
+% stray \parindent could reach the page -- which makes this the regression witness for
+% the explicit \parindent=0pt in the class.
+%
+% It renders flush today, and #20's premise that fourteen \noindent calls "compensate for"
+% a non-zero \parindent turned out to be wrong: \RaggedRight (ragged2e) already assigns
+% \parindent\RaggedRightParindent, which is zero. The class's explicit setting exists so
+% that stops being an accident of another package's side effect. If either is removed,
+% these two paragraphs are what moves.
+\documentclass{../armymemo}
+
+\address{Organizational Name/Title}
+\address{Standardized Street Address}
+\address{CITY, STATE~~12345-1234}
+
+\author{John W. Smith}\rank{CPT}\branch{CY}
+\officesymbol{ABC-DEF-GH}
+\signaturedate{10 April 2019}
+\memoline{MEMORANDUM FOR RECORD}
+\documentmark{UNCLASSIFIED//FOR OFFICIAL USE ONLY (EXAMPLE ONLY)}
+\subject{A memorandum whose items carry more than one paragraph}
+\title{COMMANDING}
+
+\begin{document}
+
+\begin{enumerate}
+\item This item has two paragraphs. The first one starts the item, so enumitem places it
+  and no indent applies.
+
+  This second paragraph is started by the author, not by the class -- the only text in a
+  memo that no \verb!\noindent! precedes. It renders flush, and that is the assertion:
+  if \verb!\parindent! ever stops being zero, this line moves right by 12pt.
+\item A second item, also with two paragraphs.
+
+  Its continuation paragraph is the same assertion a second time, so a single stray
+  indent cannot be mistaken for a one-off.
+\end{enumerate}
+
+\end{document}
