@@ -279,5 +279,15 @@ examples/example*.pdf
 # Harness scratch directory (diffs and per-build extractions).
 .test-work/
 
-# Army Regulation 25–50
-Army\ Regulation\ 25–50.pdf
+# Local reference copy of AR 25-50 itself. The regulation is the specification
+# this class implements, so a copy is worth keeping at hand while working -- but
+# it is a downloaded reference, not a source or a build input, and it is reissued
+# on its own schedule. README's References section links the record page, which
+# survives reissue, so the tree needs a link rather than a binary.
+#
+# Both the en dash and hyphen spellings, and either naming convention.
+# Deliberately narrow: DODb1.pdf and the seal images are build *inputs*, tracked,
+# which is why this file has no blanket *.pdf rule.
+Army Regulation 25*.pdf
+AR 25-50*.pdf
+AR 25–50*.pdf
