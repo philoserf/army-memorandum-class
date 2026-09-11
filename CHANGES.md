@@ -15,6 +15,14 @@
 
 ### Removed
 
+- **`\nd`, `\rd` and `\thh` are removed. This breaks any document that uses them** -- a memo
+  written as `2\nd Battalion` will stop compiling, and the fix is `2\textsuperscript{nd}`.
+  They were superscript-ordinal shorthands with no call site anywhere in this repository, and
+  each one spent a short, generic name from the global namespace to save three characters;
+  `\thh` could not even have the name it wanted, because `\th` is thorn. `\st` is kept: it has
+  real uses, and unit designations like `501\st\ Legion` are the case the shorthands were
+  written for. The collision risk is reduced, not eliminated, and the README now says so
+  rather than advertising the family as a convenience.
 - `\continuedistro` and `\continuecf` are removed. They inserted a literal `(CONTINUED)` entry followed by `\clearpage` and a repeated heading, so the author had to predict, by hand, where the page would break -- and when the prediction was wrong the output carried a spurious `DISTRIBUTION:` / `(CONTINUED)` pair and an unnecessary page. The redesigned closing keeps a heading with its entries automatically, which is what these macros were manually approximating.
 
 ### Changed

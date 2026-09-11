@@ -183,8 +183,14 @@ The body is a relabeled `enumerate`. Four levels are implemented, matching AR 25
 | 3     | `(1)` |
 | 4     | `(a)` |
 
-Do not subdivide beyond the fourth level. The ordinal shorthands `\st`, `\nd`, `\rd`, and
-`\thh` are provided for superscripts, as in `1\st` or `4\thh`.
+Do not subdivide beyond the fourth level. `\st` is provided as a superscript ordinal for
+unit designations, as in `501\st\ Legion`; it usually needs a following `\ ` to keep the
+interword space. Write the other ordinals as `2\textsuperscript{nd}`.
+
+`\st` is a short, generic name in the global namespace, so a document or package that
+defines its own `\st` will collide with it. The companions `\nd`, `\rd` and `\thh` were
+removed for that reason -- nothing used them, and `\thh` had to be misspelled because
+`\th` (thorn) was already taken.
 
 ### Class options
 
