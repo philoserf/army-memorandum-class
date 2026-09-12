@@ -280,7 +280,7 @@ same place, and before that an `examples/Makefile` as well — mostly delegated 
   which was whitespace-only and left the file at 747 lines -- but it did alter the leading
   whitespace of other lines, so verify rather than assume for any reference you find.)
 - **Version lives in three places** — the `\ProvidesClass{armymemo}[YYYY/MM/DD X.Y.Z ...]`
-  line (armymemo.cls:28, currently `2026/09/11 0.5.0`), the heading in `CHANGES.md`, and the
+  line (armymemo.cls:28, currently `2026/09/12 0.6.0`), the heading in `CHANGES.md`, and the
   `currently` reference in this very bullet. That third one is the one that goes stale,
   because it is the one nobody counts: the 0.5.0 release commit had to fix it after the
   fact. Bump all three.

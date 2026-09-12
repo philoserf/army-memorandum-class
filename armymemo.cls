@@ -25,7 +25,7 @@
 % and the dated argument is a real floor, not decoration -- the classification marks
 % use \AddToHook{shipout/background}, which the kernel gained on 2020-10-01.
 \NeedsTeXFormat{LaTeX2e}[2020/10/01]
-\ProvidesClass{armymemo}[2026/09/11 0.5.0 Army Memorandum Class]
+\ProvidesClass{armymemo}[2026/09/12 0.6.0 Army Memorandum Class]
 
 % Canonical LaTeX2e order is \ProvidesClass -> \DeclareOption -> \ProcessOptions
 % -> \LoadClass. This file used to process options 140 lines after loading the

@@ -2,7 +2,27 @@
 
 ---
 
-## [Unreleased]
+## [0.6.0] - 2026-09-12
+
+### Added
+
+- **`tools/check-ar-metrics.py`, a placement checker that runs inside
+  `task test`.** The golden files compare `pdftotext -layout` text, which
+  captures line structure and is blind to sub-line vertical position: the
+  signature-block fix above moved a block 22.73pt up the page without changing
+  the extracted text by a byte, so the harness could neither catch the bug nor
+  lock in the repair. This measures what the regulation states in lines and
+  fails when a placement drifts. It verifies 52 placements across the examples.
+
+  Read its `TOLERANCE_BL` comment before trusting a pass. `pdftotext` reports
+  bounding boxes rather than baselines, and boxes move with the glyphs inside
+  them, so it resolves errors of roughly half a line and upward -- the size of
+  the bugs the goldens miss -- and not one-point drift. Two of the fixes above,
+  the subparagraph indents and the continuation-page spacing, are below its
+  resolution and remain verified by measurement rather than regression-locked.
+
+  It needs `python3`, which `task test` now requires and reports loudly when
+  missing.
 
 ### Removed
 
@@ -33,6 +53,53 @@
   ancestor of `ed2082e`).
 
 ### Fixed
+
+Seven AR 25-50 conformance fixes to the closing block and page layout. **All of
+them change rendered output**: a document that renders one way under 0.5.0 will
+render differently under this release, and that is the point of them. Each was
+verified by measuring the built PDF against the placements the regulation states
+in lines, not by eye.
+
+- **The signature block sits on the fifth line below the last line of text when
+  there is no authority line.** AR 2-4c(2)(a) states two placements -- five lines
+  below the authority line when there is one, five below the text when there is
+  not -- and only the first was implemented. The second measured 6.57 baselines.
+  Sixteen of the nineteen examples take that path, so this moves nearly every
+  document. Figure 2-2 shows the intended form, counting 1-2-3-4-5 down its
+  gutter on a page with no authority line.
+
+- **The signature block is centred on the page when there are no enclosures.**
+  It was at the left margin. The closing row is two `\parbox` columns and an
+  empty one does not hold its width, so with nothing to list the signature fell
+  into the enclosure column. AR 2-4c(2)(a) puts it in the centre of the page.
+  Affects any memorandum without enclosures, `\addencl` being optional.
+
+- **`DISTRIBUTION:` begins on the second line below the signature block or
+  enclosure listing**, per AR 2-4a(5)(c). It was on the first, with no blank line
+  between. `CF:` was already correct and is unchanged.
+
+- **Continuation-page text begins on the third line below the subject**, per
+  AR 2-5c. It began on the 3.145th. The cause was not the head separation but
+  `\topskip`, which KOMA sets to the font size -- 12pt, not a whole number of
+  this class's 14.45pt baselines.
+
+- **Subparagraph labels sit on the quarter and half inch AR figure 2-1 states.**
+  They sat 2pt past each. The old `itemindent` values read as if they were the
+  regulation's numbers and were not: enumitem places the label at
+  `itemindent - (labelwidth + labelsep)`, so `0.5in` put a label 2pt past a
+  _quarter_ inch. Levels 3 and 4 still share an indent, as figure 2-1 requires.
+
+- **A single address given to `\multimemofor` or `\multimemothru` shares the
+  label's line**, with its wrapped line flush left. It was rendering in the
+  multiple-address shape: label alone, a blank line, and a quarter-inch hang.
+  AR 2-4a(5)(a) and figure 2-11 give the single-address form; figure 2-5 the
+  other. The multiple-address path is unchanged. `\memoline`, the documented
+  route for one address, was already correct.
+
+- **The page number sits approximately one inch from the bottom edge**, per
+  AR 2-5d. It was a quarter inch short, at 0.763in, and is now at 0.964in. This
+  is a `bottom` margin change, so the text block loses a baseline; no example
+  repaginates, and the 1-inch bottom text margin of AR 2-3c still holds.
 
 - **Single-digit days are no longer zero-padded.** `\mildate` was defined with
   `\twodigit\THEDAY`, so a date routed through it rendered 5 March 2019 as
