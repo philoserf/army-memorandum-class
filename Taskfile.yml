@@ -78,7 +78,6 @@ tasks:
     sources:
       - "{{.TEX}}"
       - armymemo.cls
-      - digsig.sty
     generates:
       - '{{.TEX | replace ".tex" ".pdf"}}'
     cmds:
@@ -134,10 +133,6 @@ tasks:
   # whatever the tool ships with. The reformat is whitespace-only (`diff -w` is
   # empty) and was verified against the goldens: every example still renders
   # byte-identically.
-  #
-  # digsig.sty is deliberately not formatted. It is a separate work bundled here
-  # under its own MIT terms (Martin Lottermoser), and reformatting a vendored
-  # file makes it undiffable against upstream for no benefit of ours.
   #
   # -c sends latexindent's backup files and indent.log to .latexindent/ (ignored)
   # instead of dropping armymemo.bak0 and indent.log in the repo root.

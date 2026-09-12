@@ -41,8 +41,20 @@
 % kernel's global-option rule, which already delivers them -- potentially twice, or
 % in a different order. Deleting leaves the kernel rule doing what it does today.
 \RequirePackage{etoolbox}  % required for conditionals (already implied)
-\newbool{am@digsig}
-\DeclareOption{digsig}{\booltrue{am@digsig}}
+% The digsig option is retired, not silently dropped. Left undeclared it would
+% reach scrartcl through the kernel's global-option rule and surface as an
+% unknown-option warning buried in the log, which tells the author nothing about
+% where the feature went. This errors by name and points at the procedure that
+% replaced it. Remove after one release.
+\DeclareOption{digsig}{%
+	\ClassError{armymemo}{The digsig option has been removed}{%
+		The class no longer emits a PDF signature field.\MessageBreak%
+		Place the signature block in Adobe Acrobat instead;\MessageBreak%
+		AR 25-50 appendix F gives the procedure, including the\MessageBreak% chktex 8
+		read-only and date-locking properties the class could not\MessageBreak%
+		set. See CHANGES.md for the rationale.%
+	}%
+}
 \ProcessOptions\relax
 
 % 12pt and oneside are mandated by AR 25-50 and are deliberately not overridable.
@@ -238,7 +250,6 @@
 
 % do I need this later? https://tex.stackexchange.com/a/64615
 \RequirePackage[colorlinks=true,urlcolor=blue,citecolor=blue,breaklinks=true]{hyperref}
-\ifbool{am@digsig}{\RequirePackage{digsig}}{}
 \urlstyle{same}
 
 \RequirePackage{ragged2e}
@@ -539,20 +550,6 @@
 % allowed to break; boxing it would reproduce the failure that stopped the first
 % attempt.
 \newcommand{\am@sigblock}{%
-	\ifbool{am@digsig}{%
-		% A pure overlay on the signing space already reserved above the row, anchored
-		% at the left edge of this column. Three details, each load-bearing:
-		%   \rlap      -- zero width. Without it the field keeps its 3in width and the
-		%                 author's name starts after it and wraps.
-		%   [0pt][0pt] -- zero height and depth, so the field does not add a second gap.
-		%   \noindent  -- \rlap is an \hbox, and an \hbox in vertical mode joins the
-		%                 vertical list as its own box rather than the name's line.
-		%                 digsig.sty documents exactly this ("the macro does not change
-		%                 TeX's mode").
-		\noindent\rlap{\raisebox{\baselineskip}[0pt][0pt]{%
-				\begin{Form}\digsigfield{3in}{3\baselineskip}{signature}\end{Form}%
-			}}%
-	}{}%
 	{\MakeUppercase\am@author}\\
 	\ifdefempty{\am@branch}{\am@rank}{\am@rank, \am@branch}\\
 	\am@title

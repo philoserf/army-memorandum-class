@@ -4,6 +4,34 @@
 
 ## [Unreleased]
 
+### Removed
+
+- **BREAKING: the `digsig` class option and the bundled `digsig.sty` are removed.** The
+  option emitted a single unconfigured `/FT /Sig` widget at the signature block. AR 25-50
+  appendix F, the regulation's own digital-signature procedure, additionally requires the
+  field to be marked read-only and to lock an associated date box (F-2f), a fillable date
+  text box at the top right (F-2e), a signature _and_ comment box at the end of every THRU
+  line (F-2i), and multi-signer date handling (F-2h). None of those can be set from a
+  document class, so the author had to open Acrobat regardless -- and once in "Prepare
+  Form", placing the signature box is three clicks. The option delivered the one part of
+  the requirement that was never the hard part.
+
+  Removing it also retires the repository's only non-GPL file. `digsig.sty` was vendored
+  because the package is in neither TeX Live nor CTAN, and its recorded provenance had
+  become a dead end: the source URL in `68d1905` points into an unrelated proposal
+  template at `gitlab.mn.tu-dresden.de`, which did not resolve on 2026-09-12, and no
+  checksum was ever recorded. `eforms` (AcroTeX) was evaluated as a replacement and
+  rejected -- it is on CTAN but not in TeX Live, so it reproduces the same hand-install
+  problem at 5,689 lines, pulling `insdljs` and `taborder`, under LPPL 1.0.
+
+  **Migration.** Place the signature field in Adobe Acrobat per AR 25-50 appendix F.
+  `\documentclass[digsig]{armymemo}` does not silently change behaviour: the option name
+  is retained for one release and raises a class error naming appendix F. Also removed:
+  `examples/example-sig.tex` and its goldens, and the `examples/digsig.sty` symlink.
+
+  This is a deliberate divergence from glallen01, who bundled the file (`68d1905`, an
+  ancestor of `ed2082e`).
+
 ### Fixed
 
 - **Single-digit days are no longer zero-padded.** `\mildate` was defined with
@@ -300,18 +328,3 @@
   > Roman in all communications (except the letterhead itself, which remains in Arial).
 
 - Refactored `\am@encls` to proper if/else chain
-
----
-
-## Bundled Dependencies
-
-### digsig.sty
-
-- **Version:** 2.3 (2022-03-31)
-- **Source:** https://gitlab.mn.tu-dresden.de/nsm/templates/nsm-proposal/-/raw/93a60a51e98b07ed4de3480a5ce1cb034f3e5c86/digsig.sty
-- **Author:** Martin Lottermoser
-- **License:** MIT (SPDX-License-Identifier: MIT)
-- **Purpose:** Provides LaTeX macros for digital signature fields in PDF files via hyperref extension
-- **Location:**
-  - `/digsig.sty` (canonical copy in repo root)
-  - `/examples/digsig.sty` (symlink for example compilation)
