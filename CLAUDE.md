@@ -27,9 +27,21 @@ bundled `digsig.sty`, and the `examples/` that exercise them.
 
   ```sh
   git remote add upstream git@github.com:glallen01/army-memorandum-class.git
+  git remote set-url --push upstream no-push # hazard 3: make it fetch-only
   git fetch upstream
   git log --oneline upstream/master..HEAD    # note: glallen01's default is `master`, not `main`
+  git remote remove upstream                 # restore the state asserted above
   ```
+
+  **The last two lines are not optional garnish, they are why this snippet has a
+  teardown at all.** `git remote add` creates a _push-capable_ remote, and nothing here
+  should ever push to an `upstream` ref (hazard 3). Leaving it behind also falsifies the
+  "there is no `upstream` remote" assertion above, which has now happened twice: once
+  found and fixed under #60 on 2026-09-09, and again on 2026-09-12. Both times the remote
+  was present with a working push URL while this file said it did not exist. If you are
+  deliberately _resuming_ tracking rather than doing a one-off comparison, keep the remote
+  but leave the push URL disabled, and fix the assertion above in the same change so the
+  file stays honest.
 
   Two glallen01 branches were never merged here and are no longer reachable locally:
   `opord-example` (`3d5e5e1`, an OPORD example) and `digsig` (`0aa362d`, superseded by the
@@ -84,8 +96,18 @@ re-adds it.
 
 3. **If you re-add the remote, keep it read-only.** `git fetch` and `gh repo sync` are
    safe — they read. Pushing is what reaches them, and nothing here should ever push to
-   an `upstream` ref. Removing the remote (2026-09-09) was what took this hazard off the
-   table; re-adding it puts it back.
+   an `upstream` ref. "Read-only" has a concrete form, so use it rather than relying on
+   care:
+
+   ```sh
+   git remote set-url --push upstream no-push
+   ```
+
+   Removing the remote is what takes this hazard off the table; re-adding it puts it
+   back. That has now been done twice — 2026-09-09 under #60, and 2026-09-12 — because
+   the comparison snippet under "Repo identity" re-adds it and, until 2026-09-12, never
+   said to take it down. Check with `git remote -v` rather than trusting this file: the
+   failure mode both times was this document asserting a state the config did not have.
 
 ### Issue tracking
 
