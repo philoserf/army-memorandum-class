@@ -175,7 +175,24 @@
 	% measures and asks geometry for -- see it for why growing the head is the
 	% regulation-correct direction.
 	,headheight=2\baselineskip
-	,headsep=2\baselineskip
+	% AR 2-5c puts continuation text on the third line below the subject, and this
+	% is what buys that. The gap is not headsep alone: the first line of a text
+	% block sits \topskip below the block's top, and KOMA sets \topskip to the
+	% font size -- 12pt here -- which is not a whole number of 14.45pt baselines.
+	% A flat 2\baselineskip therefore landed the body 3.145 lines below the
+	% subject rather than 3.
+	%
+	% So the three baselines are named explicitly and the two things that eat into
+	% them are subtracted: \topskip, and the depth of the head's last line. Written
+	% this way it tracks \topskip rather than pinning a constant that a KOMA or
+	% font-size change would silently invalidate.
+	%
+	% Measured at 3.017 baselines, not 3.000. The residual is a quarter of a point
+	% -- the head's last line is fractionally deeper than the 0.3\baselineskip a
+	% strut would give. Closing it would need a constant with no rule behind it,
+	% and 0.25pt is well below anything the goldens or tools/check-ar-metrics.py
+	% can resolve. Do not chase it.
+	,headsep=3\baselineskip-\topskip-0.3\baselineskip
 ]{geometry}
 % make sure the paragraph spacing matches the linespacing
 \setlength{\parskip}{\baselineskip}

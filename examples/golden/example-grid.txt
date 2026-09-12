@@ -140,8 +140,8 @@ The circle is at 1 inch from the top and left of the page. Dashed lines represen
                          page height = 795pt             page width = 614pt
                          \hoffset = 0pt                  \voffset = 0pt
                          \oddsidemargin = 0pt            \topmargin = 0pt
-                         \headheight = 29pt              \headsep = 29pt
-                         \textheight = 578pt             \textwidth = 470pt
+                         \headheight = 29pt              \headsep = 27pt
+                         \textheight = 580pt             \textwidth = 470pt
                          \footskip = 44pt                \marginparsep = 13pt
                          \marginparpush = 7pt            \columnsep = 10pt
                          \columnseprule = 0.0pt
