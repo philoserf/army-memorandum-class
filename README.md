@@ -14,17 +14,28 @@ markings, the signature block, and the enclosure/distribution/copies-furnished l
   Arial the letterhead font. If either is missing the class falls back to the
   metric-compatible TeX Gyre face and says so loudly — AR 25-50 names the typeface, so a
   silent substitution would hand you a memo that looks finished and is not compliant.
-- `latexmk` to drive builds, `chktex` to lint.
+- `latexmk` to drive builds, `chktex` to lint. Both come from TeX Live.
+- **Everything else comes from the repo's `Brewfile`:**
+
+  ```sh
+  brew bundle                      # install it all
+  brew bundle check --no-upgrade   # just check, install nothing
+  ```
+
+  That covers `go-task` (the build driver), `poppler` (`pdftotext` and `pdfinfo` — the
+  test harness cannot run without them, and TeX Live does **not** ship them), and the
+  formatters and linters `task lint` runs. TeX Live itself is not in the Brewfile;
+  Homebrew does not manage it.
 
 ### Files you need
 
 The class is often copied out of this repository on its own. The full set is:
 
-| File           | When                                                                  |
-| -------------- | --------------------------------------------------------------------- |
-| `armymemo.cls` | always                                                                |
-| `DODb1.pdf`    | always, unless you point `\logo{...}` at your own image              |
-| `digsig.sty`   | only with the `digsig` class option                                   |
+| File           | When                                                    |
+| -------------- | ------------------------------------------------------- |
+| `armymemo.cls` | always                                                  |
+| `DODb1.pdf`    | always, unless you point `\logo{...}` at your own image |
+| `digsig.sty`   | only with the `digsig` class option                     |
 
 Put them beside your document, or anywhere TeX searches. A missing logo is reported by
 name with a class error rather than failing inside `graphicx`.
@@ -79,19 +90,24 @@ AR 25-50 5-10.b requires two spaces between the state and the ZIP code. Write th
 ## Building
 
 ```sh
-make                # build every examples/*.pdf
-make test           # rebuild the examples and diff against the golden files
-make golden         # recapture the golden files after an intended output change
-make check          # chktex armymemo.cls
-make clean          # remove built PDFs and aux files
+task                # build every examples/*.pdf
+task test           # rebuild the examples and diff against the golden files
+task golden         # recapture the golden files after an intended output change
+task check          # chktex armymemo.cls
+task lint           # every gating linter: Python, shell, LaTeX
+task format         # reformat armymemo.cls and the examples with latexindent
+task clean          # remove built PDFs and aux files
 
 cd examples && latexmk -lualatex example.tex     # build one example
 ```
 
-`make test` is the regression check: it extracts the text and page count from every
+Builds are driven by [go-task](https://taskfile.dev) (`Taskfile.yml`); `task --list`
+prints the current set.
+
+`task test` is the regression check: it extracts the text and page count from every
 rendered example and compares them against `examples/golden/`. A class change that is
 meant to preserve output should leave it green; one that is meant to change output
-updates the goldens with `make golden`, and the resulting diff is the review evidence.
+updates the goldens with `task golden`, and the resulting diff is the review evidence.
 
 Add `-pvc` to the `latexmk` invocation for continuous preview while drafting; leave it off
 for one-shot builds.
@@ -218,7 +234,7 @@ Any other option is passed through to KOMA-Script's `scrartcl`, which the class 
 
 ## Examples
 
-`examples/` holds working documents that exercise the class; each is built by `make`.
+`examples/` holds working documents that exercise the class; each is built by `task`.
 
 | File               | Shows                                                                                                                                                      |
 | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -230,7 +246,7 @@ Any other option is passed through to KOMA-Script's `scrartcl`, which the class 
 The table covers the demonstration documents. The rest of `examples/` are regression
 fixtures, each added to pin down one behaviour that was previously untested — a wrapping
 subject, a single address, a memo with no enclosures, the active `"` character, and so on.
-The file's own header comment says what it asserts and which change would move it. `make
+The file's own header comment says what it asserts and which change would move it. `task
 test` builds all of them and diffs the rendered text against `examples/golden/`.
 
 `examples/armymemo.cls`, `examples/digsig.sty`, and `examples/DODb1.pdf` are symlinks to

@@ -1,0 +1,49 @@
+# Ruff configuration for the repo's Python tooling under tools/.
+#
+# Nothing here restates a ruff default. line-length (88) and target-version
+# (py310) were both set to their own defaults in an earlier revision and are
+# gone; if you find yourself adding a key, check `ruff config <key>` for its
+# default first and leave it out when they match.
+
+[lint]
+# Everything, then subtract. The default set (E4, E7, E9, F) is narrow enough to
+# pass almost anything, and the preference here is for the pedantic end of the
+# dial. The ignore list below is the whole cost of that, and it is meant to stay
+# short -- prefer fixing the code. S607 (partial executable path) and the whole
+# D (docstring) family were cleared that way rather than switched off.
+select = ["ALL"]
+
+ignore = [
+  # The repo does not put copyright headers on its tooling: tools/run-tests.sh
+  # has none either. The GPL notice lives in armymemo.cls and LICENSE, which is
+  # where it means something.
+  "CPY001",
+
+  # Every subprocess call here is a fixed argv -- an absolute path from
+  # shutil.which plus literal flags and a user-supplied PDF path. S603 fires on
+  # subprocess.run regardless of how the arguments were built, so it cannot be
+  # satisfied by any change short of not calling Poppler.
+  "S603",
+
+  # This is a command-line script whose output *is* the list of extracted
+  # filenames. print is the interface, not a debugging leftover.
+  "T201",
+
+  # Ruff's own formatter warns that COM812 conflicts with it and recommends
+  # disabling the rule -- the formatter already decides trailing commas.
+  "COM812",
+
+  # D203/D211 and D212/D213 are mutually exclusive pairs; ruff warns on every
+  # run until one of each is chosen. These two are the halves ruff itself drops.
+  "D203",
+  "D213",
+]
+
+# AR 25-50 prints en dashes, not hyphens: its figures are captioned "Figure 2–1"
+# and the downloaded PDF is named "Army Regulation 25–50.pdf". The extractor's
+# caption regex and default path must therefore contain real en dashes, and
+# RUF001 flags each as a confusable. Allowing the two dash characters keeps the
+# rule live for genuinely suspicious lookalikes (Cyrillic а, Greek ο) while
+# accepting the ones this repo cannot avoid. Do not "fix" these to hyphens --
+# it silently breaks caption matching against the regulation.
+allowed-confusables = ["–", "—"]

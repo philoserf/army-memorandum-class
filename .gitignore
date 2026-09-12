@@ -279,15 +279,33 @@ examples/example*.pdf
 # Harness scratch directory (diffs and per-build extractions).
 .test-work/
 
-# Local reference copy of AR 25-50 itself. The regulation is the specification
-# this class implements, so a copy is worth keeping at hand while working -- but
-# it is a downloaded reference, not a source or a build input, and it is reissued
-# on its own schedule. README's References section links the record page, which
-# survives reissue, so the tree needs a link rather than a binary.
+# latexindent's cruft directory -- backup files and indent.log, routed here by
+# `-c` in the format/lint tasks so they do not land in the repo root.
+.latexindent/
+
+# Local review notes. POST-0.4.0-REVIEW.md is a working document for the
+# maintainer's own later review, not part of the repository's documentation and
+# deliberately not part of any PR. Ignored so that a `git add -A` cannot sweep it
+# in -- which is exactly what happened once before this rule existed.
+POST-*-REVIEW.md
+
+# go-task's fingerprint cache. `task` stores a checksum per task here to decide
+# what is up to date; it is derived state and rebuilds itself. Deleting it just
+# forces one full rebuild.
+.task/
+
+# Downloaded reference material -- the regulation this class implements, the
+# figures extracted from it, and any related DoD/DA publications or templates.
+# These are downloaded references, not sources and not build inputs, and each is
+# reissued on its own schedule. So the tree carries a tracked index of stable
+# record-page URLs (references/README.md) rather than the binaries themselves.
 #
-# Both the en dash and hyphen spellings, and either naming convention.
-# Deliberately narrow: DODb1.pdf and the seal images are build *inputs*, tracked,
-# which is why this file has no blanket *.pdf rule.
-Army Regulation 25*.pdf
-AR 25-50*.pdf
-AR 25–50*.pdf
+# The trailing /* is load-bearing: git does not descend into an ignored
+# directory, so `references/` plus a negation would hide README.md along with
+# everything else. Ignoring the *contents* is what leaves the negation reachable.
+#
+# Deliberately scoped: DODb1.pdf and DOW-Seal-BW.pdf at the repo root, and
+# examples/imperialseal-536x536.jpg, are build *inputs* and stay tracked --
+# which is why this file still has no blanket *.pdf rule.
+references/*
+!references/README.md

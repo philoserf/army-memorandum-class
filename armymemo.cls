@@ -50,23 +50,23 @@
 % silently produce a non-compliant memo. headings=small and DIV=15 are layout
 % choices this class makes on the author's behalf.
 \LoadClass[
-  12pt,
-  oneside,
-  headings=small,
-  DIV=15
+	12pt,
+	oneside,
+	headings=small,
+	DIV=15
 ]{scrartcl}
 
 \AtBeginDocument{%
-  \am@putlogo%
-  \dodheader%
-  \vspace*{1\baselineskip}
+	\am@putlogo%
+	\dodheader%
+	\vspace*{1\baselineskip}
 }
 
 \AtEndDocument{%
-  \setlength{\parskip}{0pt}
-  \am@closing%
-  \am@distro%
-  \am@cf%
+	\setlength{\parskip}{0pt}
+	\am@closing%
+	\am@distro%
+	\am@cf%
 }
 
 
@@ -93,22 +93,22 @@
 % but never silently: AR 25-50 is the specification, and a quiet substitution
 % hands the author a memo that looks finished and is not compliant.
 \IfFontExistsTF{Times New Roman}{%
-  \setmainfont{Times New Roman}%
+	\setmainfont{Times New Roman}%
 }{%
-  \ClassWarningNoLine{armymemo}{%
-    Times New Roman not found;\MessageBreak%
-    falling back to TeX Gyre Termes.\MessageBreak%
-    Metrics match but this is NOT the AR 25-50 font}% chktex 8
-  \setmainfont{TeX Gyre Termes}%
+	\ClassWarningNoLine{armymemo}{%
+		Times New Roman not found;\MessageBreak%
+		falling back to TeX Gyre Termes.\MessageBreak%
+		Metrics match but this is NOT the AR 25-50 font}% chktex 8
+	\setmainfont{TeX Gyre Termes}%
 }
 \IfFontExistsTF{Arial}{%
-  \setsansfont{Arial}%
+	\setsansfont{Arial}%
 }{%
-  \ClassWarningNoLine{armymemo}{%
-    Arial not found;\MessageBreak%
-    falling back to TeX Gyre Heros.\MessageBreak%
-    Metrics match but this is NOT the AR 25-50 letterhead font}% chktex 8
-  \setsansfont{TeX Gyre Heros}%
+	\ClassWarningNoLine{armymemo}{%
+		Arial not found;\MessageBreak%
+		falling back to TeX Gyre Heros.\MessageBreak%
+		Metrics match but this is NOT the AR 25-50 letterhead font}% chktex 8
+	\setsansfont{TeX Gyre Heros}%
 }
 
 % used to change date format
@@ -147,24 +147,24 @@
 % held together by box structure, not penalties -- see \am@closing.
 \RequirePackage{needspace}
 \RequirePackage[letterpaper
-  ,margin=1in
-  % in order to get 2-line offset between bottom of text and page number
-  % (because it looks nicer)
-  ,bottom=1in-2\baselineskip
-  ,includehead
-  % includefoot, but then we manually adjust the bottom margin above, in order
-  % to also adjust the overall \textheight
-  % also the AR examples show the page number above the classification marking
-  ,includefoot
-  ,footskip=3\baselineskip
-  ,footnotesep=\baselineskip
-  % Two lines is the common case: office symbol, then a SUBJECT that fits on one
-  % line. A longer subject wraps and needs a third, which \am@fitheadheight
-  % measures and asks geometry for -- see it for why growing the head is the
-  % regulation-correct direction.
-  ,headheight=2\baselineskip
-  ,headsep=2\baselineskip
-  ]{geometry}
+	,margin=1in
+	% in order to get 2-line offset between bottom of text and page number
+	% (because it looks nicer)
+	,bottom=1in-2\baselineskip
+	,includehead
+	% includefoot, but then we manually adjust the bottom margin above, in order
+	% to also adjust the overall \textheight
+	% also the AR examples show the page number above the classification marking
+	,includefoot
+	,footskip=3\baselineskip
+	,footnotesep=\baselineskip
+	% Two lines is the common case: office symbol, then a SUBJECT that fits on one
+	% line. A longer subject wraps and needs a third, which \am@fitheadheight
+	% measures and asks geometry for -- see it for why growing the head is the
+	% regulation-correct direction.
+	,headheight=2\baselineskip
+	,headsep=2\baselineskip
+]{geometry}
 % make sure the paragraph spacing matches the linespacing
 \setlength{\parskip}{\baselineskip}
 % Skip-separated paragraphs and a first-line indent are mutually redundant, so the indent
@@ -202,28 +202,28 @@
 % been set, in either order. Documents whose subject fits on one line measure at or
 % below 2\baselineskip and are left completely alone.
 \newcommand{\am@fitheadheight}{%
-  \setbox\z@=\vbox{%
-    \hsize=\textwidth
-    % The preamble parks \@nodocument in \everypar, so starting a paragraph here --
-    % even sealed inside this box -- would raise "Missing \begin{document}". Clearing
-    % it is local to the box group.
-    \everypar{}%
-    \usekomafont{pagehead}%
-    \am@officesymbol\hspace*{\fill}\\\am@subject\par
-  }%
-  % Round UP to whole lines. Two reasons: the natural box height is a few points
-  % short of what the head actually reserves (measured: it still overflowed by
-  % 3.24pt when asked for the exact height), and whole lines are the unit this
-  % class lays out in -- headheight and headsep are both declared in \baselineskip.
-  \@tempdima=\dimexpr\ht\z@+\dp\z@\relax
-  \@tempcnta=\@tempdima
-  \@tempcntb=\dimexpr\baselineskip\relax
-  \divide\@tempcnta by \@tempcntb
-  \advance\@tempcnta by \@ne
-  \@tempdimb=\@tempcnta\baselineskip\relax
-  \ifdim\@tempdimb>\headheight
-    \geometry{headheight=\the\@tempdimb}%
-  \fi
+	\setbox\z@=\vbox{%
+		\hsize=\textwidth
+		% The preamble parks \@nodocument in \everypar, so starting a paragraph here --
+		% even sealed inside this box -- would raise "Missing \begin{document}". Clearing
+		% it is local to the box group.
+		\everypar{}%
+		\usekomafont{pagehead}%
+		\am@officesymbol\hspace*{\fill}\\\am@subject\par
+	}%
+	% Round UP to whole lines. Two reasons: the natural box height is a few points
+	% short of what the head actually reserves (measured: it still overflowed by
+	% 3.24pt when asked for the exact height), and whole lines are the unit this
+	% class lays out in -- headheight and headsep are both declared in \baselineskip.
+	\@tempdima=\dimexpr\ht\z@+\dp\z@\relax
+	\@tempcnta=\@tempdima
+	\@tempcntb=\dimexpr\baselineskip\relax
+	\divide\@tempcnta by \@tempcntb
+	\advance\@tempcnta by \@ne
+	\@tempdimb=\@tempcnta\baselineskip\relax
+	\ifdim\@tempdimb>\headheight
+		\geometry{headheight=\the\@tempdimb}%
+	\fi
 }
 \AtEndPreamble{\am@fitheadheight}
 \cofoot[]{\thepage}
@@ -267,7 +267,7 @@
 % stay whole AND must be accompanied by at least two lines of the body. Removing this
 % would satisfy one half by violating the other.
 \setlist[1]{labelwidth=12pt,labelsep=4pt,leftmargin=0pt,itemindent=16pt,align=left,
-  after={\nopagebreak\@nobreaktrue}}
+	after={\nopagebreak\@nobreaktrue}}
 \setlist[2]{labelwidth=12pt,labelsep=4pt,leftmargin=0pt,itemindent=0.5in,align=left}
 \setlist[3]{labelwidth=12pt,labelsep=4pt,leftmargin=0pt,itemindent=0.75in,align=left}
 \setlist[4]{labelwidth=12pt,labelsep=4pt,leftmargin=0pt,itemindent=0.75in,align=left}
@@ -281,13 +281,13 @@
 % page header re-expands a single missing field on every page, which is a different
 % situation entirely.
 \DeclareRobustCommand{\am@toodeep}{%
-  \textcolor{red}{[AR 25-50]}% chktex 8
-  \ClassWarningNoLine{armymemo}{%
-    AR 25-50 prohibits subdivision beyond the third\MessageBreak% chktex 8
-    subdivision; level 5 is not supported}%
+	\textcolor{red}{[AR 25-50]}% chktex 8
+	\ClassWarningNoLine{armymemo}{%
+		AR 25-50 prohibits subdivision beyond the third\MessageBreak% chktex 8
+		subdivision; level 5 is not supported}%
 }
 \setlist[5]{labelwidth=12pt,labelsep=4pt,leftmargin=0pt,itemindent=1.0in,align=left,
-  label={\am@toodeep}}
+	label={\am@toodeep}}
 
 % Superscript ordinal for unit designations, as in 501\st\ Legion. It usually
 % needs a following '\ ' to keep the interword space.
@@ -315,20 +315,20 @@
 %
 %   #1 severity: error or warning   #2 field name   #3 visible placeholder
 \newcommand{\am@MissingRequiredArg}[3]{%
-  \textcolor{red}{#3}%
-  \ifcsdef{am@reported@#2}{}{%
-    \csgdef{am@reported@#2}{}%
-    \ifstrequal{#1}{error}{%
-      \ClassError{armymemo}{%
-        #2 is a required field}{%
-        Set it in the preamble.\MessageBreak%
-        A red placeholder has been substituted in the output.}%
-    }{%
-      \ClassWarningNoLine{armymemo}{%
-        #2 is a required field;\MessageBreak%
-        a red placeholder has been substituted in the output}%
-    }%
-  }%
+	\textcolor{red}{#3}%
+	\ifcsdef{am@reported@#2}{}{%
+		\csgdef{am@reported@#2}{}%
+		\ifstrequal{#1}{error}{%
+			\ClassError{armymemo}{%
+				#2 is a required field}{%
+				Set it in the preamble.\MessageBreak%
+				A red placeholder has been substituted in the output.}%
+		}{%
+			\ClassWarningNoLine{armymemo}{%
+				#2 is a required field;\MessageBreak%
+				a red placeholder has been substituted in the output}%
+		}%
+	}%
 }
 
 % header info
@@ -340,8 +340,8 @@
 % \ifdefempty applied to it can ever take the empty branch. Only a macro whose body IS
 % the value can be tested. Do not "simplify" this away.
 \newcommand{\suspensedate}[1]{%
-  \def\am@suspensedate@raw{#1}%
-  \def\am@suspensedate{\ifstrempty{#1}{}{\textbf{S: #1}}}%
+	\def\am@suspensedate@raw{#1}%
+	\def\am@suspensedate{\ifstrempty{#1}{}{\textbf{S: #1}}}%
 }\suspensedate{}
 \newcommand{\officesymbol}[1]{\def \am@officesymbol{#1}}
 \officesymbol{\am@MissingRequiredArg{error}{officesymbol}{OFFICE SYMBOL}}
@@ -399,40 +399,40 @@
 \newcommand{\multimemofor}[1]{\listadd{\am@list@memofor}{#1}}
 
 \newcommand{\am@memoline}{%
-  % if there is nothing specified, add "memorandum for record"
-  \ifdefvoid{\am@list@memolines}{%
-    \ifdefvoid{\am@list@memothru}{
-      \ifdefvoid{\am@list@memofor}{
-        \mfr
-      }{}
-    }{}
-  }{}
-  % otherwise, skip a space and begin
-  \vspace{\baselineskip}
-  % if there are multimemothru lines:
-  \ifdefvoid{\am@list@memothru}{}{%
-    \vspace{\baselineskip}
-    MEMORANDUM THRU\\
-    \vspace{\baselineskip}
-    % loop through the thru lines with hanging indent
-    \forlistloop{\am@do@hangline}{\am@list@memothru}}%
-  \ifdefvoid{\am@list@memofor}{}{%
-    \ifdefvoid{\am@list@memothru}{%
-      \vspace{\baselineskip}
-      MEMORANDUM FOR\\ % if there is no thru
-      \vspace{\baselineskip}
-    }{%
-      \vspace{\baselineskip}
-      FOR\\ % if there is a thru, it should just be for, not memorandum for
-      \vspace{\baselineskip}
-    }
-    \forlistloop{\am@do@hangline}{\am@list@memofor}}%
-  \ifdefvoid{\am@list@memolines}{}{%
-    % after dealing with special cases, add the other lines from \memoline
-    % these lines must begin with any labels such as "MEMORANDUM FOR" or "MEMORANDUM THRU" or "FOR"
-    % allow for possibility of no multi lines.
-    \forlistloop{\am@domemoline}{\am@list@memolines}
-  }%
+	% if there is nothing specified, add "memorandum for record"
+	\ifdefvoid{\am@list@memolines}{%
+		\ifdefvoid{\am@list@memothru}{
+			\ifdefvoid{\am@list@memofor}{
+				\mfr
+			}{}
+		}{}
+	}{}
+	% otherwise, skip a space and begin
+	\vspace{\baselineskip}
+	% if there are multimemothru lines:
+	\ifdefvoid{\am@list@memothru}{}{%
+		\vspace{\baselineskip}
+		MEMORANDUM THRU\\
+		\vspace{\baselineskip}
+		% loop through the thru lines with hanging indent
+		\forlistloop{\am@do@hangline}{\am@list@memothru}}%
+	\ifdefvoid{\am@list@memofor}{}{%
+		\ifdefvoid{\am@list@memothru}{%
+			\vspace{\baselineskip}
+			MEMORANDUM FOR\\ % if there is no thru
+			\vspace{\baselineskip}
+		}{%
+			\vspace{\baselineskip}
+			FOR\\ % if there is a thru, it should just be for, not memorandum for
+			\vspace{\baselineskip}
+		}
+		\forlistloop{\am@do@hangline}{\am@list@memofor}}%
+	\ifdefvoid{\am@list@memolines}{}{%
+		% after dealing with special cases, add the other lines from \memoline
+		% these lines must begin with any labels such as "MEMORANDUM FOR" or "MEMORANDUM THRU" or "FOR"
+		% allow for possibility of no multi lines.
+		\forlistloop{\am@domemoline}{\am@list@memolines}
+	}%
 }
 
 
@@ -484,30 +484,30 @@
 % that absence has to be reproduced, not defaulted.
 \newcommand{\am@encls@numbered}{leftmargin=16pt,itemindent=0pt,align=left,label={\arabic*.}}
 \newcommand{\am@encls@list}[1]{%
-  \begin{enumerate}[topsep=0pt,itemsep=0pt,parsep=0pt,#1]
-    \forlistloop{\am@do@encl}{\am@list@encls}
-  \end{enumerate}%
+	\begin{enumerate}[topsep=0pt,itemsep=0pt,parsep=0pt,#1]
+		\forlistloop{\am@do@encl}{\am@list@encls}
+	\end{enumerate}%
 }
 \newcommand{\am@encls}{%
-  \ifnumcomp{\value{am@encl@count}}{=}{0}{}{%
-    \ifbool{am@encls@nocount}{%
-      \def\am@encl@head{Encls}%
-      \let\am@encl@opts\am@encls@numbered
-    }{%
-      \ifnumcomp{\value{am@encl@count}}{=}{1}{%
-        \def\am@encl@head{Encl}%
-        \def\am@encl@opts{itemindent=0pt,align=left,label={}}%
-      }{%
-        \def\am@encl@head{\theam@encl@count{} Encls}%
-        \let\am@encl@opts\am@encls@numbered
-      }%
-    }%
-    \am@encl@head%
-    % \expandafter, because enumitem's keyval parser does not expand a macro in the
-    % optional argument -- it would read the whole of \am@encl@opts as one key name.
-    % One expansion step hands it the option text while leaving \arabic* alone.
-    \expandafter\am@encls@list\expandafter{\am@encl@opts}%
-  }%
+	\ifnumcomp{\value{am@encl@count}}{=}{0}{}{%
+		\ifbool{am@encls@nocount}{%
+			\def\am@encl@head{Encls}%
+			\let\am@encl@opts\am@encls@numbered
+		}{%
+			\ifnumcomp{\value{am@encl@count}}{=}{1}{%
+				\def\am@encl@head{Encl}%
+				\def\am@encl@opts{itemindent=0pt,align=left,label={}}%
+			}{%
+				\def\am@encl@head{\theam@encl@count{} Encls}%
+				\let\am@encl@opts\am@encls@numbered
+			}%
+		}%
+		\am@encl@head%
+		% \expandafter, because enumitem's keyval parser does not expand a macro in the
+		% optional argument -- it would read the whole of \am@encl@opts as one key name.
+		% One expansion step hands it the option text while leaving \arabic* alone.
+		\expandafter\am@encls@list\expandafter{\am@encl@opts}%
+	}%
 }
 
 % The closing block: authority line, the reserved signing space, and a two-column
@@ -539,38 +539,38 @@
 % allowed to break; boxing it would reproduce the failure that stopped the first
 % attempt.
 \newcommand{\am@sigblock}{%
-  \ifbool{am@digsig}{%
-    % A pure overlay on the signing space already reserved above the row, anchored
-    % at the left edge of this column. Three details, each load-bearing:
-    %   \rlap      -- zero width. Without it the field keeps its 3in width and the
-    %                 author's name starts after it and wraps.
-    %   [0pt][0pt] -- zero height and depth, so the field does not add a second gap.
-    %   \noindent  -- \rlap is an \hbox, and an \hbox in vertical mode joins the
-    %                 vertical list as its own box rather than the name's line.
-    %                 digsig.sty documents exactly this ("the macro does not change
-    %                 TeX's mode").
-    \noindent\rlap{\raisebox{\baselineskip}[0pt][0pt]{%
-      \begin{Form}\digsigfield{3in}{3\baselineskip}{signature}\end{Form}%
-    }}%
-  }{}%
-  {\MakeUppercase\am@author}\\
-  \ifdefempty{\am@branch}{\am@rank}{\am@rank, \am@branch}\\
-  \am@title
+	\ifbool{am@digsig}{%
+		% A pure overlay on the signing space already reserved above the row, anchored
+		% at the left edge of this column. Three details, each load-bearing:
+		%   \rlap      -- zero width. Without it the field keeps its 3in width and the
+		%                 author's name starts after it and wraps.
+		%   [0pt][0pt] -- zero height and depth, so the field does not add a second gap.
+		%   \noindent  -- \rlap is an \hbox, and an \hbox in vertical mode joins the
+		%                 vertical list as its own box rather than the name's line.
+		%                 digsig.sty documents exactly this ("the macro does not change
+		%                 TeX's mode").
+		\noindent\rlap{\raisebox{\baselineskip}[0pt][0pt]{%
+				\begin{Form}\digsigfield{3in}{3\baselineskip}{signature}\end{Form}%
+			}}%
+	}{}%
+	{\MakeUppercase\am@author}\\
+	\ifdefempty{\am@branch}{\am@rank}{\am@rank, \am@branch}\\
+	\am@title
 }
 \newcommand{\am@closing}{%
-  \vspace*{\baselineskip}%
-  \noindent\parbox[t]{\textwidth}{%
-    % The signature column sits at exactly 0.5\textwidth, which AR 25-50 fixes.
-    % Character protrusion would drag the first glyph of each line a fraction of a
-    % point out of that column -- correct for justified prose, wrong for a block
-    % aligned to a rule. Off for the closing only.
-    \microtypesetup{protrusion=false}%
-    \noindent\am@authorityline\par
-    \vspace*{4\baselineskip}%
-    \noindent
-    \parbox[t]{0.5\textwidth}{\am@encls}%
-    \parbox[t]{0.5\textwidth}{\am@sigblock}%
-  }\par
+	\vspace*{\baselineskip}%
+	\noindent\parbox[t]{\textwidth}{%
+		% The signature column sits at exactly 0.5\textwidth, which AR 25-50 fixes.
+		% Character protrusion would drag the first glyph of each line a fraction of a
+		% point out of that column -- correct for justified prose, wrong for a block
+		% aligned to a rule. Off for the closing only.
+		\microtypesetup{protrusion=false}%
+		\noindent\am@authorityline\par
+		\vspace*{4\baselineskip}%
+		\noindent
+		\parbox[t]{0.5\textwidth}{\am@encls}%
+		\parbox[t]{0.5\textwidth}{\am@sigblock}%
+	}\par
 }
 
 % add distribution
@@ -583,20 +583,20 @@
 \newcommand{\am@do}[1]{#1\\}
 \newcommand{\adddistro}[1]{\listadd{\am@list@distro}{#1}}
 \newcommand{\am@distro}{%
-  \ifdefvoid{\am@list@distro}{}{%
-    \vspace{\baselineskip}%
-    \Needspace*{3\baselineskip}%
-    DISTRIBUTION:\\*%
-    \forlistloop{\am@do}{\am@list@distro}}}
+	\ifdefvoid{\am@list@distro}{}{%
+		\vspace{\baselineskip}%
+		\Needspace*{3\baselineskip}%
+		DISTRIBUTION:\\*%
+		\forlistloop{\am@do}{\am@list@distro}}}
 
 % add cf
 \newcommand{\addcf}[1]{\listadd{\am@list@cf}{#1}}
 \newcommand{\am@cf}{%
-  \ifdefvoid{\am@list@cf}{}{%
-    \vspace{\baselineskip}%
-    \Needspace*{3\baselineskip}%
-    CF:\\*%
-    \forlistloop{\am@do}{\am@list@cf}}}
+	\ifdefvoid{\am@list@cf}{}{%
+		\vspace{\baselineskip}%
+		\Needspace*{3\baselineskip}%
+		CF:\\*%
+		\forlistloop{\am@do}{\am@list@cf}}}
 
 
 
@@ -615,10 +615,10 @@
 % own anchor edge) while leaving their widths identical. Pinning it to zero makes
 % the 24pt and 36pt offsets mean what they say, independent of ambient font size.
 \newcommand{\am@classmark}[1]{%
-  \begin{tikzpicture}[overlay]
-    \node[align=center,anchor=north,inner sep=0pt,yshift=-24pt] at (0.5\paperwidth,0pt) {#1};
-    \node[align=center,anchor=south,inner sep=0pt,yshift=36pt] at (0.5\paperwidth,-\paperheight) {#1};
-  \end{tikzpicture}%
+	\begin{tikzpicture}[overlay]
+		\node[align=center,anchor=north,inner sep=0pt,yshift=-24pt] at (0.5\paperwidth,0pt) {#1};
+		\node[align=center,anchor=south,inner sep=0pt,yshift=36pt] at (0.5\paperwidth,-\paperheight) {#1};
+	\end{tikzpicture}%
 }
 
 % Classification marks, top and bottom of every page, through the kernel's own
@@ -643,9 +643,9 @@
 % instead of nothing (#15). \am@documentmark's body IS its value, so \ifdefempty is live
 % here; \suspensedate needs a separate raw macro because its body is a conditional.
 \AddToHook{shipout/background}{%
-  \ifdefempty{\am@documentmark}{}{%
-    \color{black}\am@classmark{\am@documentmark}%
-  }%
+	\ifdefempty{\am@documentmark}{}{%
+		\color{black}\am@classmark{\am@documentmark}%
+	}%
 }
 
 % A missing logo file fails deep inside graphicx with a bare "File `DODb1' not found"
@@ -659,28 +659,33 @@
 % drift out of sync the way a hard-coded copy would.
 \newbool{am@logo@found}
 \newcommand{\am@findlogo}{%
-  \boolfalse{am@logo@found}%
-  \IfFileExists{\am@logo}{\booltrue{am@logo@found}}{%
-    \@for\am@logo@ext:=\Gin@extensions\do{%
-      \ifbool{am@logo@found}{}{%
-        \IfFileExists{\am@logo\am@logo@ext}{\booltrue{am@logo@found}}{}%
-      }%
-    }%
-  }%
+	\boolfalse{am@logo@found}%
+	\IfFileExists{\am@logo}{\booltrue{am@logo@found}}{%
+		\@for\am@logo@ext:=\Gin@extensions\do{%
+			\ifbool{am@logo@found}{}{%
+				\IfFileExists{\am@logo\am@logo@ext}{\booltrue{am@logo@found}}{}%
+			}%
+		}%
+	}%
 }
 \newcommand{\am@putlogo}{%
-  \am@findlogo
-  \ifbool{am@logo@found}{%
-    \begin{tikzpicture}[remember picture, overlay]%
-      \node[anchor=north west,inner sep=0pt,xshift=0.5in, yshift=-0.5in]%
-        at (current page.north west) {\includegraphics[width=1in]{\am@logo}};%
-    \end{tikzpicture}%
-  }{%
-    \ClassError{armymemo}{Logo file '\am@logo' not found}{%
-      armymemo draws a letterhead logo and could not find '\am@logo'.\MessageBreak%
-      The class ships DODb1.pdf; copy it beside your document, or point\MessageBreak%
-      \string\logo{} at your own image file.}%
-  }%
+	\am@findlogo
+	\ifbool{am@logo@found}{%
+		\begin{tikzpicture}[remember picture, overlay]%
+			% These four numbers are no longer unverified. APD's DALetterhead.dotm anchors the
+			% seal to the *page* at a 0.5in horizontal and 0.5in vertical offset and gives it a
+			% 1.000 x 1.000 in extent -- exactly the anchor, the two shifts and the width below.
+			% The template also confirms the mark is the DoD seal. Recovered from an Internet
+			% Archive capture; the live APD page is behind Army SSO. See references/README.md.
+			\node[anchor=north west,inner sep=0pt,xshift=0.5in, yshift=-0.5in]%
+			at (current page.north west) {\includegraphics[width=1in]{\am@logo}};%
+		\end{tikzpicture}%
+	}{%
+		\ClassError{armymemo}{Logo file '\am@logo' not found}{%
+			armymemo draws a letterhead logo and could not find '\am@logo'.\MessageBreak%
+			The class ships DODb1.pdf; copy it beside your document, or point\MessageBreak%
+			\string\logo{} at your own image file.}%
+	}%
 }
 
 
@@ -697,51 +702,60 @@
 % observed, produces byte-identical output.
 \newcommand{\am@do@address}[1]{\fontsize{8pt}{8pt}\selectfont\textbf{\MakeUppercase{#1}}\\}
 \newcommand{\dodheader}{%
-  % Defaults apply only when the document supplied no address at all. This used to
-  % test {<}{2} on a counter, so a document supplying exactly ONE address fell below
-  % the threshold and had all three placeholders appended to its real line -- a
-  % four-line letterhead beginning with the truth and continuing with boilerplate.
-  \ifdefvoid{\am@list@address}{%
-    \address{Organizational Name/Title}
-	 \address{Standardized Street Address}
-	 \address{City, State~~12345-1234}
-  }{}
-  \thispagestyle{plain}%
-  \begin{tikzpicture}[remember picture, overlay]%
-    % \setstretch{0.7} is load-bearing, and by accident (#18). It scales every declared
-    % \baselineskip to 0.7x, which puts the letterhead's leading below the height+depth of
-    % the lines being set. TeX then abandons \baselineskip entirely and inserts \lineskip
-    % glue instead, so the pitch becomes height + depth + \lineskip -- nothing the source
-    % declares. That is why the two gaps differ: 11.54pt after the 10pt DEPARTMENT line and
-    % 10.11pt between the 8pt address lines, neither of them 5pt, 0.7x anything, or equal.
-    %
-    % Measured, so it is not guesswork: deleting \setstretch moves the address pitch to
-    % 14.45pt (the ambient 12pt \baselineskip), and changing the declared leading with
-    % \setstretch in place changes nothing at all.
-    %
-    % Do not "fix" this by deleting \setstretch or tuning a \fontsize leading. AR 25-50
-    % prescribes no letterhead geometry -- 1-16 delegates it to a template on APD's
-    % website, and 1-19 only recommends 12pt generally -- so there is no regulation figure
-    % to target, and today's geometry is preserved deliberately.
-    \setstretch{0.7}\fontfamily\sfdefault\selectfont%
-    \node[align=center,anchor=north,inner sep=0pt,yshift=-0.625in] at (current page.north) {%
-      \fontsize{10pt}{10pt}\selectfont\textbf{\am@department}\\
-      \forlistloop{\am@do@address}{\am@list@address}
-    };%%
-  \end{tikzpicture}%%
-  \par%there must be a \par here, or things break!
-  \vspace{-2\baselineskip}
-  % Conditional block for the optional suspense date. Tests \am@suspensedate@raw, not
-  % \am@suspensedate -- see \suspensedate for why testing the formatted macro cannot work.
-  % This guard was dead until #15: it always took the non-empty branch, so the spacing
-  % below applied to every memo whether or not it had a suspense date.
-  \ifdefempty{\am@suspensedate@raw}{}{%
-    \vspace{-2\baselineskip}
-    \,\hspace*{\fill}\am@suspensedate\\
-    \vspace{\baselineskip}}
-  \am@officesymbol\hspace*{\fill}\am@signaturedate\\
-  \am@memoline
-  \vspace{\baselineskip}
-  \am@subject
-  \par
+	% Defaults apply only when the document supplied no address at all. This used to
+	% test {<}{2} on a counter, so a document supplying exactly ONE address fell below
+	% the threshold and had all three placeholders appended to its real line -- a
+	% four-line letterhead beginning with the truth and continuing with boilerplate.
+	\ifdefvoid{\am@list@address}{%
+		\address{Organizational Name/Title}
+		\address{Standardized Street Address}
+		\address{City, State~~12345-1234}
+	}{}
+	\thispagestyle{plain}%
+	\begin{tikzpicture}[remember picture, overlay]%
+		% \setstretch{0.7} is load-bearing, and by accident (#18). It scales every declared
+		% \baselineskip to 0.7x, which puts the letterhead's leading below the height+depth of
+		% the lines being set. TeX then abandons \baselineskip entirely and inserts \lineskip
+		% glue instead, so the pitch becomes height + depth + \lineskip -- nothing the source
+		% declares. That is why the two gaps differ: 11.54pt after the 10pt DEPARTMENT line and
+		% 10.11pt between the 8pt address lines, neither of them 5pt, 0.7x anything, or equal.
+		%
+		% Measured, so it is not guesswork: deleting \setstretch moves the address pitch to
+		% 14.45pt (the ambient 12pt \baselineskip), and changing the declared leading with
+		% \setstretch in place changes nothing at all.
+		%
+		% Do not "fix" this by deleting \setstretch or tuning a \fontsize leading. AR 25-50
+		% prescribes no letterhead geometry -- 1-16 delegates it to a template on APD's
+		% website, and 1-19 only recommends 12pt generally -- so the regulation itself gives
+		% no figure to target, and today's geometry is preserved deliberately.
+		%
+		% The template AR 1-16 delegates to has since been recovered (DALetterhead.dotm, from
+		% an Internet Archive capture of APD's resources page; the live page is behind Army
+		% SSO). It is a Word .dotm, so it reads as OOXML, and it settles two of these numbers
+		% rather than leaving them to taste: the department line is 10pt, which is what is set
+		% below, and the template's default font is Arial, which is what \sfdefault resolves
+		% to here. The address lines' size is left inheriting in the template and does not
+		% resolve cleanly, so the 8pt used here remains this class's own choice.
+		% See references/README.md.
+		\setstretch{0.7}\fontfamily\sfdefault\selectfont%
+		\node[align=center,anchor=north,inner sep=0pt,yshift=-0.625in] at (current page.north) {%
+			\fontsize{10pt}{10pt}\selectfont\textbf{\am@department}\\
+			\forlistloop{\am@do@address}{\am@list@address}
+		};%%
+	\end{tikzpicture}%%
+	\par%there must be a \par here, or things break!
+	\vspace{-2\baselineskip}
+	% Conditional block for the optional suspense date. Tests \am@suspensedate@raw, not
+	% \am@suspensedate -- see \suspensedate for why testing the formatted macro cannot work.
+	% This guard was dead until #15: it always took the non-empty branch, so the spacing
+	% below applied to every memo whether or not it had a suspense date.
+	\ifdefempty{\am@suspensedate@raw}{}{%
+		\vspace{-2\baselineskip}
+		\,\hspace*{\fill}\am@suspensedate\\
+		\vspace{\baselineskip}}
+	\am@officesymbol\hspace*{\fill}\am@signaturedate\\
+	\am@memoline
+	\vspace{\baselineskip}
+	\am@subject
+	\par
 }

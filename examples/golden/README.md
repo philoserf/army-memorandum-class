@@ -13,7 +13,7 @@ Each example has two:
 
 ## Never hand-edit these files
 
-Regenerate with `make golden`, which refuses to write unless two independent builds
+Regenerate with `task golden`, which refuses to write unless two independent builds
 extract byte-for-byte identically.
 
 The `.txt` files contain **one form feed per page**. An editor that strips or
@@ -32,8 +32,8 @@ Both fixes have now landed and the diffs are the proof:
 
 - **#26**, milestone 3 — `example-oneaddress.txt` lost the three boilerplate lines that
   had been appended to the single real address.
-- **#29**, milestone 4 — `example-noencl.txt` had `DISTRIBUTION:` printed on the *same
-  line* as the signer's name; it now sits below the closing block.
+- **#29**, milestone 4 — `example-noencl.txt` had `DISTRIBUTION:` printed on the _same
+  line_ as the signer's name; it now sits below the closing block.
 
 The technique is the point, not those two files: when a milestone is expected to change
 output, capture the broken baseline first so the fix has something to diff against.
@@ -54,5 +54,5 @@ fires.
 
 A poppler or TeX Live major upgrade can shift `-layout` column reconstruction. The
 signature of that is **every golden diffing at once, with column-only changes** — which
-is how you tell it from a real regression. The response is `make golden` plus a bump to
+is how you tell it from a real regression. The response is `task golden` plus a bump to
 the versions above, not a code fix.

@@ -1,0 +1,202 @@
+# Build and check armymemo.cls and its examples.
+#
+# Converted from the repo's single Makefile. Task names match the old targets
+# one-for-one, so `make test` is now `task test` and so on -- with `build` added
+# as a name for what used to be the bare default target.
+
+version: "3"
+
+vars:
+  # latexmk runs with cwd=examples so the examples' relative paths resolve --
+  # \documentclass{../armymemo}, \logo{../DOW-Seal-BW} and the symlinks beside
+  # them. Kept as a `cd` rather than a task-level `dir:` on purpose: `dir:` also
+  # reroots `sources:`, which would make the class and package fingerprints
+  # resolve to the examples/ symlinks instead of the real files.
+  LATEXMK: latexmk -lualatex
+
+  # Resolve a latexindent that actually runs, rather than the first one on PATH.
+  # TeX Live ships latexindent as a Perl script whose dependencies (YAML::Tiny,
+  # File::HomeDir, Log::Log4perl, Unicode::GCString) it does not install, so it
+  # aborts with "Can't locate ... in @INC" and exit 2. That would be merely
+  # annoying if it were not for this repo's own instructions: the harness and the
+  # README both prepend "$HOME/texlive/<year>/bin/<arch>" to PATH, which puts the
+  # broken copy *first*. Probing by `--version` picks the working one -- normally
+  # Homebrew's `brew install latexindent`, which vendors its Perl deps -- and
+  # falls back to the bare name so the failure is a clear "not found" rather than
+  # a wall of Perl. Same spirit as the TEXBIN probe in tools/run-tests.sh.
+  LATEXINDENT:
+    sh: >-
+      for c in /opt/homebrew/bin/latexindent /usr/local/bin/latexindent
+      $(command -v latexindent 2>/dev/null); do
+      if [ -x "$c" ] && "$c" --version >/dev/null 2>&1; then printf '%s' "$c"; exit 0; fi;
+      done; printf 'latexindent'
+
+tasks:
+  default:
+    desc: Build every examples/*.pdf
+    cmds:
+      - task: build
+
+  # The example list is gathered by shell rather than declared as this task's
+  # `sources:`. The bare `for: sources` form would work, but giving this task
+  # `sources:` also enrolls it in Task's own up-to-date check -- and with no
+  # `generates:` to compare against, a second `task build` would skip the loop
+  # entirely even when a PDF had been deleted. The per-example check belongs on
+  # build:one, which has both halves.
+  #
+  # Serial on purpose. The Makefile asked for `-j4` -- bounded, not unbounded --
+  # because thirteen examples against unlimited parallelism can race on a cold
+  # luaotfload font-names cache. A `for` loop in `cmds:` runs one at a time, which
+  # is strictly safer and measurably slower. If you reach for parallelism here,
+  # that race is what you have to bound; do not convert this into unbounded
+  # `deps:` fan-out and assume it is free.
+  build:
+    desc: Build every examples/*.pdf
+    vars:
+      TEXFILES:
+        sh: ls examples/*.tex
+    cmds:
+      - for:
+          var: TEXFILES
+          split: "\n"
+          as: TEX
+        task: build:one
+        vars:
+          TEX: "{{.TEX}}"
+
+  # One example. Split out so each PDF gets its own up-to-date check, which is
+  # what the Makefile's pattern rule gave us.
+  #
+  # The class and the bundled package are real sources, so editing either
+  # rebuilds the PDFs. They were once prerequisites of the `all` target rather
+  # than of the pattern rule, which meant a class change left every PDF stale
+  # and `make clean && make` was the documented workaround. Keep them listed
+  # here; dropping them silently brings that bug back.
+  build:one:
+    internal: true
+    label: "build {{base .TEX}}"
+    sources:
+      - "{{.TEX}}"
+      - armymemo.cls
+      - digsig.sty
+    generates:
+      - '{{.TEX | replace ".tex" ".pdf"}}'
+    cmds:
+      - cd examples && {{.LATEXMK}} {{base .TEX}}
+
+  # Deliberately has no `sources:`. It would look natural -- the Makefile rule was
+  # `check: armymemo.cls` -- but that was a prerequisite on a .PHONY target, which
+  # always ran. In Task, `sources:` without `generates:` enrolls the task in the
+  # up-to-date check, and the whole point of check is to read chktex's output every
+  # time. It does not bite today only because chktex exits 2 on the 26 warnings and
+  # Task records a fingerprint only on success; drive the count to zero and `task
+  # check` would start reporting "up to date" and skipping.
+  check:
+    desc: Run chktex against armymemo.cls
+    cmds:
+      - chktex armymemo.cls
+
+  # Every linter that can gate, in one place: ruff over the Python, shellcheck and
+  # shfmt over the shell, latexindent -k over the LaTeX, prettier over the
+  # Markdown and YAML. All four run on their own defaults; the repo carries no
+  # prettier config, and prettier's default proseWrap is `preserve`, so it
+  # normalises structure without rewrapping the hand-wrapped prose.
+  #
+  # chktex is deliberately NOT here. It reports 26 warnings against armymemo.cls
+  # on main, so including it would make `lint` permanently red and therefore
+  # useless as a gate. It lives in `check`, which is advisory, and in `test`,
+  # which ratchets it against CHKTEX_BASELINE -- failing only when the count
+  # rises. lacheck was evaluated and rejected: it has no concept of a .cls, so all
+  # 19 of its findings here are "Do not use @ in LaTeX macro names", which is
+  # exactly what an internal `am@` macro is required to do.
+  #
+  # ruff runs through `uvx` because it is not installed and is not in the global
+  # .Brewfile -- uvx fetches and caches it on first use. shellcheck and shfmt are
+  # in the .Brewfile and are expected on PATH.
+  #
+  # shfmt runs bare apart from -d (diff, non-zero on drift). There is no
+  # .editorconfig and no -i/-ci: tools/run-tests.sh is formatted to shfmt's own
+  # defaults, so the tool needs telling nothing. Adding flags here without
+  # reformatting the file would make this gate fail on correctly formatted code.
+  lint:
+    desc: Run every gating linter -- Python, shell, LaTeX, Markdown and YAML
+    cmds:
+      - uvx ruff check tools/
+      - uvx ruff format --check tools/
+      - shellcheck tools/*.sh
+      - shfmt -d tools/*.sh
+      - "{{.LATEXINDENT}} -k -s -c .latexindent armymemo.cls examples/*.tex"
+      - prettier --check .
+
+  # Formats the Markdown and YAML with prettier, and armymemo.cls and the
+  # examples in place with latexindent's own
+  # defaults -- no localSettings.yaml, so the indent character and width are
+  # whatever the tool ships with. The reformat is whitespace-only (`diff -w` is
+  # empty) and was verified against the goldens: every example still renders
+  # byte-identically.
+  #
+  # digsig.sty is deliberately not formatted. It is a separate work bundled here
+  # under its own MIT terms (Martin Lottermoser), and reformatting a vendored
+  # file makes it undiffable against upstream for no benefit of ours.
+  #
+  # -c sends latexindent's backup files and indent.log to .latexindent/ (ignored)
+  # instead of dropping armymemo.bak0 and indent.log in the repo root.
+  #
+  # Note that TeX Live ships its own latexindent whose Perl dependencies are not
+  # installed; it exits 2 rather than failing quietly, but if you have prepended
+  # the TeX Live bin directory to PATH it is the one you will get. The working
+  # one here came from `brew install latexindent`.
+  format:
+    desc: Format the Markdown, YAML and LaTeX sources in place
+    cmds:
+      - "{{.LATEXINDENT}} -w -s -c .latexindent armymemo.cls examples/*.tex"
+      - prettier --write .
+
+  # Rendering regression harness: rebuilds every example and diffs the extracted
+  # text, page count and class diagnostics against examples/golden/.
+  #
+  # It drives latexmk itself rather than going through this file, exactly as it
+  # refused to go through the Makefile, so that a stale-PDF bug here could never
+  # make the tests pass when they should fail. Do not "simplify" this into a
+  # dependency on `build`.
+  test:
+    desc: Rendering regression harness -- the real check
+    cmds:
+      - sh tools/run-tests.sh
+
+  golden:
+    desc: Recapture the golden files after an intended output change
+    cmds:
+      - sh tools/run-tests.sh --update
+
+  # Removes everything the build and the tooling generate: the example PDFs, the
+  # LaTeX aux files beside them, and the three scratch directories the tools keep
+  # at the repo root. All three are gitignored, so this is about disk and about
+  # `clean` meaning what it says, not about the working tree being dirty.
+  #
+  # example*.pdf is deliberately narrower than *.pdf: DODb1.pdf in that directory
+  # is a tracked symlink to build input, not output.
+  #
+  # Removing .task/ discards go-task's fingerprint cache, so the next build is a
+  # full one. That is the correct behaviour for a target called clean -- it is
+  # what `make clean` always meant -- but it does mean `task clean && task build`
+  # rebuilds all twenty examples rather than none.
+  clean:
+    desc: Remove built PDFs, aux files and all tool scratch directories
+    cmds:
+      - rm -f examples/example*.pdf
+      - >-
+        cd examples && rm -f
+        *-blx.bib *.aux *.bbl *.bcf *.blg *.brf *.dvi
+        *.ent *.fdb_latexmk *.fls *.idx *.ilg *.ind *.lof *.log
+        *.lot *.orig *.rtf *.run.xml *.toc *.url
+      # .test-work: the harness's per-build extractions and diffs.
+      # .latexindent: latexindent's backups and indent.log, routed there by -c.
+      # .task: go-task's checksum cache.
+      - rm -rf .test-work .latexindent .task
+
+  proper:
+    desc: clean, and also remove *.out
+    cmds:
+      - task: clean
+      - rm -f examples/*.out
