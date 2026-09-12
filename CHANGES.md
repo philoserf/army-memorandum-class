@@ -253,7 +253,7 @@
 - Bundled `digsig.sty` v2.3 (2022-03-31, MIT, Martin Lottermoser) -- provides `\digsigfield` macro via hyperref extension
 - `examples/digsig.sty` symlink so examples compile without TEXINPUTS changes
 - `examples/example-sig.tex` -- new example demonstrating the `[digsig]` option with a custom logo
-- `\enclsnocount`: new command for unnumbered enclosure list (AR 25-50 Figure 4-4)
+- `\enclsnocount`: new command for unnumbered enclosure list (AR 25-50 Table 4-4)
 
 ### Fixed
 

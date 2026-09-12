@@ -467,7 +467,7 @@
 
 
 % add enclosures along with a total count
-% use \enclsnocount to print "Encls" without a numeric count (AR 25-50 Figure 4-4)
+% use \enclsnocount to print "Encls" without a numeric count (AR 25-50 Table 4-4)
 \newcommand{\am@do@encl}[1]{\item #1 }
 \newcounter{am@encl@count}
 \newbool{am@encls@nocount}
@@ -522,7 +522,7 @@
 % land beside it. Issues #1, #6, #25 and #29 were all that one decision.
 %
 % Both columns are \parbox[t], so their first baselines align: "Encl" sits level
-% with the author's name, as AR 25-50 Figure 4-4 shows. With no enclosures the
+% with the author's name, as AR 25-50 4-2b requires. With no enclosures the
 % left box is empty and has no height, so the row's height comes from the
 % signature alone and nothing can slide into the vacant column (#29).
 %

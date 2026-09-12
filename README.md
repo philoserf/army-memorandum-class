@@ -169,7 +169,7 @@ recipient and a list are both formatted correctly without further markup.
 | Command           | Purpose                                                                               |
 | ----------------- | ------------------------------------------------------------------------------------- |
 | `\addencl{...}`   | Add an enclosure. Repeat per enclosure; the count is generated (`Encl` vs `2 Encls`). |
-| `\enclsnocount`   | Suppress the enclosure count, per AR 25-50 Figure 4-4.                                |
+| `\enclsnocount`   | Suppress the enclosure count, per AR 25-50 Table 4-4.                                 |
 | `\adddistro{...}` | Add a distribution entry.                                                             |
 | `\addcf{...}`     | Add a copies-furnished entry.                                                         |
 
