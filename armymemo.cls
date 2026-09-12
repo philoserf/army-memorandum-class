@@ -559,8 +559,20 @@
 		\forlistloop{\am@do@encl}{\am@list@encls}
 	\end{enumerate}%
 }
+% The empty branch is \mbox{} rather than nothing, and that is load-bearing.
+% \am@closing lays the closing row out as two \parbox[t]{0.5\textwidth} columns,
+% enclosures left and signature right. A \parbox whose content is genuinely empty
+% does not hold its column: the box that follows starts at the left margin
+% instead of half a textwidth in. With no enclosures that put the signature block
+% at x=72 rather than the page centre AR 25-50 2-4c(2)(a) requires -- for any
+% memorandum without enclosures, which is an ordinary memorandum.
+%
+% \mbox{} gives the parbox something to hold onto while adding no width, height
+% or depth, so the row's height still comes from the signature alone and the
+% DISTRIBUTION spacing below it is unaffected. \strut would also hold the column
+% but would add a line's height to an otherwise empty box. See #117.
 \newcommand{\am@encls}{%
-	\ifnumcomp{\value{am@encl@count}}{=}{0}{}{%
+	\ifnumcomp{\value{am@encl@count}}{=}{0}{\mbox{}}{%
 		\ifbool{am@encls@nocount}{%
 			\def\am@encl@head{Encls}%
 			\let\am@encl@opts\am@encls@numbered
@@ -593,9 +605,15 @@
 % land beside it. Issues #1, #6, #25 and #29 were all that one decision.
 %
 % Both columns are \parbox[t], so their first baselines align: "Encl" sits level
-% with the author's name, as AR 25-50 4-2b requires. With no enclosures the
-% left box is empty and has no height, so the row's height comes from the
-% signature alone and nothing can slide into the vacant column (#29).
+% with the author's name, as AR 25-50 4-2b requires. With no enclosures the left
+% box has no height, so the row's height comes from the signature alone.
+%
+% This used to claim that "nothing can slide into the vacant column" with no
+% enclosures. That was wrong, and #117 was the proof: the signature block itself
+% slid into it. An empty \parbox does not hold its column, so the signature
+% started at the left margin rather than the centre of the page. \am@encls now
+% emits \mbox{} in its empty branch to keep the column open -- the fix lives
+% there, with the reasoning, because that is where the emptiness is decided.
 %
 % DISTRIBUTION and CF are deliberately left OUT of this box. A \parbox cannot
 % break across a page, exactly as a minipage cannot -- an earlier attempt at this

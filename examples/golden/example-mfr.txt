@@ -25,9 +25,9 @@ the routes shows up as a difference between the goldens.
 
 
 
-JOHN W. SMITH
-CPT, CY
-COMMANDING
+                                              JOHN W. SMITH
+                                              CPT, CY
+                                              COMMANDING
 
 
 
