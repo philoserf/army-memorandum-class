@@ -242,6 +242,15 @@ Two things to know before running it:
 - **`chktex` folds into `task test` as a ratchet**, not a gate: it fails only when the
   warning count rises above `CHKTEX_BASELINE` in `tools/run-tests.sh` (currently 26).
   Lower the baseline in the same change that lowers the count.
+- **The goldens cannot see sub-line vertical movement, and `tools/check-ar-metrics.py`
+  is what covers that.** `pdftotext` quantises vertical space into text rows, so a block
+  can move an appreciable distance and still extract byte-identically -- #99 was the
+  signature block 1.57 baselines out of place, with goldens that did not budge either
+  side of the fix. The checker measures the placements AR 25-50 states in lines and runs
+  inside `task test`. Read its `TOLERANCE_BL` comment before trusting a pass: bounding
+  boxes move with the glyphs inside them, so it resolves errors of roughly half a line
+  and upward, not one-point drift. It needs `python3`, and fails loudly rather than
+  skipping when that is missing.
 
 The harness finds TeX Live on its own when it is not on a non-interactive shell's `PATH`,
 probing the standard install layouts newest-first. Set `TEXBIN=/path/to/texlive/bin/<arch>`
