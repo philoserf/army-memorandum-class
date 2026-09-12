@@ -160,13 +160,23 @@
 \RequirePackage{needspace}
 \RequirePackage[letterpaper
 	,margin=1in
-	% in order to get 2-line offset between bottom of text and page number
-	% (because it looks nicer)
-	,bottom=1in-2\baselineskip
+	% AR 2-5d centres the page number "approximately 1-inch from the bottom of the
+	% page", and this is the setting that decides that -- not footskip. With
+	% includefoot AND an explicit bottom, geometry anchors the footer to the bottom
+	% margin and footskip only resizes the text block above it; sweeping footskip
+	% across 2, 3 and 26.3pt moves the page number not at all. Change this line.
+	%
+	% One baseline short of an inch puts the folio at 0.964in from the paper edge.
+	% A flat 1in overshoots to 1.165in, because the measurement runs to the folio's
+	% baseline and the margin is set below the whole foot box. The previous
+	% 1in-2\baselineskip left it at 0.763in, a quarter inch short, chosen for a
+	% two-line gap between the text and the number that looked nicer than the
+	% regulation's number. See #109 and #106.
+	,bottom=1in-\baselineskip
 	,includehead
-	% includefoot, but then we manually adjust the bottom margin above, in order
-	% to also adjust the overall \textheight
-	% also the AR examples show the page number above the classification marking
+	% The AR examples show the page number above the classification marking, and
+	% that ordering still holds: the folio sits at 0.964in and the bottom mark is
+	% anchored 0.5in from the paper edge.
 	,includefoot
 	,footskip=3\baselineskip
 	,footnotesep=\baselineskip

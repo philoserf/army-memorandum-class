@@ -89,6 +89,7 @@ there.
 
 
                                                     2
+
                  UNCLASSIFIED//FOR TRAINING USE ONLY (EXAMPLE)
                   UNCLASSIFIED//FOR TRAINING USE ONLY (EXAMPLE)
 
@@ -118,7 +119,6 @@ The circle is at 1 inch from the top and left of the page. Dashed lines represen
 
 
 
-
                                                  Body
 
 
@@ -136,19 +136,21 @@ The circle is at 1 inch from the top and left of the page. Dashed lines represen
                              ?                  Footer
 
 
+
                                        Lengths are to the nearest pt.
                          page height = 795pt             page width = 614pt
                          \hoffset = 0pt                  \voffset = 0pt
                          \oddsidemargin = 0pt            \topmargin = 0pt
                          \headheight = 29pt              \headsep = 27pt
-                         \textheight = 580pt             \textwidth = 470pt
+                         \textheight = 565pt             \textwidth = 470pt
                          \footskip = 44pt                \marginparsep = 13pt
                          \marginparpush = 7pt            \columnsep = 10pt
                          \columnseprule = 0.0pt
 
 
                                       Figure 1: Document layout
-                                                   3
+                                                  3
+
                   UNCLASSIFIED//FOR TRAINING USE ONLY (EXAMPLE)
                         UNCLASSIFIED//FOR TRAINING USE ONLY (EXAMPLE)
 
@@ -191,5 +193,6 @@ Example G3
    aka the ocean
 
                                               4
+
                         UNCLASSIFIED//FOR TRAINING USE ONLY (EXAMPLE)
 
