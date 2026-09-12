@@ -296,9 +296,22 @@
 % would satisfy one half by violating the other.
 \setlist[1]{labelwidth=12pt,labelsep=4pt,leftmargin=0pt,itemindent=16pt,align=left,
 	after={\nopagebreak\@nobreaktrue}}
-\setlist[2]{labelwidth=12pt,labelsep=4pt,leftmargin=0pt,itemindent=0.5in,align=left}
-\setlist[3]{labelwidth=12pt,labelsep=4pt,leftmargin=0pt,itemindent=0.75in,align=left}
-\setlist[4]{labelwidth=12pt,labelsep=4pt,leftmargin=0pt,itemindent=0.75in,align=left}
+% AR 25-50 figure 2-1 states the subdivision indents outright -- "indent 1/4 inch"
+% at the first subdivision and "indent 1/2 inch" at the second -- and those are
+% positions for the LABEL, which is what the figure shows sitting at them.
+%
+% With align=left and leftmargin=0pt, enumitem puts the label at
+% itemindent - (labelwidth + labelsep), i.e. itemindent - 16pt. So the itemindent
+% that lands a label on 1/4 inch is 18pt + 16pt = 34pt, not 0.5in. The round
+% numbers that were here before read as if they were the AR's, and were not:
+% they put the labels at 20.06pt and 38.06pt, each 2pt beyond the stated value.
+%
+% Levels 3 and 4 share a value on purpose. Figure 2-1: "Do not indent any further
+% than the second subdivision." Stepping level 4 would be the obvious tidy-up and
+% is exactly wrong.
+\setlist[2]{labelwidth=12pt,labelsep=4pt,leftmargin=0pt,itemindent=34pt,align=left}
+\setlist[3]{labelwidth=12pt,labelsep=4pt,leftmargin=0pt,itemindent=52pt,align=left}
+\setlist[4]{labelwidth=12pt,labelsep=4pt,leftmargin=0pt,itemindent=52pt,align=left}
 % Level 5 is declared only so that it can report itself. AR 25-50 prohibits
 % subdividing beyond the third subdivision, so there is no correct rendering to
 % fall back to -- the label is a visible marker and the warning names the rule.

@@ -38,20 +38,20 @@ When numbering subparagraphs, insert two blank spaces after parentheses.
 When paragraphs are subdivided, designate first subdivisions using lowercase letters of the
 alphabet and indent 1/4 inch as shown below.
 
-    a. When a paragraph is subdivided, it must have at least two subparagraphs.
+   a. When a paragraph is subdivided, it must have at least two subparagraphs.
 
-    b. If there is a subparagraph “a,” there must be a subparagraph “b.”
+   b. If there is a subparagraph “a,” there must be a subparagraph “b.”
 
        (1) Designate second subdivisions by numbers in parentheses; for example (1), (2), and (3)
 and indent by 1/2 inch as shown.
 
-        (2) Do not subdivide beyond the third subdivision.
+       (2) Do not subdivide beyond the third subdivision.
 
 
 
 
                  UNCLASSIFIED//FOR TRAINING USE ONLY (EXAMPLE)
-                  UNCLASSIFIED//FOR TRAINING USE ONLY (EXAMPLE)
+                 UNCLASSIFIED//FOR TRAINING USE ONLY (EXAMPLE)
 
 
 
@@ -59,9 +59,9 @@ EXC-HQ-OPS
 SUBJECT: On the use and testing of LATEX for document production
 
 
-        (a) Do not indent any further than the second subdivision.
+       (a) Do not indent any further than the second subdivision.
 
-        (b) Use (a), (b), (c), and so forth at this level.
+       (b) Use (a), (b), (c), and so forth at this level.
 
 6. Moby Dick, a classic American Novel, the text of which is public domain, follows in several
 paragraphs to make a longer example:
@@ -79,8 +79,8 @@ a philosophical flourish Cato throws himself upon his sword; I quietly take to t
 nothing surprising in this. If they but knew it, almost all men in their degree, some time or other,
 cherish very nearly the same feelings towards the ocean with me.
 
-     b. There now is your insular city of the Manhattoes, belted round by wharves as Indian isles
-by coral reefs- commerce surrounds it with her surf. Right and left, the streets take you waterward.
+     b. There now is your insular city of the Manhattoes, belted round by wharves as Indian isles by
+coral reefs- commerce surrounds it with her surf. Right and left, the streets take you waterward.
 Its extreme downtown is the battery, where that noble mole is washed by waves, and cooled by
 breezes, which a few hours previous were out of sight of land. Look at the crowds of water-gazers
 there.
@@ -89,7 +89,7 @@ there.
 
 
                                                     2
-                  UNCLASSIFIED//FOR TRAINING USE ONLY (EXAMPLE)
+                 UNCLASSIFIED//FOR TRAINING USE ONLY (EXAMPLE)
                   UNCLASSIFIED//FOR TRAINING USE ONLY (EXAMPLE)
 
 

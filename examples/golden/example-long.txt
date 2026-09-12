@@ -1,5 +1,5 @@
-              UNCLASSIFIED//FOR OFFICIAL USE ONLY (EXAMPLE ONLY)
-                                   DEPARTMENT OF THE ARMY
+             UNCLASSIFIED//FOR OFFICIAL USE ONLY (EXAMPLE ONLY)
+                                  DEPARTMENT OF THE ARMY
                                      ORGANIZATIONAL NAME/TITLE
                                    STANDARDIZED STREET ADDRESS
                                        CITY, STATE 12345-1234
@@ -26,23 +26,23 @@ When numbering subparagraphs, insert two blank spaces after parentheses.
 When paragraphs are subdivided, designate first subdivisions using lowercase letters of the
 alphabet and indent 1/4 inch as shown below.
 
-    a. When a paragraph is subdivided, it must have at least two subparagraphs.
+   a. When a paragraph is subdivided, it must have at least two subparagraphs.
 
-    b. If there is a subparagraph “a,” there must be a subparagraph “b.”
+   b. If there is a subparagraph “a,” there must be a subparagraph “b.”
 
        (1) Designate second subdivisions by numbers in parentheses; for example (1), (2), and (3)
 and indent by 1/2 inch as shown.
 
-        (2) Do not subdivide beyond the third subdivision.
+       (2) Do not subdivide beyond the third subdivision.
 
-        (a) Do not indent any further than the second subdivision.
+       (a) Do not indent any further than the second subdivision.
 
-        (b) Use (a), (b), (c), and so forth at this level.
+       (b) Use (a), (b), (c), and so forth at this level.
 
 4. Moby Dick, a classic American Novel, the text of which is public domain, follows in several
 paragraphs to make a longer example:
 
-      a. Call me Ishmael. Some years ago- never mind how long precisely- having little or no
+     a. Call me Ishmael. Some years ago- never mind how long precisely- having little or no
 money in my purse, and nothing particular to interest me on shore, I thought I would sail about
 a little and see the watery part of the world. It is a way I have of driving off the spleen and
 regulating the circulation. Whenever I find myself growing grim about the mouth; whenever
@@ -50,7 +50,7 @@ it is a damp, drizzly November in my soul; whenever I find myself involuntarily 
 
 
 
-              UNCLASSIFIED//FOR OFFICIAL USE ONLY (EXAMPLE ONLY)
+             UNCLASSIFIED//FOR OFFICIAL USE ONLY (EXAMPLE ONLY)
               UNCLASSIFIED//FOR OFFICIAL USE ONLY (EXAMPLE ONLY)
 
 
@@ -67,8 +67,8 @@ a philosophical flourish Cato throws himself upon his sword; I quietly take to t
 nothing surprising in this. If they but knew it, almost all men in their degree, some time or other,
 cherish very nearly the same feelings towards the ocean with me.
 
-     b. There now is your insular city of the Manhattoes, belted round by wharves as Indian isles
-by coral reefs- commerce surrounds it with her surf. Right and left, the streets take you waterward.
+     b. There now is your insular city of the Manhattoes, belted round by wharves as Indian isles by
+coral reefs- commerce surrounds it with her surf. Right and left, the streets take you waterward.
 Its extreme downtown is the battery, where that noble mole is washed by waves, and cooled by
 breezes, which a few hours previous were out of sight of land. Look at the crowds of water-gazers
 there.
@@ -82,7 +82,7 @@ seaward peep. But these are all landsmen; of week days pent up in lath and plast
 nailed to benches, clinched to desks. How then is this? Are the green fields gone? What do they
 here?
 
-    d. But look! here come more crowds, pacing straight for the water, and seemingly bound for a
+   d. But look! here come more crowds, pacing straight for the water, and seemingly bound for a
 dive. Strange! Nothing will content them but the extremest limit of the land; loitering under the
 shady lee of yonder warehouses will not suffice. No. They must get just as nigh the water as they
 possibly can without falling And there they stand- miles of them- leagues. Inlanders all, they come
