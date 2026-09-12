@@ -14,6 +14,23 @@ vars:
   # resolve to the examples/ symlinks instead of the real files.
   LATEXMK: latexmk -lualatex
 
+  # Resolve a latexindent that actually runs, rather than the first one on PATH.
+  # TeX Live ships latexindent as a Perl script whose dependencies (YAML::Tiny,
+  # File::HomeDir, Log::Log4perl, Unicode::GCString) it does not install, so it
+  # aborts with "Can't locate ... in @INC" and exit 2. That would be merely
+  # annoying if it were not for this repo's own instructions: the harness and the
+  # README both prepend "$HOME/texlive/<year>/bin/<arch>" to PATH, which puts the
+  # broken copy *first*. Probing by `--version` picks the working one -- normally
+  # Homebrew's `brew install latexindent`, which vendors its Perl deps -- and
+  # falls back to the bare name so the failure is a clear "not found" rather than
+  # a wall of Perl. Same spirit as the TEXBIN probe in tools/run-tests.sh.
+  LATEXINDENT:
+    sh: >-
+      for c in /opt/homebrew/bin/latexindent /usr/local/bin/latexindent
+      $(command -v latexindent 2>/dev/null); do
+      if [ -x "$c" ] && "$c" --version >/dev/null 2>&1; then printf '%s' "$c"; exit 0; fi;
+      done; printf 'latexindent'
+
 tasks:
   default:
     desc: Build every examples/*.pdf
@@ -79,9 +96,16 @@ tasks:
     cmds:
       - chktex armymemo.cls
 
-  # Lints the repo's *tooling*, not the LaTeX. `check` (chktex) and the chktex
-  # ratchet inside `test` cover armymemo.cls; this covers the Python and shell
-  # that build and test it, which nothing else looks at.
+  # Every linter that can gate, in one place: ruff over the Python, shellcheck and
+  # shfmt over the shell, latexindent -k over the LaTeX.
+  #
+  # chktex is deliberately NOT here. It reports 26 warnings against armymemo.cls
+  # on main, so including it would make `lint` permanently red and therefore
+  # useless as a gate. It lives in `check`, which is advisory, and in `test`,
+  # which ratchets it against CHKTEX_BASELINE -- failing only when the count
+  # rises. lacheck was evaluated and rejected: it has no concept of a .cls, so all
+  # 19 of its findings here are "Do not use @ in LaTeX macro names", which is
+  # exactly what an internal `am@` macro is required to do.
   #
   # ruff runs through `uvx` because it is not installed and is not in the global
   # .Brewfile -- uvx fetches and caches it on first use. shellcheck and shfmt are
@@ -91,12 +115,35 @@ tasks:
   # bare shfmt reads .editorconfig, and passing any formatting flag would make it
   # ignore that file. See .editorconfig for the precedence rule.
   lint:
-    desc: Lint and format-check the Python and shell tooling
+    desc: Run every gating linter -- Python, shell and LaTeX
     cmds:
       - uvx ruff check tools/
       - uvx ruff format --check tools/
       - shellcheck tools/*.sh
       - shfmt -d tools/*.sh
+      - '{{.LATEXINDENT}} -k -s -c .latexindent armymemo.cls examples/*.tex'
+
+  # Formats armymemo.cls and the examples in place with latexindent's own
+  # defaults -- no localSettings.yaml, so the indent character and width are
+  # whatever the tool ships with. The reformat is whitespace-only (`diff -w` is
+  # empty) and was verified against the goldens: every example still renders
+  # byte-identically.
+  #
+  # digsig.sty is deliberately not formatted. It is a separate work bundled here
+  # under its own MIT terms (Martin Lottermoser), and reformatting a vendored
+  # file makes it undiffable against upstream for no benefit of ours.
+  #
+  # -c sends latexindent's backup files and indent.log to .latexindent/ (ignored)
+  # instead of dropping armymemo.bak0 and indent.log in the repo root.
+  #
+  # Note that TeX Live ships its own latexindent whose Perl dependencies are not
+  # installed; it exits 2 rather than failing quietly, but if you have prepended
+  # the TeX Live bin directory to PATH it is the one you will get. The working
+  # one here came from `brew install latexindent`.
+  format:
+    desc: Format armymemo.cls and the examples with latexindent
+    cmds:
+      - '{{.LATEXINDENT}} -w -s -c .latexindent armymemo.cls examples/*.tex'
 
   # Rendering regression harness: rebuilds every example and diffs the extracted
   # text, page count and class diagnostics against examples/golden/.

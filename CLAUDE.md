@@ -117,11 +117,25 @@ deliberate decision, not a routine step.
 - **LuaLaTeX or XeLaTeX is required** — the class uses `fontspec` and calls
   `\setmainfont` / `\setsansfont` directly. pdflatex will not compile it.
 - **Times New Roman and Arial must be installed system-wide** or compilation fails.
-- `chktex` is the only linter for the LaTeX, and `latexmk` drives builds. The Python and
-  shell under `tools/` are linted separately by `task lint` — ruff (via `uvx`, not
-  installed), plus `shellcheck` and `shfmt`, both in the global `.Brewfile`. Rule
-  selection lives in `ruff.toml`; `.editorconfig` is what makes bare `shfmt` agree with
-  the checked-in formatting.
+- **`task lint` is every linter that can gate**: `ruff` over the Python (via `uvx`; not
+  installed), `shellcheck` and `shfmt -d` over the shell, and `latexindent -k` over
+  `armymemo.cls` and the examples. `task format` is the writing half.
+- **`chktex` is deliberately not in `lint`.** It reports 26 warnings on `main`, so it would
+  make the gate permanently red. It lives in `check` (advisory) and in `test` (ratcheted
+  against `CHKTEX_BASELINE`, failing only when the count rises).
+- **`lacheck` was evaluated and rejected.** It has no concept of a `.cls`: all 19 findings
+  here are "Do not use @ in LaTeX macro names", which is exactly what an internal `am@`
+  macro must do. Its one finding on an example is a false positive too (`~~`, the AR's
+  required spacing). A linter that only fires on correct code is worse than none.
+- **latexindent must come from Homebrew, not TeX Live.** TeX Live ships it as a Perl script
+  without its dependencies (`YAML::Tiny`, `File::HomeDir`, …), so it aborts with exit 2 —
+  and since this repo's own instructions prepend the TeX Live bin directory to `PATH`, that
+  broken copy comes *first*. The `LATEXINDENT` var in `Taskfile.yml` probes by `--version`
+  and picks one that runs, the same way `tools/run-tests.sh` probes for TeX Live.
+- `ruff.toml` carries `select = ["ALL"]` with a short, justified ignore list; nothing in it
+  restates a ruff default. `.editorconfig` is the one remaining formatting override —
+  shfmt's defaults are tabs with flattened `case` arms, and it pins `tools/run-tests.sh` to
+  4-space with indented arms instead.
 
 **The toolchain is installed** — TeX Live 2026 (`scheme-full`, no docs or sources) went in
 on 2026-09-09 under `~/texlive/2026`, user-owned, no sudo (#50). Times New Roman and Arial
@@ -153,7 +167,9 @@ removed in the conversion. `task --list` prints the current set.
 task                # build every examples/*.pdf (alias: task build)
 task test           # rendering regression harness -- the real check
 task golden         # recapture the golden files after an intended output change
-task check          # chktex armymemo.cls
+task check          # chktex armymemo.cls (advisory; always nonzero on main)
+task lint           # every gating linter: ruff, shellcheck, shfmt, latexindent -k
+task format         # reformat armymemo.cls and the examples with latexindent
 task clean          # remove built PDFs and aux files
 task proper         # clean + remove *.out
 

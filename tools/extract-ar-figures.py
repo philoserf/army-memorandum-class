@@ -29,6 +29,7 @@ import re
 import shutil
 import subprocess
 import sys
+from functools import cache
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
@@ -42,7 +43,27 @@ OUTDIR = REPO / "references" / "figures"
 CAPTION = re.compile(r"^\s*(Figure\s+[0-9A-Z]+–[0-9]+\.\s*.+?)\s*$")
 
 
+@cache
+def tool(name: str) -> str:
+    """Resolve a Poppler executable to an absolute path.
+
+    Resolved rather than invoked by bare name so that a missing Poppler is one
+    clear message instead of a FileNotFoundError from inside subprocess -- and
+    so the paths handed to subprocess are absolute, which is what ruff's S607
+    asks for. TeX Live ships these but is not on a non-interactive shell's PATH;
+    see the module docstring for the export.
+    """
+    resolved = shutil.which(name)
+    if resolved is None:
+        sys.exit(
+            f"{name} not found on PATH. It ships with Poppler, and with TeX Live:\n"
+            '  export PATH="$HOME/texlive/2026/bin/universal-darwin:$PATH"',
+        )
+    return resolved
+
+
 def slug(text: str) -> str:
+    """Reduce a figure caption to a filename-safe lowercase slug."""
     text = text.replace("–", "-").replace("—", "-")
     text = re.sub(r"[^A-Za-z0-9]+", "-", text).strip("-").lower()
     return re.sub(r"-+", "-", text)[:90]
@@ -51,7 +72,7 @@ def slug(text: str) -> str:
 def pages_with_images(pdf: Path) -> dict[int, int]:
     """Map PDF page number -> count of images on it."""
     out = subprocess.run(
-        ["pdfimages", "-list", str(pdf)],
+        [tool("pdfimages"), "-list", str(pdf)],
         capture_output=True,
         text=True,
         check=True,
@@ -67,8 +88,9 @@ def pages_with_images(pdf: Path) -> dict[int, int]:
 
 
 def captions_on(pdf: Path, page: int) -> list[str]:
+    """Return the figure captions printed on one page, in top-to-bottom order."""
     text = subprocess.run(
-        ["pdftotext", "-layout", "-f", str(page), "-l", str(page), str(pdf), "-"],
+        [tool("pdftotext"), "-layout", "-f", str(page), "-l", str(page), str(pdf), "-"],
         capture_output=True,
         text=True,
         check=True,
@@ -77,11 +99,12 @@ def captions_on(pdf: Path, page: int) -> list[str]:
 
 
 def main() -> None:
+    """Extract every figure in the PDF to OUTDIR, named by caption."""
     pdf = Path(sys.argv[1]) if len(sys.argv) > 1 else DEFAULT_PDF
     if not pdf.exists():
         sys.exit(
             f"no such file: {pdf}\n"
-            "Download AR 25-50 into references/ first; see references/README.md."
+            "Download AR 25-50 into references/ first; see references/README.md.",
         )
 
     OUTDIR.mkdir(parents=True, exist_ok=True)
@@ -94,7 +117,7 @@ def main() -> None:
         tmp.mkdir(parents=True, exist_ok=True)
         subprocess.run(
             [
-                "pdfimages",
+                tool("pdfimages"),
                 "-png",
                 "-f",
                 str(page),

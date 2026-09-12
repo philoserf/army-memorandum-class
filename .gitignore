@@ -279,6 +279,10 @@ examples/example*.pdf
 # Harness scratch directory (diffs and per-build extractions).
 .test-work/
 
+# latexindent's cruft directory -- backup files and indent.log, routed here by
+# `-c` in the format/lint tasks so they do not land in the repo root.
+.latexindent/
+
 # go-task's fingerprint cache. `task` stores a checksum per task here to decide
 # what is up to date; it is derived state and rebuilds itself. Deleting it just
 # forces one full rebuild.

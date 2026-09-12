@@ -27,6 +27,19 @@
   closed. `tools/run-tests.sh` still drives `latexmk` directly and never invokes the
   Taskfile, exactly as it never invoked the Makefile.
 
+- **`armymemo.cls` and every example are reformatted by `latexindent`, using its own
+  defaults.** The change is whitespace-only -- `diff -w` between the old and new files is
+  empty -- and is dominated by one decision: latexindent indents with a tab, the sources
+  used two spaces. It also normalised a handful of places where the indent depth was
+  inconsistent, including two lines in the letterhead example that mixed a literal tab with
+  spaces. **Rendered output is unaffected**: all twenty examples still extract
+  byte-identically against the committed goldens, which for a document class is the only
+  meaningful definition of a safe reformat.
+
+  `digsig.sty` is deliberately excluded. It is a separate work bundled here under its own
+  MIT terms, and reformatting a vendored file makes it undiffable against upstream to no
+  benefit of ours.
+
 ### Added
 
 - **`task lint` covers the repository's own tooling.** `chktex` lints the class; nothing
@@ -37,12 +50,40 @@
   flags, and without the file a bare `shfmt -w` would rewrite `tools/run-tests.sh` to tabs
   and flatten every `case` arm.
 
+  ruff runs with `select = ["ALL"]` -- the pedantic end of the dial -- against a short
+  ignore list, and nothing in `ruff.toml` restates a ruff default (`line-length` and
+  `target-version` were both set to their own defaults in an earlier revision and are
+  gone). Findings were cleared by changing the code wherever that was possible rather than
+  by switching rules off: the whole `D` docstring family, and `S607` (partial executable
+  path), which is now satisfied by resolving `pdfimages` and `pdftotext` through
+  `shutil.which`. That has a user-visible benefit beyond the linter -- a missing Poppler is
+  reported as one clear line naming the tool and the `PATH` export, instead of a
+  `FileNotFoundError` from inside `subprocess`.
+
   One ruff finding is suppressed by configuration rather than fixed. AR 25-50 prints en
   dashes in its own figure captions and in its title, so `tools/extract-ar-figures.py` must
   contain real en dashes in both its caption regex and its default path; `RUF001` flags each
   as a confusable. `allowed-confusables` accepts the two dash characters and leaves the rule
   live for everything else. Rewriting them to hyphens breaks caption matching against the
   regulation.
+
+- **`task format` and LaTeX linting.** `task format` runs `latexindent` over the class and
+  the examples; `task lint` gained `latexindent -k`, which checks the same files without
+  writing and exits nonzero if any would change. Both route latexindent's backups and
+  `indent.log` to an ignored `.latexindent/` rather than dropping `armymemo.bak0` in the
+  repository root.
+
+  latexindent must come from Homebrew. TeX Live ships it as a Perl script without its
+  dependencies, so it aborts with exit 2 -- and because this repository's own instructions
+  prepend the TeX Live bin directory to `PATH`, that broken copy is the one you get first.
+  The `LATEXINDENT` variable in `Taskfile.yml` probes by `--version` and selects one that
+  runs, in the same spirit as the `TEXBIN` probe in `tools/run-tests.sh`.
+
+  `chktex` is deliberately not part of `lint`: it reports 26 warnings on `main`, so it would
+  make the gate permanently red. It stays in `check` and in `test`'s ratchet. `lacheck` was
+  evaluated and rejected -- it has no concept of a `.cls`, so all 19 of its findings here
+  are "Do not use @ in LaTeX macro names", which is precisely what an internal `am@` macro
+  is required to do.
 
 - **`references/`, an ignored directory with a tracked index.** AR 25-50's specimen figures
   are 96 dpi screenshots, so `pdftotext` recovers their captions and nothing else -- and

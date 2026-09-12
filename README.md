@@ -83,6 +83,8 @@ task                # build every examples/*.pdf
 task test           # rebuild the examples and diff against the golden files
 task golden         # recapture the golden files after an intended output change
 task check          # chktex armymemo.cls
+task lint           # every gating linter: Python, shell, LaTeX
+task format         # reformat armymemo.cls and the examples with latexindent
 task clean          # remove built PDFs and aux files
 
 cd examples && latexmk -lualatex example.tex     # build one example
