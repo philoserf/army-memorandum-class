@@ -439,6 +439,35 @@
 \newcommand{\am@do@hangline}[1]{\noindent{}\hangindent=0.25in{}#1\\}
 \newcommand{\multimemofor}[1]{\listadd{\am@list@memofor}{#1}}
 
+% One MEMORANDUM FOR / MEMORANDUM THRU / FOR block, for a list of addresses.
+%
+% AR 25-50 2-4a(5)(a): "When using a single address, type 'MEMORANDUM FOR' and
+% the address on the same line." 2-4a(5) then begins a wrapped address line
+% "flush with the left margin except for multiple-address memorandums, which
+% will be indented 1/4 inch". Figure 2-11 shows the single-address form -- label
+% and address sharing a line, the wrap flush left -- and figure 2-5 the
+% multiple-address form, label alone with the wraps indented.
+%
+% Both shapes are the regulation's, and the count is what chooses between them.
+% The list is counted here rather than tracked at \listadd time because the
+% class deliberately dropped its per-list counters (#34); this needs the answer
+% once, at render.
+\newcounter{am@memo@n}
+\newcommand{\am@memo@count}[1]{\stepcounter{am@memo@n}}
+\newcommand{\am@do@plainline}[1]{#1}
+\newcommand{\am@memoblock}[2]{%
+	\setcounter{am@memo@n}{0}%
+	\forlistloop{\am@memo@count}{#2}%
+	\vspace{\baselineskip}%
+	\ifnum\value{am@memo@n}=1\relax
+		#1\ \forlistloop{\am@do@plainline}{#2}\\%
+	\else
+		#1\\%
+		\vspace{\baselineskip}%
+		\forlistloop{\am@do@hangline}{#2}%
+	\fi
+}
+
 \newcommand{\am@memoline}{%
 	% if there is nothing specified, add "memorandum for record"
 	\ifdefvoid{\am@list@memolines}{%
@@ -452,22 +481,14 @@
 	\vspace{\baselineskip}
 	% if there are multimemothru lines:
 	\ifdefvoid{\am@list@memothru}{}{%
-		\vspace{\baselineskip}
-		MEMORANDUM THRU\\
-		\vspace{\baselineskip}
-		% loop through the thru lines with hanging indent
-		\forlistloop{\am@do@hangline}{\am@list@memothru}}%
+		\am@memoblock{MEMORANDUM THRU}{\am@list@memothru}}%
 	\ifdefvoid{\am@list@memofor}{}{%
+		% with a THRU above it the label is just FOR, not MEMORANDUM FOR
 		\ifdefvoid{\am@list@memothru}{%
-			\vspace{\baselineskip}
-			MEMORANDUM FOR\\ % if there is no thru
-			\vspace{\baselineskip}
+			\am@memoblock{MEMORANDUM FOR}{\am@list@memofor}%
 		}{%
-			\vspace{\baselineskip}
-			FOR\\ % if there is a thru, it should just be for, not memorandum for
-			\vspace{\baselineskip}
-		}
-		\forlistloop{\am@do@hangline}{\am@list@memofor}}%
+			\am@memoblock{FOR}{\am@list@memofor}%
+		}}%
 	\ifdefvoid{\am@list@memolines}{}{%
 		% after dealing with special cases, add the other lines from \memoline
 		% these lines must begin with any labels such as "MEMORANDUM FOR" or "MEMORANDUM THRU" or "FOR"

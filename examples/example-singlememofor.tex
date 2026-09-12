@@ -1,0 +1,42 @@
+% !TEX program = lualatex
+% Coverage example: a single address supplied through \multimemofor. See #100.
+%
+% AR 25-50 2-4a(5)(a) puts the label and the address on the SAME line when there
+% is one address, and 2-4a(5) begins a wrapped address line flush with the left
+% margin -- the quarter-inch indent belongs to multiple-address memorandums only.
+% Figure 2-11 shows this form; figure 2-5 shows the other one.
+%
+% example-multimemofor.tex supplies two addresses and pins the other shape. This
+% file exists because the one-address path had no example at all, which is how it
+% went unnoticed that it rendered the multiple-address layout: label alone on its
+% line, a blank line, and a quarter-inch hang on the wrap.
+%
+% The address is deliberately long enough to wrap. A short one would still pass
+% with the hanging indent restored, so it would assert nothing.
+\documentclass{../armymemo}
+
+\address{Organizational Name/Title}
+\address{Standardized Street Address}
+\address{CITY, STATE~~12345-1234}
+
+\author{John W. Smith}\rank{CPT}\branch{CY}
+\officesymbol{ABC-DEF-GH}
+\signaturedate{10 April 2019}
+\multimemofor{U.S. ARMY NORTH (ARNO-CG), 1400 EAST GRAYSON STREET, FORT SAM HOUSTON, TX 78234-7000}
+\subject{A memorandum with a single address}
+\title{COMMANDING}
+% An enclosure, purely so this file's golden is not also recording the
+% empty-enclosure signature placement bug -- with no enclosures the signature
+% block renders at the left margin instead of the centre of the page, which is
+% tracked separately. Keeping one here means this golden moves only when the
+% address line it exists to pin actually changes.
+\addencl{AR 25-50}
+
+\begin{document}
+
+\begin{enumerate}
+	\item This memorandum supplies exactly one address through \verb|\multimemofor|.
+	\item The label and the address share a line, and the wrap is flush left.
+\end{enumerate}
+
+\end{document}

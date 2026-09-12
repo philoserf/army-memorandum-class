@@ -1,0 +1,28 @@
+                                 DEPARTMENT OF THE ARMY
+                                    ORGANIZATIONAL NAME/TITLE
+                                  STANDARDIZED STREET ADDRESS
+                                      CITY, STATE 12345-1234
+
+
+
+
+ABC-DEF-GH                                                               10 April 2019
+
+
+MEMORANDUM FOR U.S. ARMY NORTH (ARNO-CG), 1400 EAST GRAYSON STREET,
+FORT SAM HOUSTON, TX 78234-7000
+
+SUBJECT: A memorandum with a single address
+
+
+1. This memorandum supplies exactly one address through \multimemofor.
+
+2. The label and the address share a line, and the wrap is flush left.
+
+
+
+
+Encl                                              JOHN W. SMITH
+AR 25-50                                          CPT, CY
+                                                  COMMANDING
+
