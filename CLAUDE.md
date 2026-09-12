@@ -247,8 +247,11 @@ same place, and before that an `examples/Makefile` as well — mostly delegated 
   repeating it. (Lines 96 and 105 specifically are unchanged by the latexindent reformat,
   which was whitespace-only and left the file at 747 lines -- but it did alter the leading
   whitespace of other lines, so verify rather than assume for any reference you find.)
-- **Version lives in two places** — the `\ProvidesClass{armymemo}[YYYY/MM/DD X.Y.Z ...]`
-  line (armymemo.cls:28, currently `2026/09/11 0.5.0`) and `CHANGES.md`. Bump both.
+- **Version lives in three places** — the `\ProvidesClass{armymemo}[YYYY/MM/DD X.Y.Z ...]`
+  line (armymemo.cls:28, currently `2026/09/11 0.5.0`), the heading in `CHANGES.md`, and the
+  `currently` reference in this very bullet. That third one is the one that goes stale,
+  because it is the one nobody counts: the 0.5.0 release commit had to fix it after the
+  fact. Bump all three.
 - `examples/armymemo.cls`, `examples/digsig.sty`, and `examples/DODb1.pdf` are symlinks to
   the repo root, so the examples always compile against the live class.
 
@@ -304,7 +307,7 @@ indent any further than the second subdivision" — which is why `\setlist[3]` a
 Adding a new field means: define the setter, store into an `am@`-prefixed internal, and
 render it from the correct hook. The renderers vary output between zero, one, and many
 entries; the enclosure counter survives because its output names the number (`Encl` vs
-`2 Encls`; `\enclsnocount` suppresses the count per AR 25-50 Figure 4-4), while the other
+`2 Encls`; `\enclsnocount` suppresses the count per AR 25-50 Table 4-4), while the other
 lists only need to know whether they are empty.
 
 **Options.** `digsig` is the only class-specific option — it sets an etoolbox bool and
