@@ -2,6 +2,29 @@
 
 ---
 
+## [Unreleased]
+
+### Fixed
+
+- **Single-digit days are no longer zero-padded.** `\mildate` was defined with
+  `\twodigit\THEDAY`, so a date routed through it rendered 5 March 2019 as
+  `05 March 2019`. AR 25-50 2-4a(3)(c) gives the permitted formats as "13 March 2020,
+  13 Mar 20 or 13 Mar 2020", all of which happen to use a two-digit day, so the prose
+  alone does not settle padding. The regulation's own usage does: every single-digit day
+  in the document is unpadded -- "1 Mar 19" and "2 Jan 19" in table 4-2, "5 Feb 19",
+  "5 Jan 18", "5 Jan 2018", "3 January 2020", "4 October 2024". No zero-padded day
+  appears anywhere in AR 25-50. The DAIG 2025 Correspondence and Reports Guide is
+  predominantly unpadded too, with a single "01 February 2020" against four unpadded.
+
+  This only affects dates that pass through `\mildate` -- a literal
+  `\signaturedate{10 April 2019}`, which is what every bundled example uses, was never
+  padded and is unchanged. It does affect `\signaturedate{\today}`, which is what the
+  README's quick start shows, on the nine days of each month with a single-digit date.
+
+  No golden moved, and that is expected rather than reassuring: no example exercises
+  `\mildate` at all. The fix was confirmed by rendering a scratch document with
+  `\signaturedate{\formatdate{5}{3}{2019}}` and reading the date off the PDF.
+
 ## [0.5.0] - 2026-09-11
 
 ### Changed
