@@ -192,6 +192,26 @@ run_chktex() {
 	return 0
 }
 
+# --------------------------------------------------------------- ar metrics ---
+# The goldens compare extracted text, and pdftotext quantises vertical space into
+# text rows: a block can move an appreciable distance and still land in the same
+# row. #99 was exactly that -- the signature block 1.57 baselines out of place,
+# with byte-identical extracted text before and after the fix. This measures the
+# placements the AR states in lines, so that class of bug cannot pass green.
+#
+# Same reasoning as the .diag capture above, which closed the equivalent gap
+# around class diagnostics. See tools/check-ar-metrics.py for what it can and
+# cannot resolve -- it is a line-level guard, not a precision instrument.
+run_metrics() {
+	if ! command -v python3 >/dev/null 2>&1; then
+		echo "FAIL ar-metrics: python3 not found"
+		echo "    The placement checks need it; see tools/check-ar-metrics.py."
+		return 1
+	fi
+	python3 "$ROOT/tools/check-ar-metrics.py" "$EX" || return 1
+	return 0
+}
+
 # --------------------------------------------------------------------- main ---
 mkdir -p "$WORK"
 
@@ -275,6 +295,7 @@ for b in $(examples); do
 	fi
 done
 
+run_metrics || fail=1
 run_chktex || fail=1
 
 if [ "$fail" -ne 0 ]; then
