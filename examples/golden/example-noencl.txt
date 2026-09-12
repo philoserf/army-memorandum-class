@@ -23,9 +23,9 @@ below the signature block, not beside it.
 
 
 
-JOHN W. SMITH
-CPT, CY
-COMMANDING
+                                               JOHN W. SMITH
+                                               CPT, CY
+                                               COMMANDING
 
 DISTRIBUTION:
 DISTRO 1

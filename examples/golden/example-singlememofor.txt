@@ -22,7 +22,7 @@ SUBJECT: A memorandum with a single address
 
 
 
-Encl                                              JOHN W. SMITH
-AR 25-50                                          CPT, CY
+                                                  JOHN W. SMITH
+                                                  CPT, CY
                                                   COMMANDING
 

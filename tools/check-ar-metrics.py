@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Assert the AR 25-50 vertical placements that the golden files cannot see.
+r"""Assert the AR 25-50 vertical placements that the golden files cannot see.
 
 The golden harness compares `pdftotext -layout` text. That captures line
 *structure* -- which lines exist, and how many blank lines separate them -- and
@@ -20,10 +20,17 @@ What it measures, per example, from `pdftotext -bbox-layout`:
     AR 2-4c(2)(a)  signature block    5 lines below the authority line, or
                                       5 lines below the last line of text when
                                       there is no authority line
+    AR 2-4c(2)(a)  signature block    in the centre of the page
 
 Whether a document has an authority line is read from its .tex source rather
 than guessed from the PDF: "the last uppercase line ending in a colon" also
-matches SUBJECT: and would silently measure the wrong gap.
+matches SUBJECT: and would silently measure the wrong gap. The signature block is
+located the same way, by uppercasing the document's own \author -- an earlier
+version looked for it in a window around the centre column, which meant the one
+bug that moved it OUT of that window (#117, the signature at the left margin with
+no enclosures) registered as "cannot locate, skipped" rather than as a failure. A
+check that goes quiet exactly when the thing it measures is broken is worse than
+no check.
 
 An example whose parts cannot be identified with confidence is reported as
 skipped, never as passing. Skips are expected -- a memo whose closing is pushed
@@ -71,11 +78,18 @@ BASELINESKIP_PT = 14.45
 # drift. Tightening it without a real baseline source would make it flap.
 TOLERANCE_BL = 0.35
 
-# The signature column starts at 0.5\textwidth past a 1in margin: 72 + 234 = 306.
-# The page number is centred on the same axis, so digit-only lines are dropped
-# before this window is applied.
-SIG_COLUMN_MIN_PT = 300.0
-SIG_COLUMN_MAX_PT = 312.0
+# AR 2-4c(2)(a) puts the signature block in the centre of the page. The class
+# fixes letterpaper and a 1in margin -- both AR requirements, both deliberately
+# not overridable -- so the column is 0.5\textwidth past the margin: 72 + 234.
+SIG_COLUMN_PT = 306.0
+
+# Half a point. This is a horizontal box position, not a glyph-sensitive vertical
+# measurement, so it does not need the latitude TOLERANCE_BL does.
+SIG_COLUMN_TOLERANCE_PT = 0.5
+
+# Used only to separate left-column material from the signature column when
+# scanning for body text, never to decide where the signature is.
+LEFT_COLUMN_MAX_PT = 300.0
 
 # Lines starting above this are letterhead or the continuation-page head, never
 # body text. Used only to decide that a page carries no measurable body.
@@ -142,19 +156,23 @@ def has_authority_line(tex: Path) -> bool:
     return bool(re.search(r"\\authority\{\s*[^}\s][^}]*\}", source))
 
 
-def find_signature(lines: list[Line]) -> Line | None:
-    """Return the first line of the signature column, or None.
+def find_author(tex: Path) -> str | None:
+    r"""Return the document's \author as the class renders it, in uppercase."""
+    source = re.sub(r"(?<!\\)%.*", "", tex.read_text(encoding="utf-8"))
+    match = re.search(r"\\author\{([^}]*)\}", source)
+    return match.group(1).strip().upper() if match else None
 
-    Digit-only lines are dropped first. The page number is centred on the same
-    axis as the signature column and would otherwise match.
+
+def find_signature(lines: list[Line], author: str | None) -> Line | None:
+    """Return the signature block's first line, located by the author's name.
+
+    Found by content rather than by position on purpose: see the module
+    docstring. Locating it by column would hide exactly the bugs that move it.
     """
-    candidates = [
-        ln
-        for ln in lines
-        if SIG_COLUMN_MIN_PT < ln.xmin < SIG_COLUMN_MAX_PT
-        and not ln.text.strip().isdigit()
-    ]
-    return min(candidates, key=lambda ln: (ln.page, ln.ymin)) if candidates else None
+    if author is None:
+        return None
+    matches = [ln for ln in lines if ln.text.strip() == author]
+    return min(matches, key=lambda ln: (ln.page, ln.ymin)) if matches else None
 
 
 def last_line_above(lines: list[Line], marker: Line) -> Line | None:
@@ -164,7 +182,7 @@ def last_line_above(lines: list[Line], marker: Line) -> Line | None:
         for ln in lines
         if ln.page == marker.page
         and ln.ymin < marker.ymin
-        and ln.xmin < SIG_COLUMN_MIN_PT
+        and ln.xmin < LEFT_COLUMN_MAX_PT
     ]
     return max(above, key=lambda ln: ln.ymin) if above else None
 
@@ -182,17 +200,36 @@ def check_example(pdf: Path, tex: Path) -> list[Result]:
         for ln in extract_lines(pdf)
         if not ln.text.strip().isdigit() and "UNCLASSIFIED" not in ln.text
     ]
-    signature = find_signature(lines)
+    author = find_author(tex)
+    signature = find_signature(lines, author)
     if signature is None:
-        return [Result(name, "signature block", "skip", "no signature column found")]
+        detail = (
+            "no \\author in the source"
+            if author is None
+            else f"{author!r} not in the PDF"
+        )
+        return [Result(name, "signature block", "skip", detail)]
+
+    results: list[Result] = []
+    offset = abs(signature.xmin - SIG_COLUMN_PT)
+    centred = "ok" if offset <= SIG_COLUMN_TOLERANCE_PT else "FAIL"
+    results.append(
+        Result(
+            name,
+            "AR 2-4c(2)(a) signature block centred",
+            centred,
+            f"x={signature.xmin:.2f} (want {SIG_COLUMN_PT:.2f})",
+        )
+    )
 
     if has_authority_line(tex):
         authority = find_authority(lines, signature)
         if authority is None or authority.ymin < HEAD_REGION_PT:
-            return [
+            results.append(
                 Result(name, "signature block", "skip", "authority line not locatable")
-            ]
-        results = [
+            )
+            return results
+        results.append(
             measure(
                 name,
                 "AR 2-4c(2)(a) authority -> signature",
@@ -200,7 +237,7 @@ def check_example(pdf: Path, tex: Path) -> list[Result]:
                 signature,
                 5.0,
             )
-        ]
+        )
         body = last_line_above(lines, authority)
         if body is not None and body.ymin >= HEAD_REGION_PT:
             results.append(
@@ -210,10 +247,14 @@ def check_example(pdf: Path, tex: Path) -> list[Result]:
 
     body = last_line_above(lines, signature)
     if body is None or body.ymin < HEAD_REGION_PT:
-        return [
+        results.append(
             Result(name, "signature block", "skip", "no body text above the signature")
-        ]
-    return [measure(name, "AR 2-4c(2)(a) text -> signature", body, signature, 5.0)]
+        )
+        return results
+    results.append(
+        measure(name, "AR 2-4c(2)(a) text -> signature", body, signature, 5.0)
+    )
+    return results
 
 
 def measure(name: str, rule: str, upper: Line, lower: Line, want_bl: float) -> Result:
