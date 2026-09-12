@@ -146,6 +146,19 @@
   both the harness and the `build` task enumerate examples as `examples/*.tex`; a `.tex`
   file in that directory would have been treated as a twenty-first example with no golden.
 
+- **`example-grid.tex`'s copy is neutral too.** Replacing the seal left the same question
+  open in the text, which was Star Wars throughout -- `GALACTIC CONFIDENTIAL//DEATHSTAR` as
+  the classification mark, Death Star and Alderaan as the address, a THRU line through the
+  501st Legion, and Darth Vader as the addressee. It now reads as the placeholder
+  correspondence the rest of the examples already use: an Example Command at Fort Example,
+  `UNCLASSIFIED//FOR TRAINING USE ONLY (EXAMPLE)`, and generic names in the distribution.
+
+  Lengths were chosen to preserve what the example actually tests. It is the layout
+  fixture -- it overlays a baseline grid -- so the long `\multimemothru` line still wraps
+  onto a second line, the classification mark is still long enough to exercise the banner,
+  and `\st` still appears in an ordinal. Page count is unchanged at four; only
+  `example-grid`'s text golden moved.
+
 ## [0.4.0] - 2026-09-11
 
 ### Fixed

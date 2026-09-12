@@ -8,7 +8,7 @@ version: "3"
 
 vars:
   # latexmk runs with cwd=examples so the examples' relative paths resolve --
-  # \documentclass{../armymemo}, \logo{imperialseal-536x536} and the symlinks beside
+  # \documentclass{../armymemo}, \logo{assets/placeholder-seal} and the symlinks beside
   # them. Kept as a `cd` rather than a task-level `dir:` on purpose: `dir:` also
   # reroots `sources:`, which would make the class and package fingerprints
   # resolve to the examples/ symlinks instead of the real files.
