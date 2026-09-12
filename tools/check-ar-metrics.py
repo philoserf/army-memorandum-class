@@ -21,6 +21,7 @@ What it measures, per example, from `pdftotext -bbox-layout`:
                                       5 lines below the last line of text when
                                       there is no authority line
     AR 2-4c(2)(a)  signature block    in the centre of the page
+    AR 2-5d        page number        centred, ~1 inch from the bottom edge
 
 Whether a document has an authority line is read from its .tex source rather
 than guessed from the PDF: "the last uppercase line ending in a colon" also
@@ -90,6 +91,16 @@ SIG_COLUMN_TOLERANCE_PT = 0.5
 # Used only to separate left-column material from the signature column when
 # scanning for body text, never to decide where the signature is.
 LEFT_COLUMN_MAX_PT = 300.0
+
+# AR 2-5d: "Center the page number approximately 1-inch from the bottom of the
+# page." Centred is exact; the distance is not, and the regulation says so.
+PAGE_NUMBER_FROM_BOTTOM_PT = 72.0
+PAGE_NUMBER_CENTRE_PT = 306.0
+
+# A tenth of an inch, which is what "approximately" is being read as. The class
+# lands at 0.964in; the value before #109 was 0.763in, a quarter inch short, and
+# this is set to catch that without pretending the AR states an exact figure.
+PAGE_NUMBER_TOLERANCE_PT = 7.2
 
 # Lines starting above this are letterhead or the continuation-page head, never
 # body text. Used only to decide that a page carries no measurable body.
@@ -192,6 +203,58 @@ def find_authority(lines: list[Line], signature: Line) -> Line | None:
     return last_line_above(lines, signature)
 
 
+def check_page_numbers(pdf: Path, name: str) -> list[Result]:
+    """Assert AR 2-5d for every page number in the document."""
+    pdftotext = shutil.which("pdftotext")
+    if pdftotext is None:
+        msg = "pdftotext not found; install Poppler (see the repo Brewfile)"
+        raise RuntimeError(msg)
+    xml = subprocess.run(
+        [pdftotext, "-bbox-layout", str(pdf), "-"],
+        capture_output=True,
+        text=True,
+        check=True,
+    ).stdout
+    results: list[Result] = []
+    for page_no, page in enumerate(ET.fromstring(xml).iter(XHTML + "page"), 1):  # noqa: S314
+        height = float(page.get("height"))
+        # The folio is the LOWEST line on the page whose text is exactly this
+        # page's number. Both halves matter: example-grid prints a measurement
+        # grid full of loose digits, so "the first digit-only line" finds grid
+        # labels near the top of the page, and "any digit" finds the wrong one
+        # even at the bottom. Position is deliberately not used to find it --
+        # see the module docstring on why locating by position hides the bugs
+        # that move a thing.
+        folios = [
+            node
+            for node in page.iter(XHTML + "line")
+            if "".join(node.itertext()).strip() == str(page_no)
+        ]
+        if not folios:
+            continue  # page 1 carries no folio: the class sets \thispagestyle{plain}
+        node = max(folios, key=lambda n: float(n.get("yMax")))
+        # yMax approximates the baseline for a line of digits, which carry no
+        # descenders -- the one case where the box bottom is the baseline.
+        from_bottom = height - float(node.get("yMax"))
+        centre = (float(node.get("xMin")) + float(node.get("xMax"))) / 2
+        off_v = abs(from_bottom - PAGE_NUMBER_FROM_BOTTOM_PT)
+        off_h = abs(centre - PAGE_NUMBER_CENTRE_PT)
+        status = (
+            "ok"
+            if off_v <= PAGE_NUMBER_TOLERANCE_PT and off_h <= SIG_COLUMN_TOLERANCE_PT
+            else "FAIL"
+        )
+        results.append(
+            Result(
+                f"{name} p{page_no}",
+                "AR 2-5d page number",
+                status,
+                f"{from_bottom / 72:.3f}in from bottom, centre x={centre:.2f}",
+            )
+        )
+    return results
+
+
 def check_example(pdf: Path, tex: Path) -> list[Result]:
     """Assert AR 2-4c(1) and 2-4c(2)(a) against one built example."""
     name = pdf.stem
@@ -275,6 +338,7 @@ def main(argv: list[str]) -> int:
         pdf = tex.with_suffix(".pdf")
         if pdf.exists():
             results.extend(check_example(pdf, tex))
+            results.extend(check_page_numbers(pdf, tex.stem))
 
     failures = [r for r in results if r.status == "FAIL"]
     skips = [r for r in results if r.status == "skip"]
