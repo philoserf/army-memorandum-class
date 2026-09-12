@@ -272,8 +272,8 @@ TSWLatexianTemp*
 ### army-memorandum-class ###
 # Built example PDFs. These are generated output, not sources: the golden files
 # under examples/golden/ are this repo's tracked rendered reference.
-# Note the narrow glob -- DODb1.pdf and imperialseal-536x536.jpg are build
-# *inputs* and stay tracked.
+# Note the narrow glob -- DODb1.pdf is a build *input* and stays tracked, as
+# does examples/assets/placeholder-seal.pdf, which the glob also never matches.
 examples/example*.pdf
 
 # Harness scratch directory (diffs and per-build extractions).
@@ -305,7 +305,7 @@ POST-*-REVIEW.md
 # everything else. Ignoring the *contents* is what leaves the negation reachable.
 #
 # Deliberately scoped: DODb1.pdf at the repo root, and
-# examples/imperialseal-536x536.jpg, are build *inputs* and stay tracked --
+# examples/assets/placeholder-seal.pdf, are build *inputs* and stay tracked --
 # which is why this file still has no blanket *.pdf rule.
 references/*
 !references/README.md

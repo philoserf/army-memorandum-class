@@ -2,7 +2,7 @@
 
 ---
 
-## [Unreleased]
+## [0.5.0] - 2026-09-11
 
 ### Changed
 
@@ -124,6 +124,40 @@
   count, and the seal is an image in an absolutely positioned node, so all twenty examples
   stay green either way. The swap was confirmed by rendering `example-sig` and looking at
   the letterhead.
+
+### Added
+
+- **`examples/assets/placeholder-seal.pdf`**, a neutral drawn mark, replaces
+  `examples/imperialseal-536x536.jpg` as the custom logo in `example-grid.tex`. The old
+  file was the Star Wars Galactic Empire insignia: a third-party trademark, tracked in a
+  GPL repository, rendered onto a document in official Army memorandum format. After the
+  DOW seal was dropped it was also the only remaining coverage of the custom `\logo` path,
+  so it is replaced rather than simply deleted.
+
+  The replacement is drawn with TikZ and owned by this repository;
+  `examples/assets/placeholder-seal.tex` is its source and the file says how to rebuild it.
+  It carries **no text**, which matters more than it looks: the goldens are
+  `pdftotext -layout` output, so a glyph anywhere in the logo lands in the extraction and
+  shifts the page's column alignment. A first draft lettered SAMPLE SEAL across the middle
+  and failed `example-grid` for exactly that reason. A seal contributes no text to a
+  memorandum, and this one does not either — `example-grid`'s golden is unchanged.
+
+  Source and asset live under `examples/assets/` rather than beside the examples because
+  both the harness and the `build` task enumerate examples as `examples/*.tex`; a `.tex`
+  file in that directory would have been treated as a twenty-first example with no golden.
+
+- **`example-grid.tex`'s copy is neutral too.** Replacing the seal left the same question
+  open in the text, which was Star Wars throughout -- `GALACTIC CONFIDENTIAL//DEATHSTAR` as
+  the classification mark, Death Star and Alderaan as the address, a THRU line through the
+  501st Legion, and Darth Vader as the addressee. It now reads as the placeholder
+  correspondence the rest of the examples already use: an Example Command at Fort Example,
+  `UNCLASSIFIED//FOR TRAINING USE ONLY (EXAMPLE)`, and generic names in the distribution.
+
+  Lengths were chosen to preserve what the example actually tests. It is the layout
+  fixture -- it overlays a baseline grid -- so the long `\multimemothru` line still wraps
+  onto a second line, the classification mark is still long enough to exercise the banner,
+  and `\st` still appears in an ordinal. Page count is unchanged at four; only
+  `example-grid`'s text golden moved.
 
 ## [0.4.0] - 2026-09-11
 

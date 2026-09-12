@@ -1,0 +1,36 @@
+% Source for placeholder-seal.pdf, the stand-in logo used by example-grid.tex.
+%
+% example-grid exercises the custom \logo path -- it needs *a* graphics file, and
+% nothing about which one. It previously used a Star Wars Galactic Empire mark,
+% which was a third-party trademark tracked in a GPL repository and rendered onto
+% a document in official Army memorandum format. This replaces it with a drawing
+% owned by this repository.
+%
+% Deliberately reads as a placeholder rather than as insignia: concentric rules
+% and radial ticks, no eagle, no stars, no lettering -- nothing that could be
+% mistaken for a real seal if the page escaped into the world.
+%
+% It carries NO TEXT on purpose. The golden files are `pdftotext -layout` output,
+% so any glyph in the logo lands in the extraction and shifts the whole page's
+% column alignment. A first draft of this file said SAMPLE SEAL in the middle and
+% failed example-grid for exactly that reason. A seal contributes no text to a
+% memorandum; keep it that way.
+%
+% Square, because the class renders the logo at width=1in and a square keeps the
+% letterhead block's proportions the same as every other example.
+%
+% Rebuild with:
+%     cd examples && latexmk -lualatex placeholder-seal.tex
+\documentclass[border=0pt]{standalone}
+\usepackage{tikz}
+\begin{document}
+\begin{tikzpicture}
+  \fill[white] (-1,-1) rectangle (1,1);
+  \draw[line width=2.2pt] (0,0) circle (0.95);
+  \draw[line width=0.9pt] (0,0) circle (0.80);
+  \foreach \a in {0,45,...,315}{\draw[line width=0.9pt] (\a:0.46) -- (\a:0.74);}
+  \draw[line width=1.4pt] (0,0) circle (0.40);
+  \foreach \a in {22.5,67.5,...,337.5}{\fill (\a:0.26) circle (0.035);}
+  \draw[line width=0.9pt] (0,0) circle (0.13);
+\end{tikzpicture}
+\end{document}

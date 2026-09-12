@@ -1,22 +1,24 @@
-                         GALACTIC CONFIDENTIAL//DEATHSTAR
-                                      GALACTIC FLEET
-                                         DEATH STAR
-                                      ALDERAAN SYSTEM
-                                        CORE WORLDS
+                 UNCLASSIFIED//FOR TRAINING USE ONLY (EXAMPLE)
+                        UNITED STATES ARMY EXAMPLE COMMAND
+                               EXAMPLE GARRISON HEADQUARTERS
+                                     1000 EXAMPLE AVENUE
+                                  FORT EXAMPLE, ST 12345-1234
 
 
                                                                                   S: 1 JAN 2019
 
-DS-1-OBS                                                                           10 April 2019
+EXC-HQ-OPS                                                                         10 April 2019
 
 
 MEMORANDUM THRU
 
 U.S. Army Command and General Staff College (ATZL), 100 Stimson Avenue, Ft Leavenworth,
    KS 66027-1352
-CHIEF OF STAFF, 501st Legion, Galactic Army, Grand Army of the Republic, Galactic Empire
+CHIEF OF STAFF, 1st Example Battalion, Example Brigade, Example Division, United States
+   Army
 
-FOR General of the Grand Army of the Republic, Dark Lord of the Sith, Darth Vader
+FOR Commanding General, United States Army Example Command, Fort Example, ST 12345-
+1234
 
 SUBJECT: On the use and testing of LATEX for document production
 
@@ -45,21 +47,21 @@ and indent by 1/2 inch as shown.
 
         (2) Do not subdivide beyond the third subdivision.
 
-        (a) Do not indent any further than the second subdivision.
 
 
 
-
-                         GALACTIC CONFIDENTIAL//DEATHSTAR
-                           GALACTIC CONFIDENTIAL//DEATHSTAR
-
+                 UNCLASSIFIED//FOR TRAINING USE ONLY (EXAMPLE)
+                  UNCLASSIFIED//FOR TRAINING USE ONLY (EXAMPLE)
 
 
-DS-1-OBS
+
+EXC-HQ-OPS
 SUBJECT: On the use and testing of LATEX for document production
 
 
-         (b) Use (a), (b), (c), and so forth at this level.
+        (a) Do not indent any further than the second subdivision.
+
+        (b) Use (a), (b), (c), and so forth at this level.
 
 6. Moby Dick, a classic American Novel, the text of which is public domain, follows in several
 paragraphs to make a longer example:
@@ -83,33 +85,16 @@ Its extreme downtown is the battery, where that noble mole is washed by waves, a
 breezes, which a few hours previous were out of sight of land. Look at the crowds of water-gazers
 there.
 
-7. POC for this memo is John Doe, who can be reached at john@dev.null or (555) 555-1234.
-
-FOR THE COMMANDER:
 
 
 
-
-3 Encls                                               BOBA FETT
-1. LATEXHOWTO                                         Contractor, Independent
-2. StackExchange                                      Procurement of Prized Heads
-3. armymemo.cls
-
-
- 1
-   This is a footnote
- 2
-   wallet
- 3
-   aka the ocean
-
-                                                     2
-                           GALACTIC CONFIDENTIAL//DEATHSTAR
-                           GALACTIC CONFIDENTIAL//DEATHSTAR
+                                                    2
+                  UNCLASSIFIED//FOR TRAINING USE ONLY (EXAMPLE)
+                  UNCLASSIFIED//FOR TRAINING USE ONLY (EXAMPLE)
 
 
 
-DS-1-OBS
+EXC-HQ-OPS
 SUBJECT: On the use and testing of LATEX for document production
 
 
@@ -164,28 +149,47 @@ The circle is at 1 inch from the top and left of the page. Dashed lines represen
 
                                       Figure 1: Document layout
                                                    3
-                           GALACTIC CONFIDENTIAL//DEATHSTAR
-                     GALACTIC CONFIDENTIAL//DEATHSTAR
+                  UNCLASSIFIED//FOR TRAINING USE ONLY (EXAMPLE)
+                        UNCLASSIFIED//FOR TRAINING USE ONLY (EXAMPLE)
 
 
 
-DS-1-OBS
+EXC-HQ-OPS
 SUBJECT: On the use and testing of LATEX for document production
 
 
+7. POC for this memo is John Doe, who can be reached at john@dev.null or (555) 555-1234.
+
+FOR THE COMMANDER:
+
+
+
+
+3 Encls                                       JOHN W. SMITH
+1. LATEXHOWTO                                 Contractor, Independent
+2. StackExchange                              Contract Support Officer
+3. armymemo.cls
+
 DISTRIBUTION:
-G.M. Tarkin
-Adm. Ozzel
-Adm. Motti
-V.Adm. Piett
+COL A. Adams
+LTC B. Brooks
+MAJ C. Carter
+MAJ D. Dawson
 
 CF:
-Galactic J3
-Fleet J3
+Example J3
+Example G3
 
 
 
 
-                                         4
-                     GALACTIC CONFIDENTIAL//DEATHSTAR
+ 1
+   This is a footnote
+ 2
+   wallet
+ 3
+   aka the ocean
+
+                                              4
+                        UNCLASSIFIED//FOR TRAINING USE ONLY (EXAMPLE)
 
