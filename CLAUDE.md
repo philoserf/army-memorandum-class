@@ -248,7 +248,7 @@ same place, and before that an `examples/Makefile` as well — mostly delegated 
   which was whitespace-only and left the file at 747 lines -- but it did alter the leading
   whitespace of other lines, so verify rather than assume for any reference you find.)
 - **Version lives in two places** — the `\ProvidesClass{armymemo}[YYYY/MM/DD X.Y.Z ...]`
-  line (armymemo.cls:28, currently `2026/09/11 0.4.0`) and `CHANGES.md`. Bump both.
+  line (armymemo.cls:28, currently `2026/09/11 0.5.0`) and `CHANGES.md`. Bump both.
 - `examples/armymemo.cls`, `examples/digsig.sty`, and `examples/DODb1.pdf` are symlinks to
   the repo root, so the examples always compile against the live class.
 
