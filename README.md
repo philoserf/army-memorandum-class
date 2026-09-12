@@ -35,7 +35,6 @@ The class is often copied out of this repository on its own. The full set is:
 | -------------- | ------------------------------------------------------- |
 | `armymemo.cls` | always                                                  |
 | `DODb1.pdf`    | always, unless you point `\logo{...}` at your own image |
-| `digsig.sty`   | only with the `digsig` class option                     |
 
 Put them beside your document, or anywhere TeX searches. A missing logo is reported by
 name with a class error rather than failing inside `graphicx`.
@@ -223,14 +222,15 @@ knowing:
 
 ### Class options
 
-`digsig` adds an interactive PDF signature field to the signature block, via the bundled
-`digsig.sty`:
+The class declares no options of its own. Everything you pass is handed to KOMA-Script's
+`scrartcl`, which the class builds on.
 
-```latex
-\documentclass[digsig]{armymemo}
-```
-
-Any other option is passed through to KOMA-Script's `scrartcl`, which the class builds on.
+`digsig`, which added an interactive PDF signature field, was removed — it emitted a bare
+signature widget while AR 25-50 appendix F additionally requires the field to be marked
+read-only, to lock an associated date box, and to be repeated at each `THRU` line, none of
+which a document class can set. Place the signature block in Adobe Acrobat instead, per
+appendix F. The option name still errors by name for one release rather than failing as an
+unknown option.
 
 ## Examples
 
@@ -241,7 +241,6 @@ Any other option is passed through to KOMA-Script's `scrartcl`, which the class 
 | `example.tex`      | The standard memorandum, with distribution and copies furnished.                                                                                           |
 | `example-long.tex` | A fully populated memo: long `MEMORANDUM FOR` address, suspense date, classification banner, authority line, enclosure, distribution and copies furnished. |
 | `example-grid.tex` | Layout and spacing against a measurement grid.                                                                                                             |
-| `example-sig.tex`  | The `digsig` option, with an alternate logo.                                                                                                               |
 
 The table covers the demonstration documents. The rest of `examples/` are regression
 fixtures, each added to pin down one behaviour that was previously untested — a wrapping
@@ -249,7 +248,7 @@ subject, a single address, a memo with no enclosures, the active `"` character, 
 The file's own header comment says what it asserts and which change would move it. `task
 test` builds all of them and diffs the rendered text against `examples/golden/`.
 
-`examples/armymemo.cls`, `examples/digsig.sty`, and `examples/DODb1.pdf` are symlinks to
+`examples/armymemo.cls` and `examples/DODb1.pdf` are symlinks to
 the repository root, so the examples always build against the live class.
 
 ## References
@@ -309,6 +308,3 @@ Thanks to @jschaf for the `enumitem` list structure and document template, and t
 
 The grant above is GPL version 2 **or, at your option, any later version**; the `LICENSE`
 file in this repository carries the text of **GPL version 3**, which that grant permits.
-
-`digsig.sty` is a separate work bundled here under its own terms: Copyright (C) Martin
-Lottermoser, 2005–2022, **MIT License**. Its notice is preserved in the file itself.

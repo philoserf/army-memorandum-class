@@ -5,8 +5,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## What this is
 
 A LaTeX document class (`armymemo.cls`) implementing the U.S. Army memorandum format
-per AR 25-50. There is no application code — the deliverables are the class file, the
-bundled `digsig.sty`, and the `examples/` that exercise them.
+per AR 25-50. There is no application code — the deliverables are the class file and the
+`examples/` that exercise it.
 
 ## Repo identity — read before any `gh` command
 
@@ -44,8 +44,9 @@ bundled `digsig.sty`, and the `examples/` that exercise them.
   file stays honest.
 
   Two glallen01 branches were never merged here and are no longer reachable locally:
-  `opord-example` (`3d5e5e1`, an OPORD example) and `digsig` (`0aa362d`, superseded by the
-  bundled `digsig.sty`). Both remain public on glallen01 and come back with the fetch above.
+  `opord-example` (`3d5e5e1`, an OPORD example) and `digsig` (`0aa362d`, which was
+  superseded by a bundled `digsig.sty` that has since been removed — see CHANGES.md).
+  Both remain public on glallen01 and come back with the fetch above.
 
 - **GitHub still classifies this repo as a fork** (`isFork: true`, parent `glallen01`),
   and removing the remote did not change that — it is repo metadata, not a remote. PR and
@@ -218,9 +219,9 @@ cd examples && latexmk -lualatex example.tex     # build a single example
 
 **Up-to-date checks are by checksum, not mtime.** `make` rebuilt on a newer timestamp;
 `task` compares file contents, so `touch armymemo.cls` no longer forces a rebuild while a
-real edit still does. `armymemo.cls` and `digsig.sty` are listed as `sources:` of the
-per-example `build:one` task, so editing either rebuilds all twenty PDFs — that is the
-#12/#38 fix, and dropping them from that list silently restores the bug. Fingerprints live
+real edit still does. `armymemo.cls` is listed as a `sources:` entry of the per-example
+`build:one` task, so editing it rebuilds all nineteen PDFs — that is the #12/#38 fix, and
+dropping it from that list silently restores the bug. Fingerprints live
 in `.task/`, which is ignored and safe to delete; doing so forces one full rebuild.
 
 **`task test` is the test suite.** It rebuilds every `examples/*.tex`, extracts
@@ -274,8 +275,8 @@ same place, and before that an `examples/Makefile` as well — mostly delegated 
   `currently` reference in this very bullet. That third one is the one that goes stale,
   because it is the one nobody counts: the 0.5.0 release commit had to fix it after the
   fact. Bump all three.
-- `examples/armymemo.cls`, `examples/digsig.sty`, and `examples/DODb1.pdf` are symlinks to
-  the repo root, so the examples always compile against the live class.
+- `examples/armymemo.cls` and `examples/DODb1.pdf` are symlinks to the repo root, so the
+  examples always compile against the live class.
 
 ## Architecture
 
@@ -332,9 +333,15 @@ entries; the enclosure counter survives because its output names the number (`En
 `2 Encls`; `\enclsnocount` suppresses the count per AR 25-50 Table 4-4), while the other
 lists only need to know whether they are empty.
 
-**Options.** `digsig` is the only class-specific option — it sets an etoolbox bool and
-loads the bundled `digsig.sty`, which adds an interactive PDF signature field to the
-signature block. Everything else is passed through to `scrartcl` via `\DeclareOption*`.
+**Options.** The class declares **no options of its own**. Everything a document passes
+reaches `scrartcl` through the kernel's global-option rule — _not_ through
+`\DeclareOption*`, which was deleted (see the comment at armymemo.cls:39, and do not
+revive it: it would deliver options twice or in a different order).
+
+The one `\DeclareOption` still present is a headstone. `digsig` was the sole
+class-specific option; it is removed, and the declaration survives only to raise a class
+error naming AR 25-50 appendix F, so a document still passing it gets an explanation
+rather than an unknown-option warning in the log. Delete it after one release.
 
 `am@`-prefixed macros are internal — a document can't reach them without `\makeatletter`.
 Everything else is public API.
