@@ -14,7 +14,18 @@ markings, the signature block, and the enclosure/distribution/copies-furnished l
   Arial the letterhead font. If either is missing the class falls back to the
   metric-compatible TeX Gyre face and says so loudly — AR 25-50 names the typeface, so a
   silent substitution would hand you a memo that looks finished and is not compliant.
-- `latexmk` to drive builds, `chktex` to lint.
+- `latexmk` to drive builds, `chktex` to lint. Both come from TeX Live.
+- **Everything else comes from the repo's `Brewfile`:**
+
+  ```sh
+  brew bundle                      # install it all
+  brew bundle check --no-upgrade   # just check, install nothing
+  ```
+
+  That covers `go-task` (the build driver), `poppler` (`pdftotext` and `pdfinfo` — the
+  test harness cannot run without them, and TeX Live does **not** ship them), and the
+  formatters and linters `task lint` runs. TeX Live itself is not in the Brewfile;
+  Homebrew does not manage it.
 
 ### Files you need
 

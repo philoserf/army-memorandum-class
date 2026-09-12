@@ -169,10 +169,20 @@ tasks:
     cmds:
       - sh tools/run-tests.sh --update
 
+  # Removes everything the build and the tooling generate: the example PDFs, the
+  # LaTeX aux files beside them, and the three scratch directories the tools keep
+  # at the repo root. All three are gitignored, so this is about disk and about
+  # `clean` meaning what it says, not about the working tree being dirty.
+  #
   # example*.pdf is deliberately narrower than *.pdf: DODb1.pdf in that directory
   # is a tracked symlink to build input, not output.
+  #
+  # Removing .task/ discards go-task's fingerprint cache, so the next build is a
+  # full one. That is the correct behaviour for a target called clean -- it is
+  # what `make clean` always meant -- but it does mean `task clean && task build`
+  # rebuilds all twenty examples rather than none.
   clean:
-    desc: Remove built PDFs and aux files
+    desc: Remove built PDFs, aux files and all tool scratch directories
     cmds:
       - rm -f examples/example*.pdf
       - >-
@@ -180,6 +190,10 @@ tasks:
         *-blx.bib *.aux *.bbl *.bcf *.blg *.brf *.dvi
         *.ent *.fdb_latexmk *.fls *.idx *.ilg *.ind *.lof *.log
         *.lot *.orig *.rtf *.run.xml *.toc *.url
+      # .test-work: the harness's per-build extractions and diffs.
+      # .latexindent: latexindent's backups and indent.log, routed there by -c.
+      # .task: go-task's checksum cache.
+      - rm -rf .test-work .latexindent .task
 
   proper:
     desc: clean, and also remove *.out

@@ -93,11 +93,11 @@ does not close the gap the APD template would — see below.
 
 ### Re-extracting the figures
 
-`tools/extract-ar-figures.py` does this. It needs Poppler (`pdfimages`, `pdftotext`), which
-TeX Live 2026 ships but which is not on a non-interactive shell's `PATH`:
+`tools/extract-ar-figures.py` does this. It needs Poppler for `pdfimages` and `pdftotext`
+— Homebrew's `poppler`, which the repo `Brewfile` records. TeX Live ships neither binary,
+so no `PATH` export is needed here; that export is for `lualatex` and friends.
 
 ```sh
-export PATH="$HOME/texlive/2026/bin/universal-darwin:$PATH"
 python3 tools/extract-ar-figures.py
 ```
 

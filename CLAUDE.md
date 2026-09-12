@@ -117,6 +117,16 @@ deliberate decision, not a routine step.
 - **LuaLaTeX or XeLaTeX is required** — the class uses `fontspec` and calls
   `\setmainfont` / `\setsansfont` directly. pdflatex will not compile it.
 - **Times New Roman and Arial must be installed system-wide** or compilation fails.
+- **The repo has its own `Brewfile`** — `brew bundle` installs the non-TeX-Live tooling, and
+  `brew bundle check --no-upgrade` reports what is missing. Use the flag: a bare
+  `brew bundle check` also fails on merely _outdated_ formulae, which answers a different
+  question than "can I build this repo?". It duplicates entries in the global `~/.Brewfile`
+  on purpose — a global describes one machine today, this describes what a clone needs.
+- **`poppler` is a hard dependency of `task test`, and TeX Live does not provide it.**
+  `pdftotext` and `pdfinfo` drive the golden comparison; `pdfimages` and `pdftoppm` back
+  `tools/extract-ar-figures.py` and the visual diffing. An earlier revision of this file
+  and of `references/README.md` said TeX Live ships them. It does not — verified by listing
+  its `bin/` and by running the extractor with TeX Live off `PATH` entirely.
 - **`task lint` is every linter that can gate**: `ruff` over the Python (via `uvx`; not
   installed), `shellcheck` and `shfmt -d` over the shell, `latexindent -k` over
   `armymemo.cls` and the examples, and `prettier --check .` over the Markdown and YAML.

@@ -20,8 +20,11 @@ Output goes to references/figures/, which .gitignore excludes -- see
 references/README.md for why none of it is tracked, and for what the figures can
 and cannot settle.
 
+Requires Poppler for pdfimages and pdftotext. That is Homebrew's `poppler`, not
+TeX Live -- TeX Live ships neither binary, despite being the source of everything
+else in this repository's build. See the repo Brewfile.
+
 Usage:
-    export PATH="$HOME/texlive/2026/bin/universal-darwin:$PATH"   # for poppler
     python3 tools/extract-ar-figures.py [path/to/AR.pdf]
 """
 
