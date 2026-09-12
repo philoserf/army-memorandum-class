@@ -113,7 +113,7 @@
 
 % used to change date format
 \RequirePackage{datetime}
-\newdateformat{mildate}{\twodigit\THEDAY\ \monthname[\THEMONTH] \THEYEAR}
+\newdateformat{mildate}{\THEDAY\ \monthname[\THEMONTH] \THEYEAR}
 \mildate
 % for logo and other includes
 \RequirePackage{graphicx}
