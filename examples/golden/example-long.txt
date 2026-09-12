@@ -120,6 +120,7 @@ AUTHORITY LINE:
 Encl                                         JOHN DOE
 AR 25-50                                     CPT, CY
                                              COMMANDING
+
 DISTRIBUTION:
 DISTRO 1
 DISTRO 2

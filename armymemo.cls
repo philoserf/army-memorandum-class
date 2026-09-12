@@ -457,8 +457,17 @@
 \newcommand{\documentmark}[1]{\def \am@documentmark{#1}}\documentmark{}
 
 % authority line
-\newcommand{\authority}[1]{\def\am@authorityline{\ifstrempty{#1}{}{\MakeUppercase{#1}:}}}
-\authority{}
+%
+% \am@authorityline@raw exists for the same reason \am@suspensedate@raw does, and the
+% warning there applies verbatim: \am@authorityline's body is a conditional, not the
+% value, so it is never empty and neither \ifstrempty nor \ifdefempty applied to it can
+% ever take the empty branch. \am@closing has to know whether an authority line was
+% actually set -- AR 25-50 2-4c(2)(a) places the signature block differently in each case
+% -- and only a macro whose body IS the value can answer that. Do not "simplify" it away.
+\newcommand{\authority}[1]{%
+	\def\am@authorityline@raw{#1}%
+	\def\am@authorityline{\ifstrempty{#1}{}{\MakeUppercase{#1}:}}%
+}\authority{}
 
 % signature block
 % AR 25-50 requires the signature block; it identifies the memo's author. These
@@ -552,7 +561,7 @@
 \newcommand{\am@sigblock}{%
 	{\MakeUppercase\am@author}\\
 	\ifdefempty{\am@branch}{\am@rank}{\am@rank, \am@branch}\\
-	\am@title
+	\am@title\strut%
 }
 \newcommand{\am@closing}{%
 	\vspace*{\baselineskip}%
@@ -562,8 +571,35 @@
 		% point out of that column -- correct for justified prose, wrong for a block
 		% aligned to a rule. Off for the closing only.
 		\microtypesetup{protrusion=false}%
-		\noindent\am@authorityline\par
-		\vspace*{4\baselineskip}%
+		% AR 25-50 2-4c(2)(a) states two different placements, so this branches.
+		% With an authority line: it sits 2 lines below the last line of text (2-4c(1)),
+		% and the signature block 5 lines below it. Without one: the signature block sits
+		% 5 lines below the last line of TEXT, not 7.
+		%
+		% The old code emitted \am@authorityline unconditionally and always skipped 4
+		% lines. With no authority line that left an EMPTY paragraph as this \parbox's
+		% first line and measured the skip from it, putting the signature 6.57 baselines
+		% below the text -- not 7, because \parbox[t] takes its reference from the first
+		% line's baseline, and an empty line has no ascender where a text line does.
+		% Sixteen of the nineteen examples take this path.
+		%
+		% \strut is what removes that 0.57 and it is load-bearing, not decoration. It
+		% gives the empty branch a first line of normal height and depth, so the box has
+		% the same geometry in both branches and the skip below it means the same thing
+		% in both. Replacing it with a bare \vspace* of the "equivalent" size does not
+		% work: measured, that lands at 5.57 baselines, and the difference would have to
+		% be bought back with a fractional magic constant that no rule in the AR explains.
+		%
+		% The two skips differ by one because the authority branch's first line is the
+		% authority line itself, which AR 2-4c(1) already places 2 lines below the text,
+		% while the empty branch's first line is the phantom.
+		\ifdefempty{\am@authorityline@raw}{%
+			\noindent\strut\par
+			\vspace*{2\baselineskip}%
+		}{%
+			\noindent\am@authorityline\par
+			\vspace*{4\baselineskip}%
+		}%
 		\noindent
 		\parbox[t]{0.5\textwidth}{\am@encls}%
 		\parbox[t]{0.5\textwidth}{\am@sigblock}%
