@@ -136,11 +136,11 @@ empty and reports nothing.
 
 ### Letterhead
 
-| Command            | Purpose                                                                                                          |
-| ------------------ | ---------------------------------------------------------------------------------------------------------------- |
-| `\address{...}`    | One line of the letterhead address. Repeat, in order, for each line.                                             |
-| `\department{...}` | Departmental line. Defaults to `DEPARTMENT OF THE ARMY`.                                                         |
-| `\logo{...}`       | Letterhead seal, given as a graphics file without extension. Defaults to `DODb1`. `DOW-Seal-BW` is also bundled. |
+| Command            | Purpose                                                                                                                    |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------- |
+| `\address{...}`    | One line of the letterhead address. Repeat, in order, for each line.                                                       |
+| `\department{...}` | Departmental line. Defaults to `DEPARTMENT OF THE ARMY`.                                                                   |
+| `\logo{...}`       | Letterhead seal, given as a graphics file without extension. Defaults to `DODb1`, the DoD seal AR 25-50 1-16b(1) requires. |
 
 ### Memorandum lines
 
