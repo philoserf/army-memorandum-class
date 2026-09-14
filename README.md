@@ -70,6 +70,11 @@ The class is often copied out of this repository on its own. The full set is:
 Put them beside your document, or anywhere TeX searches. A missing logo is reported by
 name with a class error rather than failing inside `graphicx`.
 
+**The class is not on CTAN and is not planned for it.** This repository is the whole
+distribution, so there is no package to install and no `texmf` tree to place — copying the
+two files above is the supported route. What 1.0 promises is that the command names and
+their behavior are stable for people doing exactly that.
+
 ### A note on fonts
 
 The class sets **Times New Roman** as the main font. This follows the 4 OCT 24 update to
