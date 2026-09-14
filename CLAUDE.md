@@ -205,7 +205,7 @@ a way a repository name is not.
   `task format` is the writing half. `prettier` respects `.gitignore`, so `.` does not
   wander into `.task/`, `.latexindent/` or `references/figures/`, and no `.prettierignore`
   is needed.
-- **`chktex` is deliberately not in `lint`.** It reports 26 warnings on `main`, so it would
+- **`chktex` is deliberately not in `lint`.** It reports 25 warnings on `main`, so it would
   make the gate permanently red. It lives in `check` (advisory) and in `test` (ratcheted
   against `CHKTEX_BASELINE`, failing only when the count rises).
 - **`lacheck` was evaluated and rejected.** It has no concept of a `.cls`: all 19 findings
@@ -242,7 +242,7 @@ export PATH="$HOME/texlive/2026/bin/universal-darwin:$PATH"
 `latexrun` is not in the tree. The build used to branch on it and always fall through;
 that branch is gone, and `latexmk -lualatex` is simply what runs.
 
-**`task check` exits nonzero on `main`** — `chktex` reports 26 warnings against
+**`task check` exits nonzero on `main`** — `chktex` reports 25 warnings against
 `armymemo.cls` (spacing, dashes), none of them new. Compare counts rather than expecting
 a clean run. Note the exit _code_ is 201, not chktex's own 2: go-task reports a failed
 command with its own status. Nothing scripts on it — the ratchet in `tools/run-tests.sh`
@@ -289,7 +289,9 @@ Two things to know before running it:
   page, and stripping those silently breaks page-break detection. See
   `examples/golden/README.md` for provenance and the full rule.
 - **`chktex` folds into `task test` as a ratchet**, not a gate: it fails only when the
-  warning count rises above `CHKTEX_BASELINE` in `tools/run-tests.sh` (currently 26).
+  warning count rises above `CHKTEX_BASELINE` in `tools/run-tests.sh` (currently 25).
+  It was 26 until 1.0.0 removed the `digsig` headstone, which took a warning with it;
+  the baseline only ever ratchets down, and it moves in the same change as the count.
   Lower the baseline in the same change that lowers the count.
 - **The goldens cannot see sub-line vertical movement, and `tools/check-ar-metrics.py`
   is what covers that.** `pdftotext` quantises vertical space into text rows, so a block
