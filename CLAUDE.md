@@ -62,9 +62,12 @@ per AR 25-50. There is no application code — the deliverables are the class fi
 
 ## Fork policy — do not contact upstream
 
-**Nothing goes to `glallen01/army-memorandum-class` until the divergent work is finished
-and deliberately proposed.** Upstream is a separate maintainer's project; unfinished work
-arriving there is noise for them, not a contribution.
+**Nothing goes to `glallen01/army-memorandum-class`.** Upstream is a separate maintainer's
+project; work arriving there unbidden is noise for them, not a contribution. As of
+2026-09-14 this is settled rather than pending: the curated PR series was considered and
+decided against under #122, for the reasons recorded below. There is no longer a future
+state in which contact happens by default — reopening it takes a new issue and a
+deliberate decision.
 
 Removing the `upstream` remote closed off the accidental `git push`, but it did **not**
 make this section obsolete: GitHub still treats the repo as a fork, and hazards 1 and 2
@@ -127,13 +130,59 @@ original work.
 These issues are the backlog of intended divergence — read the relevant one before
 "fixing" something in the class, because the analysis is likely already written up there.
 
-### When the work is done
+### Decided, 2026-09-14: nothing is proposed upstream (#122)
 
-The graduate-to-`philoserf` option has already been taken. What remains is the other
-branch: if the work ever warrants it, propose a curated series of PRs upstream — small,
-separable, each on a clean branch cut from `ed2082e`, the last commit this repo shares
-with glallen01. That requires re-adding the remote (see Repo identity), and is a
-deliberate decision, not a routine step.
+**The curated PR series will not be offered to `glallen01`.** This was the branch left
+open when #53 graduated the fork instead of tracking upstream, and it stayed open through
+three milestones. It is closed now, before 1.0, because shipping a 1.0 while the
+relationship to the parent project is formally undecided gets the order wrong.
+
+The reason is the shape of the divergence, not its size. A curated series is only worth
+preparing if the pieces are ones the other maintainer would plausibly want, and the most
+consequential work here is a set of decisions they may well not share:
+
+- **`digsig` was removed**, and `glallen01` deliberately bundled `digsig.sty` (`68d1905`,
+  an ancestor of `ed2082e`). Proposing its removal is proposing they reverse a choice they
+  made, which is not a contribution so much as an argument.
+- **The `0.4.0` remediation and the milestone 9 conformance work change rendered output.**
+  Anyone with existing memoranda gets different PDFs. That is a reasonable thing for this
+  repo to decide for itself and an unreasonable thing to hand someone else.
+- **Most of the rest is repo-local** — the task runner, the golden harness, the AR metrics
+  and public-API checkers, the reference index. None of it travels.
+
+What is left after removing those is small enough that the curation cost exceeds the
+value. The honest summary is that this stopped being the same project some time ago,
+which is exactly what the graduation rule in `~/source/x3c3/CLAUDE.md` describes.
+
+**This does not license contact of any kind.** The hazards in this section stay live:
+`gh` still defaults a PR from a fork to the parent, and a bare issue URL still posts a
+cross-reference into their timeline. Reopening the question is a deliberate decision with
+a new issue behind it, not something to infer from a convenient-looking diff.
+
+### Decided, 2026-09-14: CTAN is not a goal (#121)
+
+**This class is distributed from this repository and nowhere else.** No `.dtx`/`.ins`
+wrapper, no TDS-conformant tree, no package submission. `README.md`'s "Files you need"
+table is the whole distribution story: copy `armymemo.cls` and `DODb1.pdf` beside the
+document.
+
+Recorded here so it is not rediscovered as an open question. It was filed before the
+freeze precisely because the cost is asymmetric — deciding now is free, and retrofitting
+`.dtx` onto a released 1.0 means either a disruptive 2.0 or two maintained layouts.
+
+Two things follow, and one of them is the real reason:
+
+- **1.0 means "the public API is stable for people copying the file."** That is a smaller
+  promise than a packaged release makes, and a completely honest one. It is the promise
+  `tools/check-public-api.py` enforces.
+- **The non-free font requirement never has to be argued.** AR 25-50 names Times New Roman
+  and Arial; neither is redistributable, and neither ships with TeX Live. A CTAN package
+  whose documented fonts are non-free needs a stated position on that. A repository that
+  falls back to the metric-compatible TeX Gyre faces and says so loudly (#14) does not.
+
+If this is ever reversed, the packaging work comes **before** the next major version, not
+after, and `armymemo` would need to be unclaimed on CTAN — a package name is permanent in
+a way a repository name is not.
 
 ## Toolchain
 

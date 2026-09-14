@@ -54,6 +54,19 @@
   `a.` / `(1)` / `(a)` labels, but they are LaTeX's own names and carry LaTeX's
   contract, not this class's.
 
+- **`README.md` now says the class is not on CTAN and is not planned for it.**
+  Whether to package for CTAN was an open question from #16 onward and gated the
+  repository's shape; it is decided against (#121). This repository is the whole
+  distribution, so 1.0 promises that the command names and their behavior are
+  stable for people copying `armymemo.cls` beside their document -- a smaller
+  promise than a packaged release makes, and an honest one. It also means the
+  non-free font requirement never needs a stated position: AR 25-50 names Times New
+  Roman and Arial, neither is redistributable, and the class falls back to the
+  metric-compatible TeX Gyre faces and says so loudly.
+
+  The related decision not to propose a curated pull-request series to the parent
+  project (#122) is recorded in `CLAUDE.md`; it changes nothing about the class.
+
 - **A "What this class covers" section in `README.md`.** "Implements AR 25-50" is
   the class's whole description, and the regulation specifies several kinds of
   correspondence this class does not produce. Until now the answer for each was
