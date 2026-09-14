@@ -41,20 +41,17 @@
 % kernel's global-option rule, which already delivers them -- potentially twice, or
 % in a different order. Deleting leaves the kernel rule doing what it does today.
 \RequirePackage{etoolbox}  % required for conditionals (already implied)
-% The digsig option is retired, not silently dropped. Left undeclared it would
-% reach scrartcl through the kernel's global-option rule and surface as an
-% unknown-option warning buried in the log, which tells the author nothing about
-% where the feature went. This errors by name and points at the procedure that
-% replaced it. Remove after one release.
-\DeclareOption{digsig}{%
-	\ClassError{armymemo}{The digsig option has been removed}{%
-		The class no longer emits a PDF signature field.\MessageBreak%
-		Place the signature block in Adobe Acrobat instead;\MessageBreak%
-		AR 25-50 appendix F gives the procedure, including the\MessageBreak% chktex 8
-		read-only and date-locking properties the class could not\MessageBreak%
-		set. See CHANGES.md for the rationale.%
-	}%
-}
+% The class declares NO options of its own, and that is the whole option surface:
+% everything a document passes reaches scrartcl through the kernel's global-option
+% rule. \ProcessOptions stays because the rule needs it; \DeclareOption* is
+% deliberately absent, per the note above.
+%
+% The digsig headstone that stood here through 0.6.0 -- a \DeclareOption raising a
+% class error by name -- is gone as of 1.0.0. It was declared for exactly one
+% release so a document still passing [digsig] got an explanation instead of an
+% unknown-option warning, and that release has now happened. A document passing it
+% now gets the kernel's own unused-global-option warning, which is the correct
+% answer for an option that no longer exists.
 \ProcessOptions\relax
 
 % 12pt and oneside are mandated by AR 25-50 and are deliberately not overridable.
@@ -70,7 +67,7 @@
 
 \AtBeginDocument{%
 	\am@putlogo%
-	\dodheader%
+	\am@dodheader%
 	\vspace*{1\baselineskip}
 }
 
@@ -143,9 +140,14 @@
 }
 
 % used to change date format
+%
+% am@-prefixed because it is internal: the class invokes it once, here, so that
+% \today renders the way AR 25-50 writes a date, and nothing is meant to switch
+% the format back. It was \mildate through 0.6.0 -- a public name for something
+% that was never API, which is the sort of thing a version freeze is for.
 \RequirePackage{datetime}
-\newdateformat{mildate}{\THEDAY\ \monthname[\THEMONTH] \THEYEAR}
-\mildate
+\newdateformat{am@mildate}{\THEDAY\ \monthname[\THEMONTH] \THEYEAR}
+\am@mildate
 % for logo and other includes
 \RequirePackage{graphicx}
 % for future use of colors in classification markings
@@ -166,8 +168,8 @@
 % is the right outcome for someone who ignored the warning at 5.
 \renewlist{enumerate}{enumerate}{5}
 \setlistdepth{5}
-% required for \setstretch, which \dodheader relies on to set the letterhead's line
-% pitch -- indirectly, and not in the way the source looks like it does. See \dodheader.
+% required for \setstretch, which \am@dodheader relies on to set the letterhead's line
+% pitch -- indirectly, and not in the way the source looks like it does. See \am@dodheader.
 \RequirePackage{setspace}
 
 
@@ -417,7 +419,7 @@
 % header info
 \newcommand{\signaturedate}[1]{\def \am@signaturedate{#1}}\signaturedate{}
 \signaturedate{\am@MissingRequiredArg{warning}{signaturedate}{DRAFT}}
-% \am@suspensedate@raw exists so the guard in \dodheader can be LIVE, and removing it
+% \am@suspensedate@raw exists so the guard in \am@dodheader can be LIVE, and removing it
 % silently restores a bug that survived for years. \am@suspensedate's body is a
 % conditional, not the value, so it is never empty -- neither \ifstrempty nor
 % \ifdefempty applied to it can ever take the empty branch. Only a macro whose body IS
@@ -456,22 +458,20 @@
 % needed for it.
 %
 % This note used to document a second, hand-built THRU workflow
-% (\multimemothru followed by \addmemoline{FOR ...}) and then apologise that
-% it "deviates" from the others. The README documented only the first, so
-% the class and the README described different APIs. The hand-built form
-% still works, and examples/example-grid.tex still shows it; it is a literal
-% line like any other, not a supported second route.
+% (\multimemothru followed by \memoline{FOR ...}, spelled \addmemoline at the
+% time) and then apologise that it "deviates" from the others. The README
+% documented only the first, so the class and the README described different
+% APIs. The hand-built form still works, and examples/example-grid.tex still
+% shows it; it is a literal line like any other, not a supported second route.
 %
-% \addmemoline is a retained alias for \memoline. It is the older name, so
-% documents in the wild may use it; it stays working, deliberately without a
-% deprecation warning, since firing one at an unbroken document buys nothing.
-% The irony is acknowledged: \addmemoline is the name that fits the \add*
-% list-adder family (\addencl, \adddistro, \addcf, \address) and \memoline is
-% the one that does not. \memoline is canonical anyway, because it is the
-% name the README documents and the name every example uses.
+% \addmemoline, a retained alias for \memoline, was dropped at 1.0.0. It was the
+% older name and it is the one that fits the \add* list-adder family (\addencl,
+% \adddistro, \addcf, \address), which \memoline conspicuously does not -- but
+% \memoline is the name the README documents, the name every example uses, and
+% freezing two spellings of one concept into a 1.0 is worse than dropping the
+% undocumented one while dropping it is still cheap.
 %
 \newcommand{\memoline}[1]{\listadd{\am@list@memolines}{#1}}
-\newcommand{\addmemoline}[1]{\memoline{#1}}
 \newcommand{\mfr}{\memoline{MEMORANDUM FOR RECORD}}
 \newcommand{\am@domemoline}[1]{\vspace{\baselineskip}#1\\}
 \newcommand{\multimemothru}[1]{\listadd{\am@list@memothru}{#1}}
@@ -833,19 +833,19 @@
 }
 
 
-% \dodheader alternate implementation possibility:
+% \am@dodheader alternate implementation possibility:
 %    https://www.ntg.nl/maps/31/15.pdf "Exact layout with LaTeX" Siep Kroonenberg
 %    uses plain tex and picture environment
 
 \newcommand{\department}[1]{\def\am@department{\ifstrempty{#1}{DEPARTMENT OF THE ARMY}{\MakeUppercase{#1}}}}\department{}
 \newcommand{\address}[1]{\listadd{\am@list@address}{#1}}
 % The second \fontsize argument is the declared leading, and it does NOT reach the page --
-% see the note on \setstretch in \dodheader. It is written equal to the type size, the
+% see the note on \setstretch in \am@dodheader. It is written equal to the type size, the
 % conventional "no special leading" idiom, rather than a specific-looking number that
 % would invite someone to tune it. Measured: changing it to 10.11pt, the pitch actually
 % observed, produces byte-identical output.
 \newcommand{\am@do@address}[1]{\fontsize{8pt}{8pt}\selectfont\textbf{\MakeUppercase{#1}}\\}
-\newcommand{\dodheader}{%
+\newcommand{\am@dodheader}{%
 	% Defaults apply only when the document supplied no address at all. This used to
 	% test {<}{2} on a counter, so a document supplying exactly ONE address fell below
 	% the threshold and had all three placeholders appended to its real line -- a
