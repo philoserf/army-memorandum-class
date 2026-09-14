@@ -9,8 +9,8 @@ by the next release. This makes that a failing test instead.
 The rule is symmetric and has no allowlist, deliberately:
 
     every command armymemo.cls defines without the am@ prefix
-        must appear in README.md's command reference
-    every command README.md's command reference names
+        must appear in README.md's frozen-API table
+    every command README.md's frozen-API table names
         must be defined by armymemo.cls
 
 A new public command therefore fails until it is documented, and a documented
