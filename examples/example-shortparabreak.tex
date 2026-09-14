@@ -1,0 +1,44 @@
+% !TEX program = lualatex
+% Coverage example: AR 25-50 2-5c(1), "do not divide a paragraph of three lines or
+% fewer between pages." Paragraph 2 below is exactly three lines and sits on a page
+% boundary with room above it for one or two of them. The class must decline the
+% division and move the whole paragraph to page two, leaving page one short.
+%
+% Paragraph 3 exists so that the closing is not what forces the move. With the
+% short paragraph last, \am@closing's unbreakable box and the \nopagebreak after
+% the body list would carry it across regardless, and the example would pass
+% without ever exercising 2-5c(1). See #124.
+%
+% The filler's height is a \rule of exact depth rather than tuned prose, and that
+% is deliberate: the golden has to survive a TeX Live font-metric change. Prose
+% filler reflows when metrics move and takes the page break with it -- which is
+% why examples/example-pagebottom.tex calls itself the most fragile golden here.
+% A rule is a box, so only the paragraph line counts depend on metrics, and the
+% depth below sits in the middle of its regime.
+\documentclass{../armymemo}
+
+\address{Organizational Name/Title}
+\address{Standardized Street Address}
+\address{CITY, STATE~~12345-1234}
+
+\author{John W. Smith}\rank{CPT}\branch{CY}
+\officesymbol{ABC-DEF-GH}
+\signaturedate{10 April 2019}
+\memoline{MEMORANDUM FOR RECORD}
+\subject{A three-line paragraph on a page boundary, which may not be divided}
+\title{COMMANDING}
+\authority{FOR THE COMMANDER}
+
+\begin{document}
+
+\begin{enumerate}
+	\item This paragraph and the rule after it exist only to push what follows down
+	      the page.\rule[-5.7in]{0pt}{0pt}
+	\item This paragraph is three lines long and begins near the foot of page one.
+	      AR 25-50 2-5c(1) forbids dividing a paragraph of three lines or fewer
+	      between pages, so all three lines must appear on the same page.
+	\item This paragraph follows, so that the closing is not what forces the
+	      paragraph above it across the page break.
+\end{enumerate}
+
+\end{document}

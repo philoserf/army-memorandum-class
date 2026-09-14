@@ -1,0 +1,37 @@
+% !TEX program = lualatex
+% Coverage example: AR 25-50 2-5c(4), the single-line exception. The rule says the
+% authority line and signature block may not appear on a continuation page without
+% at least two lines of the last paragraph -- "unless the last paragraph is a
+% single line", which may go alone with them. This is that case: a one-line final
+% paragraph, positioned so the closing cannot fit on page one.
+%
+% The filler's height is a \rule of exact depth rather than tuned prose, and that
+% is deliberate: the golden has to survive a TeX Live font-metric change. Prose
+% filler reflows when metrics move and takes the page break with it -- which is
+% why examples/example-pagebottom.tex calls itself the most fragile golden here.
+% A rule is a box, so only the FINAL paragraph's line count depends on metrics,
+% and the depth below sits in the middle of its regime: the break stays where it
+% is under roughly half an inch of drift either way. See #124.
+\documentclass{../armymemo}
+
+\address{Organizational Name/Title}
+\address{Standardized Street Address}
+\address{CITY, STATE~~12345-1234}
+
+\author{John W. Smith}\rank{CPT}\branch{CY}
+\officesymbol{ABC-DEF-GH}
+\signaturedate{10 April 2019}
+\memoline{MEMORANDUM FOR RECORD}
+\subject{A final paragraph of one line, which may accompany the closing alone}
+\title{COMMANDING}
+\authority{FOR THE COMMANDER}
+
+\begin{document}
+
+\begin{enumerate}
+	\item This paragraph and the rule after it exist only to push what follows down
+	      the page.\rule[-5.0in]{0pt}{0pt}
+	\item The point of contact for this memorandum is the undersigned.
+\end{enumerate}
+
+\end{document}

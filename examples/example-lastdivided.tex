@@ -1,0 +1,37 @@
+% !TEX program = lualatex
+% Coverage example: AR 25-50 2-5c(1) and 2-5c(4) acting together on a final
+% paragraph long enough that it must be divided. At least two lines belong on each
+% page, and at least two must accompany the authority line and signature block.
+% Both constraints are live here -- the paragraph divides, and the division is the
+% one the regulation permits.
+%
+% The filler's height is a \rule of exact depth rather than tuned prose, and that
+% is deliberate: the golden has to survive a TeX Live font-metric change. Prose
+% filler reflows when metrics move and takes the page break with it -- which is
+% why examples/example-pagebottom.tex calls itself the most fragile golden here.
+% A rule is a box, so only the FINAL paragraph's line count depends on metrics,
+% and the depth below sits in the middle of its regime: the break stays where it
+% is under roughly half an inch of drift either way. See #124.
+\documentclass{../armymemo}
+
+\address{Organizational Name/Title}
+\address{Standardized Street Address}
+\address{CITY, STATE~~12345-1234}
+
+\author{John W. Smith}\rank{CPT}\branch{CY}
+\officesymbol{ABC-DEF-GH}
+\signaturedate{10 April 2019}
+\memoline{MEMORANDUM FOR RECORD}
+\subject{A final paragraph long enough to be divided between pages}
+\title{COMMANDING}
+\authority{FOR THE COMMANDER}
+
+\begin{document}
+
+\begin{enumerate}
+	\item This paragraph and the rule after it exist only to push what follows down
+	      the page.\rule[-4.5in]{0pt}{0pt}
+	\item This paragraph is the last one in the memorandum and is long enough that it cannot fit whole above the closing, so the page builder has to divide it. AR 25-50 2-5c(1) requires at least two lines of a divided paragraph on each page, and 2-5c(4) requires at least two lines of the last paragraph to accompany the authority line and the signature block.
+\end{enumerate}
+
+\end{document}

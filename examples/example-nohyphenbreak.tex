@@ -1,0 +1,45 @@
+% !TEX program = lualatex
+% Coverage example: AR 25-50 2-5c(3), "do not hyphenate a word between pages."
+% Paragraph 2 is built from long, readily hyphenated words and is divided by a page
+% break, so the line ending page one is exactly where a hyphenation would fall if
+% \brokenpenalty did not forbid it. The assertion lives in the golden: the last body
+% line of page one ends in a whole word, never in a hyphen.
+%
+% Paragraph 3 exists so the closing is not what forces the break, which would move
+% the paragraph whole and never exercise the rule. See #124.
+%
+% The filler's height is a \rule of exact depth rather than tuned prose, and that
+% is deliberate: the golden has to survive a TeX Live font-metric change. Prose
+% filler reflows when metrics move and takes the page break with it -- which is
+% why examples/example-pagebottom.tex calls itself the most fragile golden here.
+\documentclass{../armymemo}
+
+\address{Organizational Name/Title}
+\address{Standardized Street Address}
+\address{CITY, STATE~~12345-1234}
+
+\author{John W. Smith}\rank{CPT}\branch{CY}
+\officesymbol{ABC-DEF-GH}
+\signaturedate{10 April 2019}
+\memoline{MEMORANDUM FOR RECORD}
+\subject{A divided paragraph of readily hyphenated words}
+\title{COMMANDING}
+\authority{FOR THE COMMANDER}
+
+\begin{document}
+
+\begin{enumerate}
+	\item This paragraph and the rule after it exist only to push what follows down
+	      the page.\rule[-4.9in]{0pt}{0pt}
+	\item Interdepartmental telecommunications responsibilities are assigned
+	      administratively, and the reconnaissance characteristics of
+	      uncharacteristically indistinguishable counterintelligence establishments
+	      remain organizationally incomprehensible to representatives of the
+	      interdepartmental subcommittee on administratively indistinguishable
+	      responsibilities. Correspondingly, the superintendent's recommendations
+	      concerning interoperability were characterized as insufficiently
+	      substantiated by the undersigned representative.
+	\item This paragraph follows, so the closing is not what forces the break.
+\end{enumerate}
+
+\end{document}
