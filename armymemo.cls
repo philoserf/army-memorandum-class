@@ -88,6 +88,25 @@
 % at the top or bottom of the page. This messes up other formatting leaving lots
 % of space at the bottom of some pages that requires manual intervention.
 %% http://www.tex.ac.uk/cgi-bin/texfaq2html?label=widows
+%
+% These two are also what enforces AR 25-50 2-5c(1): "do not divide a paragraph of
+% three lines or fewer between pages" and "at least two lines of a divided
+% paragraph on each page". A paragraph of three lines can only split 1+2 or 2+1,
+% and both are a widow or an orphan, so at 10000 neither break is available and
+% the paragraph moves whole. A longer paragraph divides no finer than 2+2 for the
+% same reason. Nothing else in the class addresses 2-5c(1); raising either penalty
+% back to a finite value silently gives the rule up.
+%
+% Verified under #124 rather than reasoned about, and the regression lock that
+% carries the weight is examples/example-shortparabreak.tex, where the three-line
+% paragraph is deliberately NOT the last one: page one there has room for one
+% more line and takes none of it, because the only division on offer is 1+2 and
+% these two penalties forbid both halves of it. A short paragraph in the LAST
+% position proves much less than it appears to -- the unbreakable closing box and
+% the \nopagebreak after the body list would carry it across whole whether or not
+% these penalties were set at all, which is why the example has a paragraph after
+% it. For longer paragraphs, a page position swept in sub-line steps never
+% produced a division finer than 2+2; examples/example-lastdivided.tex locks that.
 \widowpenalty=10000
 \clubpenalty=10000
 
@@ -283,7 +302,20 @@
 \RaggedRight
 
 % AR 25-50 allows for hyphenation (just not across pages per AR 25-50 2-5-c-3)
-% and we want less hyphenation than more
+% and we want less hyphenation than more.
+%
+% \brokenpenalty is the one that carries 2-5c(3); \hyphenpenalty only makes
+% hyphenation rarer everywhere, which is taste rather than regulation. Verified
+% under #124 across a swept page position with a paragraph built entirely of long,
+% readily hyphenated words: it hyphenates freely within a page and never at the
+% break. examples/example-nohyphenbreak.tex is the regression lock, and it shows
+% both halves -- an "interdepart-" mid-page, and a whole word ending page one.
+%
+% 2-5c(2), "at least two words of a divided sentence on each page", has no
+% mechanism here and cannot have one: TeX breaks pages between lines and has no
+% notion of a sentence, so a line ending in the first word of a new sentence is a
+% legal break by every penalty the class can set. A counterexample was constructed
+% under #124. This is the one part of 2-5c an author has to check by eye.
 \hyphenpenalty=5000
 \brokenpenalty=10000
 

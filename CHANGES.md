@@ -2,6 +2,56 @@
 
 ---
 
+## [Unreleased]
+
+### Added
+
+- **Four boundary examples, and goldens, for the AR 25-50 2-5c page-break
+  rules.** The class made a specific structural claim about how a memorandum may
+  break across pages and nothing tested it (#124). It has now been measured:
+  boundary documents with final paragraphs of one to five lines, swept across the
+  page position in sub-line steps, plus a paragraph built entirely of long,
+  readily hyphenated words swept the same way.
+
+  The class is correct on the three rules it can enforce, and the examples lock
+  each one:
+
+  | Rule    | Requirement                                                                      | Enforced by                                                          | Locked by                                       |
+  | ------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------- | ----------------------------------------------- |
+  | 2-5c(1) | no divided paragraph of three lines or fewer; two lines a side                   | `\widowpenalty` / `\clubpenalty`                                     | `example-shortparabreak`, `example-lastdivided` |
+  | 2-5c(2) | two words of a divided sentence on each page                                     | **nothing -- see below**                                             | --                                              |
+  | 2-5c(3) | no word hyphenated between pages                                                 | `\brokenpenalty`                                                     | `example-nohyphenbreak`                         |
+  | 2-5c(4) | two lines of the last paragraph with the closing, or one if that is all there is | `\nopagebreak` after the body list, plus the unbreakable closing box | `example-lastoneline`, `example-lastdivided`    |
+
+  `example-shortparabreak` is the sharpest of the four: page one there has room
+  for one more line and takes none of it, because the only division on offer for
+  the three-line paragraph below is 1+2 and both halves are forbidden. Its third
+  paragraph exists so that the closing is not what forces the move -- with the
+  short paragraph last, the unbreakable closing box would carry it across
+  regardless and the example would pass without exercising 2-5c(1) at all. That
+  is also why the sweep of final paragraphs, on its own, proves less about
+  2-5c(1) than it looks: the independent evidence is this example plus the 2+2
+  division in `example-lastdivided`.
+
+  These examples size their filler with a `\rule` of exact depth rather than tuned
+  prose, deliberately. Prose filler reflows when font metrics move and takes the
+  page break with it, which is why `examples/example-pagebottom.tex` calls itself
+  the most fragile golden here. A rule is a box, so only the paragraph line counts
+  depend on metrics, and each depth was placed in the middle of its regime.
+
+  `task test` now covers 24 examples and 68 measured placements, up from 20 and 52.
+
+### Fixed
+
+- Nothing. **2-5c(2) is not enforced, and cannot be.** TeX breaks pages between
+  lines and has no notion of a sentence, so a line ending in the first word of a
+  new sentence is a legal break by every penalty a class can set; a counterexample
+  was constructed under #124. This is the one part of 2-5c an author has to check
+  by eye, and it is now recorded in `armymemo.cls` beside the penalties rather
+  than left as an unexamined claim.
+
+---
+
 ## [0.6.0] - 2026-09-12
 
 ### Added
