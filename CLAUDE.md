@@ -274,8 +274,9 @@ same place, and before that an `examples/Makefile` as well — mostly delegated 
   the 4 OCT 24 AR 25-50 update and the DAIG guidance quoted in `CHANGES.md` — a local copy
   of that guide now sits in `references/`. Users override with `\setmainfont{Arial}`.
   An earlier revision of this file claimed the README was stale here and cited lines 117
-  and 126; both were wrong. The README (lines 13-14) states the split correctly, and 117 is
-  `\mildate` while 126 is a comment about subdivision depth. Verify a line reference before
+  and 126; both were wrong. The README (lines 13-14) states the split correctly, and 117 was
+  the date format (`\mildate` then, `\am@mildate` since 1.0.0) while 126 is a comment about
+  subdivision depth. Verify a line reference before
   repeating it. (Lines 96 and 105 specifically are unchanged by the latexindent reformat,
   which was whitespace-only and left the file at 747 lines -- but it did alter the leading
   whitespace of other lines, so verify rather than assume for any reference you find.)
@@ -332,9 +333,9 @@ indent any further than the second subdivision" — which is why `\setlist[3]` a
 - _List_: `\address`, `\addencl`, `\adddistro`, `\addcf`, `\memoline` / `\multimemofor` /
   `\multimemothru` use etoolbox `\listadd` into `\am@list@*`, rendered by an `\am@*` loop
   inside the appropriate hook. Only enclosures still keep a counter (`am@encl@count`);
-  the rest test the list itself with `\ifdefvoid`. `\addmemoline` is a retained alias for
-  `\memoline` -- it is the name that matches this family, but `\memoline` is the one the
-  README documents and every example uses, so that is the canonical spelling.
+  the rest test the list itself with `\ifdefvoid`. `\memoline` is the canonical spelling
+  even though `\addmemoline` is the name that would match this family: the alias was
+  undocumented and was dropped at 1.0.0 rather than frozen (#123).
 
 Adding a new field means: define the setter, store into an `am@`-prefixed internal, and
 render it from the correct hook. The renderers vary output between zero, one, and many
@@ -347,10 +348,21 @@ reaches `scrartcl` through the kernel's global-option rule — _not_ through
 `\DeclareOption*`, which was deleted (see the comment at armymemo.cls:39, and do not
 revive it: it would deliver options twice or in a different order).
 
-The one `\DeclareOption` still present is a headstone. `digsig` was the sole
-class-specific option; it is removed, and the declaration survives only to raise a class
-error naming AR 25-50 appendix F, so a document still passing it gets an explanation
-rather than an unknown-option warning in the log. Delete it after one release.
+There is now **no `\DeclareOption` at all**. The `digsig` headstone that stood here
+through 0.6.0 — a declaration whose only job was to raise a class error naming AR 25-50
+appendix F — was declared for exactly one release and removed in 1.0.0, as its own comment
+said it should be. A document passing `digsig` now gets the kernel's unused-global-option
+warning, which is the right answer for an option that does not exist.
 
 `am@`-prefixed macros are internal — a document can't reach them without `\makeatletter`.
-Everything else is public API.
+Everything else is public API, and as of 1.0.0 that surface is **frozen and enforced**:
+`tools/check-public-api.py` runs inside `task test` and fails if the set of non-`am@`
+commands in `armymemo.cls` differs from the frozen-API table in `README.md`, in either
+direction. Adding a public command without documenting it is a failing build, which is the
+point — that is how an unintended name gets frozen. The table holds 22 commands; the
+`\theenum*` / `\labelenum*` hooks are excluded by rule as LaTeX's own names.
+
+Two names were cleared rather than frozen, both under #123: `\addmemoline` (an
+undocumented alias for `\memoline`) and the `digsig` option above. Two more were renamed
+into the internal namespace because they were never API — `\dodheader` became
+`\am@dodheader`, and the `\mildate` date format became `\am@mildate`.

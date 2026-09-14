@@ -113,6 +113,48 @@ for one-shot builds.
 
 ## Command reference
 
+### The frozen public API
+
+Version 1.0.0 freezes these names and their behavior. They are every command
+`armymemo.cls` defines without the internal `am@` prefix, and the list is checked
+against the class on every `task test` run by `tools/check-public-api.py` — a new
+public command fails the build until it appears here.
+
+| Command          | Group                     |
+| ---------------- | ------------------------- |
+| `\addcf`         | closing lists             |
+| `\adddistro`     | closing lists             |
+| `\addencl`       | closing lists             |
+| `\address`       | letterhead                |
+| `\author`        | signature block, required |
+| `\authority`     | signature block           |
+| `\branch`        | signature block, required |
+| `\department`    | letterhead                |
+| `\documentmark`  | marking                   |
+| `\enclsnocount`  | closing lists             |
+| `\logo`          | letterhead                |
+| `\memoline`      | memorandum lines          |
+| `\mfr`           | memorandum lines          |
+| `\multimemofor`  | memorandum lines          |
+| `\multimemothru` | memorandum lines          |
+| `\officesymbol`  | required                  |
+| `\rank`          | signature block, required |
+| `\signaturedate` | required                  |
+| `\st`            | body                      |
+| `\subject`       | required                  |
+| `\suspensedate`  | dates                     |
+| `\title`         | signature block           |
+
+Anything else the class defines is internal. `am@`-prefixed macros are internal by
+construction — a document cannot reach them without `\makeatletter` — and the
+`\theenum*` and `\labelenum*` hooks the class redefines to get AR 25-50's label
+scheme are LaTeX's own names, carrying LaTeX's contract rather than this class's.
+
+Two names were cleared just before the freeze rather than frozen: `\addmemoline`,
+an undocumented alias for `\memoline`, and the `digsig` class option, which had
+been kept for one release as an error message naming its replacement. See
+`CHANGES.md`.
+
 ### Required fields
 
 Six fields are required. Each substitutes a visible red placeholder into the output so
@@ -229,8 +271,9 @@ The class declares no options of its own. Everything you pass is handed to KOMA-
 signature widget while AR 25-50 appendix F additionally requires the field to be marked
 read-only, to lock an associated date box, and to be repeated at each `THRU` line, none of
 which a document class can set. Place the signature block in Adobe Acrobat instead, per
-appendix F. The option name still errors by name for one release rather than failing as an
-unknown option.
+appendix F. The option name was kept for one release as a `\DeclareOption` that errored by
+name; 1.0.0 removed it, so a document still passing `digsig` now gets the kernel's ordinary
+unused-option warning.
 
 ## Examples
 

@@ -25,7 +25,7 @@ WORK="$ROOT/.test-work"
 # chktex reports this many warnings on a clean tree. The harness fails only when
 # the count *rises*, so new lint is caught without demanding the backlog be fixed
 # first. Milestone 2 cleanups should ratchet this down.
-CHKTEX_BASELINE=26
+CHKTEX_BASELINE=25
 
 # The distinctive token emitted by the font fallback guard (#14). Deliberately not
 # a generic "Class armymemo Warning" match: \am@MissingRequiredArg emits
@@ -212,6 +212,21 @@ run_metrics() {
 	return 0
 }
 
+# ---------------------------------------------------------------- public api ---
+# 1.0.0 froze the public command surface. A freeze recorded only in a changelog
+# sentence decays the first time someone adds a convenience command and never
+# documents it -- public by accident, and frozen by the next release. This makes
+# the class and the README's frozen-API table have to agree, in both directions.
+run_api() {
+	if ! command -v python3 >/dev/null 2>&1; then
+		echo "FAIL public-api: python3 not found"
+		echo "    The API freeze check needs it; see tools/check-public-api.py."
+		return 1
+	fi
+	python3 "$ROOT/tools/check-public-api.py" "$ROOT" || return 1
+	return 0
+}
+
 # --------------------------------------------------------------------- main ---
 mkdir -p "$WORK"
 
@@ -296,6 +311,7 @@ for b in $(examples); do
 done
 
 run_metrics || fail=1
+run_api || fail=1
 run_chktex || fail=1
 
 if [ "$fail" -ne 0 ]; then

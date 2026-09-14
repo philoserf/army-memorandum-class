@@ -41,6 +41,23 @@
 
   `task test` now covers 24 examples and 68 measured placements, up from 20 and 52.
 
+- **`tools/check-public-api.py`, which makes the 1.0 API freeze a test.** A freeze
+  recorded only in a changelog sentence decays the first time someone adds a
+  convenience command and never documents it: public by accident, and frozen by the
+  next release. The check is symmetric and has no allowlist -- every command
+  `armymemo.cls` defines without the `am@` prefix must appear in the README's new
+  frozen-API table, and every command that table names must be defined by the class.
+  It runs inside `task test`.
+
+  The two lists agree at **22 commands**. `\theenum*` and `\labelenum*` are excluded
+  by rule rather than by name: the class redefines them to get AR 25-50's `1.` /
+  `a.` / `(1)` / `(a)` labels, but they are LaTeX's own names and carry LaTeX's
+  contract, not this class's.
+
+- **A "frozen public API" table in `README.md`.** The public surface had never been
+  written down anywhere except by implication, spread across the command-reference
+  tables. It is now one list, and it is the list the checker reads.
+
 ### Fixed
 
 - Nothing. **2-5c(2) is not enforced, and cannot be.** TeX breaks pages between
@@ -49,6 +66,44 @@
   was constructed under #124. This is the one part of 2-5c an author has to check
   by eye, and it is now recorded in `armymemo.cls` beside the penalties rather
   than left as an unexamined claim.
+
+### Removed
+
+- **BREAKING: the `digsig` class option is gone for good.** 0.6.0 removed the
+  feature and kept the option declared as a headstone -- a `\DeclareOption` whose
+  only job was to raise a class error naming AR 25-50 appendix F, so that a
+  document still passing `[digsig]` got an explanation instead of an
+  unknown-option warning buried in the log. Its own comment said "remove after one
+  release", and 0.6.0 was that release. A document passing `digsig` now gets the
+  kernel's ordinary unused-global-option warning.
+
+  The class now declares **no options whatsoever**. Everything a document passes
+  reaches `scrartcl` through the kernel's global-option rule.
+
+- **BREAKING: `\addmemoline` is dropped.** It was an undocumented alias for
+  `\memoline`, retained without a deprecation warning on the grounds that firing
+  one at an unbroken document buys nothing. That reasoning held while the names
+  were free to change; it stops holding at a freeze. `\addmemoline` is the name
+  that fits the `\add*` list-adder family and `\memoline` is the one that does
+  not -- but `\memoline` is what the README documents and what every example uses,
+  and freezing two spellings of one concept into a 1.0 is worse than dropping the
+  undocumented one while dropping it is still cheap.
+
+  **Migration.** Rename `\addmemoline` to `\memoline`. Nothing else changes; it
+  was a one-line pass-through.
+
+### Changed
+
+- **Two internals lost their public-looking names.** `\dodheader` became
+  `\am@dodheader` and the `\mildate` date format became `\am@mildate`. Neither was
+  ever API: the class calls `\am@dodheader` once from `\AtBeginDocument` and
+  invokes the date format once at load so that `\today` renders the way AR 25-50
+  writes a date. They were public only by the accident of lacking the prefix,
+  which is exactly the kind of thing a version freeze exists to catch. Renamed now
+  rather than frozen forever.
+
+  Technically breaking for a document that called `\dodheader` itself, which would
+  have produced a second letterhead.
 
 ---
 
