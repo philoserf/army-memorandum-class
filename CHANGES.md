@@ -54,6 +54,29 @@
   `a.` / `(1)` / `(a)` labels, but they are LaTeX's own names and carry LaTeX's
   contract, not this class's.
 
+- **A "What this class covers" section in `README.md`.** "Implements AR 25-50" is
+  the class's whole description, and the regulation specifies several kinds of
+  correspondence this class does not produce. Until now the answer for each was
+  neither "implemented" nor "out of scope" -- they were simply absent, and an
+  author found out by writing one. The section states a position on each (#125).
+
+  The memorandum of understanding or agreement of 2-6 is **out of scope**: figures
+  2-15 and 2-16 describe a different document, with a centred title, `BETWEEN` and
+  `AND` lines and overscored signature blocks side by side in protocol order. That
+  is a separate class, not a variant of this one. Chapter 3 letters and chapter 4
+  tabbing were already out of scope and are now written down as such.
+
+  The chapter 6 and appendix D signature-block variants are **the author's
+  responsibility**, and that is a documentation answer rather than a missing
+  feature: the class positions the block and renders name, rank-and-branch and duty
+  title, and the 24 figures' worth of grade, branch, retired and reserve, NCO,
+  chaplain and inspector general forms are what an author passes to `\rank` and
+  `\title`. The decision memorandum of 2-8 is recorded as not implemented, with no
+  decision taken against it.
+
+  The section also carries the one AR 25-50 page-break rule an author has to check
+  by eye, 2-5c(2), which until now was recorded only in a class comment.
+
 - **A "frozen public API" table in `README.md`.** The public surface had never been
   written down anywhere except by implication, spread across the command-reference
   tables. It is now one list, and it is the list the checker reads.
