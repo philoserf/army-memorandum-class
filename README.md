@@ -6,6 +6,37 @@ subject, signature block, distribution — as preamble declarations, and write t
 as an ordinary nested `enumerate`. The class produces the letterhead, the classification
 markings, the signature block, and the enclosure/distribution/copies-furnished lists.
 
+## What this class covers
+
+AR 25-50 specifies several kinds of correspondence. This class implements **the
+general-use memorandum of chapter 2** and is not a general implementation of the
+regulation, so the table says which is which rather than leaving you to find out by
+writing one.
+
+| AR 25-50                                          | Status                                                                                                                                                                                                                                                                                                                                                                          |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2-4, memorandum format                            | **Implemented.** Letterhead, office symbol, date, `MEMORANDUM FOR`/`THRU` lines, subject, body, authority line, signature block.                                                                                                                                                                                                                                                |
+| 2-5, page layout and continuation pages           | **Implemented**, including the 2-5c page-break rules — with one exception, below.                                                                                                                                                                                                                                                                                               |
+| 2-7, memorandum for record                        | **Partly implemented.** `\mfr` emits the `MEMORANDUM FOR RECORD` header line. Everything else about an MFR is ordinary memorandum format, which the class does produce.                                                                                                                                                                                                         |
+| Chapter 4, enclosures and distribution            | **Implemented** for the closing lists: enclosures with their generated count, distribution, and copies furnished.                                                                                                                                                                                                                                                               |
+| Chapter 6 and appendix D, signature-block content | **The author's responsibility.** The class positions the block and renders name, rank-and-branch, and duty title; it does not know the 24 figures' worth of grade, branch, retired and reserve, NCO, chaplain, medical corps, general staff and inspector general variants. Those are what you pass to `\rank` and `\title` — see the figures in appendix D and write them out. |
+| 2-6, memorandum of understanding or agreement     | **Out of scope.** Figures 2-15 and 2-16 describe a different document: a centred title, `BETWEEN` and `AND` lines, and overscored signature blocks side by side in protocol order with the senior official on the right. That is a separate class, not a variant of this one.                                                                                                   |
+| 2-8, decision memorandum                          | **Not implemented.** Figures 2-18 and 2-19. No decision has been taken against it; nobody has needed one.                                                                                                                                                                                                                                                                       |
+| Chapter 3, letters                                | **Out of scope.** This is a memorandum class.                                                                                                                                                                                                                                                                                                                                   |
+| Chapter 4, tabbing                                | **Out of scope.** A physical assembly procedure, not a typesetting one.                                                                                                                                                                                                                                                                                                         |
+
+### The one rule you have to check yourself
+
+AR 25-50 2-5c governs how a memorandum breaks across pages, and the class enforces three
+of its four parts: a paragraph of three lines or fewer is never divided, a divided
+paragraph keeps at least two lines on each page, and no word is hyphenated across a page
+break. All three are measured by the test suite.
+
+**2-5c(2) — "at least two words of a divided sentence on each page" — is not enforced and
+cannot be.** TeX breaks pages between lines and has no notion of a sentence, so a line
+ending in the first word of a new sentence is a legal break by every penalty a document
+class can set. If your memorandum runs to a continuation page, read the break.
+
 ## Requirements
 
 - **LuaLaTeX or XeLaTeX.** The class uses `fontspec` and calls `\setmainfont` /
