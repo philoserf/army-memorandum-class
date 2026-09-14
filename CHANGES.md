@@ -2,7 +2,7 @@
 
 ---
 
-## [Unreleased]
+## [1.0.0] - 2026-09-14
 
 ### Added
 
@@ -40,6 +40,14 @@
   depend on metrics, and each depth was placed in the middle of its regime.
 
   `task test` now covers 24 examples and 68 measured placements, up from 20 and 52.
+
+  **The fourth rule is not enforced, and cannot be.** 2-5c(2) asks for at least two
+  words of a divided sentence on each page. TeX breaks pages between lines and has
+  no notion of a sentence, so a line ending in the first word of a new sentence is
+  a legal break by every penalty a class can set; a counterexample was constructed.
+  Nothing was fixed here because nothing was broken -- this is a limit of the
+  medium, and it is now written down beside the penalties in `armymemo.cls` and in
+  the README, rather than left as an unexamined claim.
 
 - **`tools/check-public-api.py`, which makes the 1.0 API freeze a test.** A freeze
   recorded only in a changelog sentence decays the first time someone adds a
@@ -93,15 +101,6 @@
 - **A "frozen public API" table in `README.md`.** The public surface had never been
   written down anywhere except by implication, spread across the command-reference
   tables. It is now one list, and it is the list the checker reads.
-
-### Fixed
-
-- Nothing. **2-5c(2) is not enforced, and cannot be.** TeX breaks pages between
-  lines and has no notion of a sentence, so a line ending in the first word of a
-  new sentence is a legal break by every penalty a class can set; a counterexample
-  was constructed under #124. This is the one part of 2-5c an author has to check
-  by eye, and it is now recorded in `armymemo.cls` beside the penalties rather
-  than left as an unexamined claim.
 
 ### Removed
 

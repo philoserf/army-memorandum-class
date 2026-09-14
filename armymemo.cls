@@ -25,7 +25,7 @@
 % and the dated argument is a real floor, not decoration -- the classification marks
 % use \AddToHook{shipout/background}, which the kernel gained on 2020-10-01.
 \NeedsTeXFormat{LaTeX2e}[2020/10/01]
-\ProvidesClass{armymemo}[2026/09/12 0.6.0 Army Memorandum Class]
+\ProvidesClass{armymemo}[2026/09/14 1.0.0 Army Memorandum Class]
 
 % Canonical LaTeX2e order is \ProvidesClass -> \DeclareOption -> \ProcessOptions
 % -> \LoadClass. This file used to process options 140 lines after loading the
@@ -43,8 +43,12 @@
 \RequirePackage{etoolbox}  % required for conditionals (already implied)
 % The class declares NO options of its own, and that is the whole option surface:
 % everything a document passes reaches scrartcl through the kernel's global-option
-% rule. \ProcessOptions stays because the rule needs it; \DeclareOption* is
-% deliberately absent, per the note above.
+% rule. \DeclareOption* is deliberately absent, per the note directly above.
+%
+% \ProcessOptions stays. With nothing declared it has nothing of its own to do,
+% but it is where the standard class skeleton puts it and deleting it would be a
+% deviation for no gain -- and the next class-specific option, if there ever is
+% one, would need it back.
 %
 % The digsig headstone that stood here through 0.6.0 -- a \DeclareOption raising a
 % class error by name -- is gone as of 1.0.0. It was declared for exactly one
