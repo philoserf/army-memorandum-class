@@ -1,5 +1,7 @@
 # armymemo — U.S. Army memorandum class for LaTeX
 
+![Status: Stable](https://img.shields.io/badge/Status-Stable-brightgreen.svg)
+
 `armymemo.cls` typesets memoranda in the format required by **AR 25-50**
 (_Preparing and Managing Correspondence_). You supply the metadata — office symbol,
 subject, signature block, distribution — as preamble declarations, and write the body
