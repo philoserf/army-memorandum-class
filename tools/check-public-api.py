@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S uv run --script
 r"""Assert that armymemo.cls and README.md describe the same public API.
 
 Version 1.0.0 froze the class's public command surface. A freeze that lives only
@@ -25,7 +25,7 @@ Two categories are excluded, both by rule rather than by name:
     them without \makeatletter.
 
 Usage:
-    python3 tools/check-public-api.py [repo root]
+    uv run tools/check-public-api.py [repo root]
 """
 
 from __future__ import annotations

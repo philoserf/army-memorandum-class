@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S uv run --script
 """Extract the specimen figures from a local copy of AR 25-50 as PNGs.
 
 Every figure in AR 25-50 is a 96 dpi raster screenshot rather than text, so
@@ -25,7 +25,7 @@ TeX Live -- TeX Live ships neither binary, despite being the source of everythin
 else in this repository's build. See the repo Brewfile.
 
 Usage:
-    python3 tools/extract-ar-figures.py [path/to/AR.pdf]
+    uv run tools/extract-ar-figures.py [path/to/AR.pdf]
 """
 
 import re

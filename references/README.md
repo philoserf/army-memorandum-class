@@ -98,7 +98,7 @@ does not close the gap the APD template would — see below.
 so no `PATH` export is needed here; that export is for `lualatex` and friends.
 
 ```sh
-python3 tools/extract-ar-figures.py
+uv run tools/extract-ar-figures.py
 ```
 
 It names each figure from the caption printed on its own page rather than from a hardcoded

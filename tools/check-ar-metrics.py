@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S uv run --script
 r"""Assert the AR 25-50 vertical placements that the golden files cannot see.
 
 The golden harness compares `pdftotext -layout` text. That captures line
@@ -45,7 +45,7 @@ than baselines and boxes move with the glyphs inside them.
 Requires Poppler for pdftotext. That is Homebrew's `poppler`, not TeX Live.
 
 Usage:
-    python3 tools/check-ar-metrics.py [path/to/examples]
+    uv run tools/check-ar-metrics.py [path/to/examples]
 """
 
 from __future__ import annotations
