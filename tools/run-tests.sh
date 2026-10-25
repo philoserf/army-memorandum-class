@@ -203,12 +203,12 @@ run_chktex() {
 # around class diagnostics. See tools/check-ar-metrics.py for what it can and
 # cannot resolve -- it is a line-level guard, not a precision instrument.
 run_metrics() {
-	if ! command -v python3 >/dev/null 2>&1; then
-		echo "FAIL ar-metrics: python3 not found"
+	if ! command -v uv >/dev/null 2>&1; then
+		echo "FAIL ar-metrics: uv not found"
 		echo "    The placement checks need it; see tools/check-ar-metrics.py."
 		return 1
 	fi
-	python3 "$ROOT/tools/check-ar-metrics.py" "$EX" || return 1
+	uv run "$ROOT/tools/check-ar-metrics.py" "$EX" || return 1
 	return 0
 }
 
@@ -218,12 +218,12 @@ run_metrics() {
 # documents it -- public by accident, and frozen by the next release. This makes
 # the class and the README's frozen-API table have to agree, in both directions.
 run_api() {
-	if ! command -v python3 >/dev/null 2>&1; then
-		echo "FAIL public-api: python3 not found"
+	if ! command -v uv >/dev/null 2>&1; then
+		echo "FAIL public-api: uv not found"
 		echo "    The API freeze check needs it; see tools/check-public-api.py."
 		return 1
 	fi
-	python3 "$ROOT/tools/check-public-api.py" "$ROOT" || return 1
+	uv run "$ROOT/tools/check-public-api.py" "$ROOT" || return 1
 	return 0
 }
 

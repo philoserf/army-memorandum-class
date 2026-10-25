@@ -300,7 +300,7 @@ Two things to know before running it:
   side of the fix. The checker measures the placements AR 25-50 states in lines and runs
   inside `task test`. Read its `TOLERANCE_BL` comment before trusting a pass: bounding
   boxes move with the glyphs inside them, so it resolves errors of roughly half a line
-  and upward, not one-point drift. It needs `python3`, and fails loudly rather than
+  and upward, not one-point drift. It needs `uv`, and fails loudly rather than
   skipping when that is missing.
 
 The harness finds TeX Live on its own when it is not on a non-interactive shell's `PATH`,
