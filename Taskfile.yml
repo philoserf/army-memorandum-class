@@ -99,17 +99,14 @@ tasks:
     cmds:
       - cd examples && {{.LATEXMK}} {{base .TEX}}
 
-  # Deliberately has no `sources:`. It would look natural -- the Makefile rule was
-  # `check: armymemo.cls` -- but that was a prerequisite on a .PHONY target, which
-  # always ran. In Task, `sources:` without `generates:` enrolls the task in the
-  # up-to-date check, and the whole point of check is to read chktex's output every
-  # time. It does not bite today only because chktex exits 2 on the 25 warnings and
-  # Task records a fingerprint only on success; drive the count to zero and `task
-  # check` would start reporting "up to date" and skipping.
+  # The gate: `lint`, which since chktex reached zero warnings includes it. No
+  # `sources:` here or on lint: in Task, `sources:` without `generates:` enrolls a
+  # task in the up-to-date check, and a passing lint would then report "up to
+  # date" and skip instead of reading the tree.
   check:
-    desc: Run chktex against armymemo.cls
+    desc: The gate -- every linter (task lint)
     cmds:
-      - chktex armymemo.cls
+      - task: lint
 
   # Every linter that can gate, in one place: ruff over the Python, shellcheck and
   # shfmt over the shell, latexindent -k over the LaTeX, `bun fmt` over the
@@ -118,11 +115,9 @@ tasks:
   # sets `proseWrap: preserve` (Prettier's default anyway) so it normalises
   # structure without rewrapping the hand-wrapped prose.
   #
-  # chktex is deliberately NOT here. It reports 25 warnings against armymemo.cls
-  # on main, so including it would make `lint` permanently red and therefore
-  # useless as a gate. It lives in `check`, which is advisory, and in `test`,
-  # which ratchets it against CHKTEX_BASELINE -- failing only when the count
-  # rises. lacheck was evaluated and rejected: it has no concept of a .cls, so all
+  # chktex runs clean: a line it misreads carries a `% chktex N` suppression with
+  # its reason beside it, so a new warning fails the gate rather than joining a
+  # backlog. lacheck was evaluated and rejected: it has no concept of a .cls, so all
   # 19 of its findings here are "Do not use @ in LaTeX macro names", which is
   # exactly what an internal `am@` macro is required to do.
   #
@@ -142,6 +137,7 @@ tasks:
       - shellcheck tools/*.sh
       - shfmt -d tools/*.sh
       - "{{.LATEXINDENT}} -k -s -c .latexindent armymemo.cls examples/*.tex"
+      - env PATH="{{.TEXPATH}}" chktex -q armymemo.cls
       - bun fmt --check .
 
   # Formats the Markdown and YAML with `bun fmt`, and armymemo.cls and the
