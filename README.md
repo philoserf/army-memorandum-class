@@ -191,7 +191,7 @@ scheme are LaTeX's own names, carrying LaTeX's contract rather than this class's
 Two names were cleared just before the freeze rather than frozen: `\addmemoline`,
 an undocumented alias for `\memoline`, and the `digsig` class option, which had
 been kept for one release as an error message naming its replacement. See
-`CHANGES.md`.
+`CHANGELOG.md`.
 
 ### Required fields
 
@@ -350,12 +350,12 @@ senior leaders — following the rescission of DA Memorandum 25–52 — and cha
 requirement from one space after ending punctuation to two.
 
 The first is why the class no longer forces Arial; the second is why `\frenchspacing` was
-removed. See `CHANGES.md` for the full rationale.
+removed. See `CHANGELOG.md` for the full rationale.
 
 ### DAIG Correspondence and Reports Guide
 
 Department of the Army Inspector General guidance, the source for the Times New Roman
-default — see [Resources for Correspondence and Reports][daig]. `CHANGES.md` records the
+default — see [Resources for Correspondence and Reports][daig]. `CHANGELOG.md` records the
 direct URL of the edition consulted, along with the passage quoted from it.
 
 [ar25-50]: https://armypubs.army.mil/ProductMaps/PubForm/Details.aspx?PUB_ID=1020633
