@@ -8,7 +8,3 @@
 # says to bump together, so the gate cross-checks them.
 VERSION_CMD="grep -m1 ProvidesClass armymemo.cls"
 VERSION_FILES="armymemo.cls:grep CHANGELOG.md:grep CLAUDE.md:grep"
-
-# `task check` is chktex, advisory and nonzero on main by design. `task lint` is
-# every linter that can gate; `task test` is already the test row.
-GATE_CMD="task lint"

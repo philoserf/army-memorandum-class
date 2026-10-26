@@ -114,7 +114,7 @@
 % Setup fonts:
 % allow automatic quote expansion
 \RequirePackage{csquotes}
-\MakeOuterQuote{"}
+\MakeOuterQuote{"}% chktex 18 -- csquotes' outer-quote character, not a typed quote
 % for font selection
 \RequirePackage{fontspec}
 \RequirePackage[english]{babel}
@@ -183,8 +183,10 @@
 % \Needspace keeps a heading with its first entries. The closing block itself is
 % held together by box structure, not penalties -- see \am@closing.
 \RequirePackage{needspace}
+% The options lead with their commas so comments can sit between them. chktex 26
+% reads that as space before punctuation; geometry's keyval parser trims it.
 \RequirePackage[letterpaper
-	,margin=1in
+	,margin=1in% chktex 26
 	% AR 2-5d centres the page number "approximately 1-inch from the bottom of the
 	% page", and this is the setting that decides that -- not footskip. With
 	% includefoot AND an explicit bottom, geometry anchors the footer to the bottom
@@ -197,19 +199,19 @@
 	% 1in-2\baselineskip left it at 0.763in, a quarter inch short, chosen for a
 	% two-line gap between the text and the number that looked nicer than the
 	% regulation's number. See #109 and #106.
-	,bottom=1in-\baselineskip
-	,includehead
+	,bottom=1in-\baselineskip% chktex 26
+	,includehead% chktex 26
 	% The AR examples show the page number above the classification marking, and
 	% that ordering still holds: the folio sits at 0.964in and the bottom mark is
 	% anchored 0.5in from the paper edge.
-	,includefoot
-	,footskip=3\baselineskip
-	,footnotesep=\baselineskip
+	,includefoot% chktex 26
+	,footskip=3\baselineskip% chktex 26
+	,footnotesep=\baselineskip% chktex 26
 	% Two lines is the common case: office symbol, then a SUBJECT that fits on one
 	% line. A longer subject wraps and needs a third, which \am@fitheadheight
 	% measures and asks geometry for -- see it for why growing the head is the
 	% regulation-correct direction.
-	,headheight=2\baselineskip
+	,headheight=2\baselineskip% chktex 26
 	% AR 2-5c puts continuation text on the third line below the subject, and this
 	% is what buys that. The gap is not headsep alone: the first line of a text
 	% block sits \topskip below the block's top, and KOMA sets \topskip to the
@@ -227,7 +229,7 @@
 	% strut would give. Closing it would need a constant with no rule behind it,
 	% and 0.25pt is well below anything the goldens or tools/check-ar-metrics.py
 	% can resolve. Do not chase it.
-	,headsep=3\baselineskip-\topskip-0.3\baselineskip
+	,headsep=3\baselineskip-\topskip-0.3\baselineskip% chktex 26
 ]{geometry}
 % make sure the paragraph spacing matches the linespacing
 \setlength{\parskip}{\baselineskip}
@@ -305,7 +307,7 @@
 \urlstyle{same}
 
 \RequirePackage{ragged2e}
-\RaggedRight
+\RaggedRight%
 
 % AR 25-50 allows for hyphenation (just not across pages per AR 25-50 2-5-c-3)
 % and we want less hyphenation than more.
@@ -421,7 +423,7 @@
 }
 
 % header info
-\newcommand{\signaturedate}[1]{\def \am@signaturedate{#1}}\signaturedate{}
+\newcommand{\signaturedate}[1]{\def\am@signaturedate{#1}}\signaturedate{}
 \signaturedate{\am@MissingRequiredArg{warning}{signaturedate}{DRAFT}}
 % \am@suspensedate@raw exists so the guard in \am@dodheader can be LIVE, and removing it
 % silently restores a bug that survived for years. \am@suspensedate's body is a
@@ -430,9 +432,9 @@
 % the value can be tested. Do not "simplify" this away.
 \newcommand{\suspensedate}[1]{%
 	\def\am@suspensedate@raw{#1}%
-	\def\am@suspensedate{\ifstrempty{#1}{}{\textbf{S: #1}}}%
+	\def\am@suspensedate{\ifstrempty{#1}{}{\textbf{S: #1}}}% chktex 13 -- a label, not a sentence end; \@ would widen the space
 }\suspensedate{}
-\newcommand{\officesymbol}[1]{\def \am@officesymbol{#1}}
+\newcommand{\officesymbol}[1]{\def\am@officesymbol{#1}}
 \officesymbol{\am@MissingRequiredArg{error}{officesymbol}{OFFICE SYMBOL}}
 % allow replacing the logo
 \newcommand{\logo}[1]{\def\am@logo{\ifstrempty{#1}{DODb1}{#1}}}\logo{}
@@ -519,7 +521,7 @@
 	\ifdefvoid{\am@list@memolines}{%
 		\ifdefvoid{\am@list@memothru}{
 			\ifdefvoid{\am@list@memofor}{
-				\mfr
+				\mfr%
 			}{}
 		}{}
 	}{}
@@ -551,7 +553,7 @@
 
 % top and bottom of page classification markings
 % TODO should be highest of any portion marking (how to track/test)?
-\newcommand{\documentmark}[1]{\def \am@documentmark{#1}}\documentmark{}
+\newcommand{\documentmark}[1]{\def\am@documentmark{#1}}\documentmark{}
 
 % authority line
 %
@@ -574,13 +576,13 @@
 %
 % \title stays optional and defaults to empty: a memo may genuinely have no duty
 % title, so there is nothing to report.
-\renewcommand{\author}[1]{\def \am@author{#1}}
+\renewcommand{\author}[1]{\def\am@author{#1}}
 \author{\am@MissingRequiredArg{warning}{author}{AUTHOR NAME}}
-\newcommand{\rank}[1]{\def \am@rank{#1}}
+\newcommand{\rank}[1]{\def\am@rank{#1}}
 \rank{\am@MissingRequiredArg{warning}{rank}{RANK}}
-\newcommand{\branch}[1]{\def \am@branch{#1}}
+\newcommand{\branch}[1]{\def\am@branch{#1}}
 \branch{\am@MissingRequiredArg{warning}{branch}{BRANCH}}
-\renewcommand{\title}[1]{\def \am@title{#1}}\title{}
+\renewcommand{\title}[1]{\def\am@title{#1}}\title{}
 
 
 % add enclosures along with a total count
@@ -857,7 +859,7 @@
 	\ifdefvoid{\am@list@address}{%
 		\address{Organizational Name/Title}
 		\address{Standardized Street Address}
-		\address{City, State~~12345-1234}
+		\address{City, State~~12345-1234}% chktex 8 -- a ZIP+4 hyphen, not a dash
 	}{}
 	\thispagestyle{plain}%
 	\begin{tikzpicture}[remember picture, overlay]%

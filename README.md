@@ -130,8 +130,8 @@ AR 25-50 5-10.b requires two spaces between the state and the ZIP code. Write th
 task                # build every examples/*.pdf
 task test           # rebuild the examples and diff against the golden files
 task golden         # recapture the golden files after an intended output change
-task check          # chktex armymemo.cls
-task lint           # every gating linter: Python, shell, LaTeX
+task check          # the gate: task lint
+task lint           # every gating linter: Python, shell, LaTeX (chktex included)
 task format         # reformat armymemo.cls and the examples with latexindent
 task clean          # remove built PDFs and aux files
 

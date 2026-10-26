@@ -209,9 +209,9 @@ a way a repository name is not.
   the global `core.excludesfile`. It needs Homebrew `bun` 1.4.4 or later — on 1.4.3
   `bun fmt` fails with `Script not found "fmt"`. If a `package.json` ever gains a `fmt`
   script, `bun fmt` runs that instead of formatting.
-- **`chktex` is deliberately not in `lint`.** It reports 25 warnings on `main`, so it would
-  make the gate permanently red. It lives in `check` (advisory) and in `test` (ratcheted
-  against `CHKTEX_BASELINE`, failing only when the count rises).
+- **`chktex` is in `lint` and runs clean.** A line it misreads carries a `% chktex N`
+  suppression with the reason beside it (the geometry options' leading commas, csquotes'
+  outer quote, a label's colon, a ZIP+4 hyphen), so a new warning fails the gate.
 - **`lacheck` was evaluated and rejected.** It has no concept of a `.cls`: all 19 findings
   here are "Do not use @ in LaTeX macro names", which is exactly what an internal `am@`
   macro must do. Its one finding on an example is a false positive too (`~~`, the AR's
@@ -250,11 +250,8 @@ export PATH="$HOME/texlive/2026/bin/universal-darwin:$PATH"
 `latexrun` is not in the tree. The build used to branch on it and always fall through;
 that branch is gone, and `latexmk -lualatex` is simply what runs.
 
-**`task check` exits nonzero on `main`** — `chktex` reports 25 warnings against
-`armymemo.cls` (spacing, dashes), none of them new. Compare counts rather than expecting
-a clean run. Note the exit _code_ is 201, not chktex's own 2: go-task reports a failed
-command with its own status. Nothing scripts on it — the ratchet in `tools/run-tests.sh`
-runs `chktex` itself — but do not assert on 2.
+**`task check` is the gate**: it runs `task lint`, chktex included. A failing command's
+exit _code_ is go-task's own (201), not the tool's, so do not assert on a tool's status.
 
 ## Commands
 
@@ -265,8 +262,8 @@ removed in the conversion. `task --list` prints the current set.
 task                # build every examples/*.pdf (alias: task build)
 task test           # rendering regression harness -- the real check
 task golden         # recapture the golden files after an intended output change
-task check          # chktex armymemo.cls (advisory; always nonzero on main)
-task lint           # every gating linter: ruff, shellcheck, shfmt, latexindent -k
+task check          # the gate: task lint
+task lint           # every gating linter: ruff, shellcheck, shfmt, latexindent -k, chktex
 task format         # reformat armymemo.cls and the examples with latexindent
 task clean          # remove built PDFs and aux files
 task proper         # clean + remove *.out
@@ -296,10 +293,6 @@ Two things to know before running it:
   identically. A golden is never hand-edited -- the `.txt` files carry one form feed per
   page, and stripping those silently breaks page-break detection. See
   `examples/golden/README.md` for provenance and the full rule.
-- **`chktex` folds into `task test` as a ratchet**, not a gate: it fails only when the
-  warning count rises above `CHKTEX_BASELINE` in `tools/run-tests.sh` (currently 25).
-  It was 26 until 1.0.0 removed the `digsig` headstone, which took a warning with it;
-  the baseline only ever ratchets down, and it moves in the same change as the count.
   Lower the baseline in the same change that lowers the count.
 - **The goldens cannot see sub-line vertical movement, and `tools/check-ar-metrics.py`
   is what covers that.** `pdftotext` quantises vertical space into text rows, so a block

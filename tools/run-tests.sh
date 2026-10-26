@@ -22,11 +22,6 @@ EX="$ROOT/examples"
 GOLDEN="$EX/golden"
 WORK="$ROOT/.test-work"
 
-# chktex reports this many warnings on a clean tree. The harness fails only when
-# the count *rises*, so new lint is caught without demanding the backlog be fixed
-# first. Milestone 2 cleanups should ratchet this down.
-CHKTEX_BASELINE=25
-
 # The distinctive token emitted by the font fallback guard (#14). Deliberately not
 # a generic "Class armymemo Warning" match: \am@MissingRequiredArg emits
 # that same prefix for legitimately missing optional fields.
@@ -60,7 +55,7 @@ if ! command -v lualatex >/dev/null 2>&1; then
 	done
 fi
 
-for t in lualatex latexmk pdftotext pdfinfo chktex; do
+for t in lualatex latexmk pdftotext pdfinfo; do
 	if ! command -v "$t" >/dev/null 2>&1; then
 		echo "error: $t not found." >&2
 		echo "       Set TEXBIN=/path/to/texlive/bin/<arch> if TeX Live is installed" >&2
@@ -172,24 +167,6 @@ check_determinism() {
 			}
 	done
 	return $drift
-}
-
-# ------------------------------------------------------------------- chktex ---
-run_chktex() {
-	n=$(chktex "$ROOT/armymemo.cls" 2>/dev/null | grep -c '^Warning' || true)
-	if [ "$n" -gt "$CHKTEX_BASELINE" ]; then
-		echo "FAIL chktex: $n warnings, above the baseline of $CHKTEX_BASELINE"
-		echo "    New lint was introduced. Fix it, or lower nothing -- the baseline"
-		echo "    only ratchets down."
-		return 1
-	fi
-	if [ "$n" -lt "$CHKTEX_BASELINE" ]; then
-		echo "ok   chktex ($n warnings, below the baseline of $CHKTEX_BASELINE --"
-		echo "     lower CHKTEX_BASELINE in $0 to lock the improvement in)"
-		return 0
-	fi
-	echo "ok   chktex ($n warnings, at baseline)"
-	return 0
 }
 
 # --------------------------------------------------------------- ar metrics ---
@@ -312,7 +289,6 @@ done
 
 run_metrics || fail=1
 run_api || fail=1
-run_chktex || fail=1
 
 if [ "$fail" -ne 0 ]; then
 	echo "FAILED"
