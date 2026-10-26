@@ -2,6 +2,59 @@
 
 ---
 
+## [1.0.1] - 2026-10-26
+
+A maintenance release. **Rendered output is unchanged**: every example matches
+its golden, and `tools/check-ar-metrics.py` verifies all 68 placements, the
+same as 1.0.0. The public API is unchanged at 22 commands. Everything here is
+tooling, plus one source cleanup in `armymemo.cls` that cannot reach the page.
+
+### Changed
+
+- **chktex runs clean on `armymemo.cls` and now gates `task check`.** It reported
+  25 warnings at 1.0.0, kept out of the gate and ratcheted by a baseline in the
+  harness. Fourteen were "command terminated with space" and are fixed outright --
+  `\def \am@x` becomes `\def\am@x`, and a `%` follows a control word at the end of a
+  line. TeX already skips the space after a control word, so none of them can
+  change output. The other eleven are misreadings and carry a `% chktex N`
+  suppression with the reason beside it: the geometry options' leading commas, the
+  csquotes outer-quote character, a label's colon, and a ZIP+4 hyphen. With the
+  count at zero, chktex moved into `task lint`, `task check` runs `lint`, and the
+  `CHKTEX_BASELINE` ratchet is gone (#144).
+
+- **`task build` finds TeX Live the way `task test` does.** It ran `latexmk` from
+  `PATH`, which TeX Live is usually not on in a non-interactive shell, so a build
+  failed on a machine with the toolchain installed. The Taskfile now runs the
+  harness's probe of the standard install layouts, newest first, and `TEXBIN`
+  overrides both (#143).
+
+- **The Python tools run through `uv run`**, not whichever `python3` was first on
+  `PATH`. The harness checks for `uv`, and the scripts' shebangs are
+  `#!/usr/bin/env -S uv run --script`, so running one directly goes through `uv`
+  too (#136).
+
+- **Markdown and YAML are formatted with `bun fmt`**, not prettier. It is
+  Prettier-compatible and reads the same config; on adoption it rewrote none of the
+  files prettier had already formatted. It needs Homebrew `bun` 1.4.4 or later
+  (#135). The config is the workspace `.prettierrc.json`, adopted here (#132).
+
+- **`CHANGES.md` is now `CHANGELOG.md`**, the name the release tooling reads. A
+  pure rename; no entry changed (#142).
+
+### Added
+
+- **A `.release-gate` profile**, so the pre-release check can find the version in
+  the `\ProvidesClass` line and cross-check the other two places it lives (#140).
+- **A status badge in `README.md`.**
+
+### Fixed
+
+- **Stale chktex counts and prettier claims in the docs.** `CLAUDE.md` and the
+  Taskfile cited a warning count that 1.0.0 had moved, and said the repo carried
+  no prettier config after it had adopted one (#137).
+
+---
+
 ## [1.0.0] - 2026-09-14
 
 ### Added
