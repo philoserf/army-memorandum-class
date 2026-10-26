@@ -45,7 +45,7 @@ per AR 25-50. There is no application code — the deliverables are the class fi
 
   Two glallen01 branches were never merged here and are no longer reachable locally:
   `opord-example` (`3d5e5e1`, an OPORD example) and `digsig` (`0aa362d`, which was
-  superseded by a bundled `digsig.sty` that has since been removed — see CHANGES.md).
+  superseded by a bundled `digsig.sty` that has since been removed — see CHANGELOG.md).
   Both remain public on glallen01 and come back with the fetch above.
 
 - **GitHub still classifies this repo as a fork** (`isFork: true`, parent `glallen01`),
@@ -328,7 +328,7 @@ same place, and before that an `examples/Makefile` as well — mostly delegated 
   a rebuilt PDF, and do not look for one in a diff -- look at the golden.
 - **Fonts: Times New Roman body, Arial letterhead.** The class sets
   `\setmainfont{Times New Roman}` (armymemo.cls:96) and `\setsansfont{Arial}` (:105), per
-  the 4 OCT 24 AR 25-50 update and the DAIG guidance quoted in `CHANGES.md` — a local copy
+  the 4 OCT 24 AR 25-50 update and the DAIG guidance quoted in `CHANGELOG.md` — a local copy
   of that guide now sits in `references/`. Users override with `\setmainfont{Arial}`.
   An earlier revision of this file claimed the README was stale here and cited lines 117
   and 126; both were wrong. The README (lines 13-14) states the split correctly, and 117 was
@@ -338,7 +338,7 @@ same place, and before that an `examples/Makefile` as well — mostly delegated 
   which was whitespace-only and left the file at 747 lines -- but it did alter the leading
   whitespace of other lines, so verify rather than assume for any reference you find.)
 - **Version lives in three places** — the `\ProvidesClass{armymemo}[YYYY/MM/DD X.Y.Z ...]`
-  line (armymemo.cls:28, currently `2026/09/14 1.0.0`), the heading in `CHANGES.md`, and the
+  line (armymemo.cls:28, currently `2026/09/14 1.0.0`), the heading in `CHANGELOG.md`, and the
   `currently` reference in this very bullet. That third one is the one that goes stale,
   because it is the one nobody counts: the 0.5.0 release commit had to fix it after the
   fact. Bump all three.
