@@ -87,7 +87,7 @@ tasks:
   # `check: armymemo.cls` -- but that was a prerequisite on a .PHONY target, which
   # always ran. In Task, `sources:` without `generates:` enrolls the task in the
   # up-to-date check, and the whole point of check is to read chktex's output every
-  # time. It does not bite today only because chktex exits 2 on the 26 warnings and
+  # time. It does not bite today only because chktex exits 2 on the 25 warnings and
   # Task records a fingerprint only on success; drive the count to zero and `task
   # check` would start reporting "up to date" and skipping.
   check:
@@ -96,12 +96,13 @@ tasks:
       - chktex armymemo.cls
 
   # Every linter that can gate, in one place: ruff over the Python, shellcheck and
-  # shfmt over the shell, latexindent -k over the LaTeX, prettier over the
-  # Markdown and YAML. All four run on their own defaults; the repo carries no
-  # prettier config, and prettier's default proseWrap is `preserve`, so it
-  # normalises structure without rewrapping the hand-wrapped prose.
+  # shfmt over the shell, latexindent -k over the LaTeX, `bun fmt` over the
+  # Markdown and YAML. The first three run on their own defaults. `bun fmt` is
+  # Prettier-compatible and reads .prettierrc.json, the workspace config, which
+  # sets `proseWrap: preserve` (Prettier's default anyway) so it normalises
+  # structure without rewrapping the hand-wrapped prose.
   #
-  # chktex is deliberately NOT here. It reports 26 warnings against armymemo.cls
+  # chktex is deliberately NOT here. It reports 25 warnings against armymemo.cls
   # on main, so including it would make `lint` permanently red and therefore
   # useless as a gate. It lives in `check`, which is advisory, and in `test`,
   # which ratchets it against CHKTEX_BASELINE -- failing only when the count
@@ -125,9 +126,9 @@ tasks:
       - shellcheck tools/*.sh
       - shfmt -d tools/*.sh
       - "{{.LATEXINDENT}} -k -s -c .latexindent armymemo.cls examples/*.tex"
-      - prettier --check .
+      - bun fmt --check .
 
-  # Formats the Markdown and YAML with prettier, and armymemo.cls and the
+  # Formats the Markdown and YAML with `bun fmt`, and armymemo.cls and the
   # examples in place with latexindent's own
   # defaults -- no localSettings.yaml, so the indent character and width are
   # whatever the tool ships with. The reformat is whitespace-only (`diff -w` is
@@ -145,7 +146,7 @@ tasks:
     desc: Format the Markdown, YAML and LaTeX sources in place
     cmds:
       - "{{.LATEXINDENT}} -w -s -c .latexindent armymemo.cls examples/*.tex"
-      - prettier --write .
+      - bun fmt .
 
   # Rendering regression harness: rebuilds every example and diffs the extracted
   # text, page count and class diagnostics against examples/golden/.
