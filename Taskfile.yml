@@ -7,12 +7,28 @@
 version: "3"
 
 vars:
+  # TeX Live is frequently not on a non-interactive shell's PATH. TEXPATH is PATH
+  # with the newest standard install's bin directory put first when lualatex is
+  # not already there: the same probe, in the same order, as tools/run-tests.sh,
+  # so `task` and the harness find the same toolchain. TEXBIN overrides. Nothing
+  # machine-specific is committed. It is a var the TeX commands pass on, not an
+  # `env:` entry, because Task never lets `env:` override a variable the shell
+  # already set, and PATH always is.
+  TEXPATH:
+    sh: >-
+      if command -v lualatex >/dev/null 2>&1; then printf '%s' "$PATH"; exit 0; fi;
+      for d in ${TEXBIN:-} /Library/TeX/texbin
+      $(printf '%s\n' "$HOME"/texlive/*/bin/* /usr/local/texlive/*/bin/*
+      /opt/texlive/*/bin/* 2>/dev/null | sort -r); do
+      if [ -x "$d/lualatex" ]; then printf '%s' "$d:$PATH"; exit 0; fi;
+      done; printf '%s' "$PATH"
+
   # latexmk runs with cwd=examples so the examples' relative paths resolve --
   # \documentclass{../armymemo}, \logo{assets/placeholder-seal} and the symlinks beside
   # them. Kept as a `cd` rather than a task-level `dir:` on purpose: `dir:` also
   # reroots `sources:`, which would make the class and package fingerprints
   # resolve to the examples/ symlinks instead of the real files.
-  LATEXMK: latexmk -lualatex
+  LATEXMK: env PATH="{{.TEXPATH}}" latexmk -lualatex
 
   # Resolve a latexindent that actually runs, rather than the first one on PATH.
   # TeX Live ships latexindent as a Perl script whose dependencies (YAML::Tiny,
