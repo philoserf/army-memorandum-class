@@ -238,8 +238,10 @@ on 2026-09-09 under `~/texlive/2026`, user-owned, no sudo (#50). Times New Roman
 both resolve from `/System/Library/Fonts/Supplemental/`, and all four examples build.
 
 **Its binaries are not on a non-interactive shell's `PATH`**, so `command -v lualatex`
-comes back empty from a tool shell and the toolchain looks absent. Prepend the bin
-directory first:
+comes back empty from a tool shell and the toolchain looks absent. `task` and the harness
+both find it anyway: the Taskfile's `TEXPATH` and `tools/run-tests.sh` run the same probe of the
+standard install layouts, newest first, and `TEXBIN` overrides both. To run the TeX tools
+by hand, prepend the bin directory first:
 
 ```sh
 export PATH="$HOME/texlive/2026/bin/universal-darwin:$PATH"
