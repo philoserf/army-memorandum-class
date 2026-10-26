@@ -1,0 +1,14 @@
+# Profile for the release-gate skill (~/.claude/skills/release-gate).
+# Sourced as shell from the repo root; see that script's header for the contract.
+#
+# A LaTeX class has no package manifest, so the gate cannot detect where the
+# version lives. Its primary source is the \ProvidesClass line in armymemo.cls;
+# the first semver on that line is the version, since the date uses slashes.
+# CHANGES.md and CLAUDE.md are the other two of the "three places" CLAUDE.md
+# says to bump together, so the gate cross-checks them.
+VERSION_CMD="grep -m1 ProvidesClass armymemo.cls"
+VERSION_FILES="armymemo.cls:grep CHANGES.md:grep CLAUDE.md:grep"
+
+# `task check` is chktex, advisory and nonzero on main by design. `task lint` is
+# every linter that can gate; `task test` is already the test row.
+GATE_CMD="task lint"
