@@ -36,4 +36,4 @@ brew "shellcheck"  # POSIX sh correctness for tools/run-tests.sh
 brew "shfmt"       # shell formatting, run with no style flags -- see Taskfile.yml
 brew "latexindent" # LaTeX formatting. NOT the TeX Live copy, whose Perl
 # dependencies are missing; see the LATEXINDENT var in Taskfile.yml
-brew "prettier" # Markdown and YAML
+brew "bun"         # `bun fmt` (1.4.4+), Prettier-compatible, over the Markdown and YAML
