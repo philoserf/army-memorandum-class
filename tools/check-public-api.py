@@ -1,4 +1,7 @@
 #!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.10"
+# ///
 r"""Assert that armymemo.cls and README.md describe the same public API.
 
 Version 1.0.0 froze the class's public command surface. A freeze that lives only

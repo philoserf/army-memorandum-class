@@ -1,4 +1,7 @@
 #!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.10"
+# ///
 """Extract the specimen figures from a local copy of AR 25-50 as PNGs.
 
 Every figure in AR 25-50 is a 96 dpi raster screenshot rather than text, so
