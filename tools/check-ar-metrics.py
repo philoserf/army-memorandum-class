@@ -1,4 +1,7 @@
 #!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.10"
+# ///
 r"""Assert the AR 25-50 vertical placements that the golden files cannot see.
 
 The golden harness compares `pdftotext -layout` text. That captures line
