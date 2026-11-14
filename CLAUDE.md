@@ -203,8 +203,8 @@ a way a repository name is not.
   installed), `shellcheck` and `shfmt -d` over the shell, `latexindent -k` over
   `armymemo.cls` and the examples, and `bun fmt --check .` over the Markdown and YAML.
   `task format` is the writing half. Its settings are the `[fmt]` table in
-  `bunfig.toml`. It respects `.gitignore`, so `.` does not wander into `.task/`, `.latexindent/` or
-  `references/figures/`. It needs Homebrew `bun` 1.4.4 or later — on 1.4.3
+  `bunfig.toml`. It respects `.gitignore`, so `.` does not wander into `.task/`,
+  `.latexindent/` or `references/figures/`. It needs Homebrew `bun` 1.4.4 or later — on 1.4.3
   `bun fmt` fails with `Script not found "fmt"`. If a `package.json` ever gains a `fmt`
   script, `bun fmt` runs that instead of formatting.
 - **`chktex` is in `lint` and runs clean.** A line it misreads carries a `% chktex N`
@@ -226,10 +226,9 @@ a way a repository name is not.
   Markdown uses `_emphasis_`, because that is what those tools do unprompted. The one
   formatter setting is `embeddedLanguageFormatting = "off"` in `bunfig.toml`; `bun fmt`'s
   default preserves prose wrap, which is why the hand-wrapped prose in these files survives
-  formatting unrewrapped. There is
-  deliberately no `.editorconfig`. If you add style flags to any of these formatters
-  without reformatting the files in the same change, the `lint` gate will start failing on
-  correct code.
+  formatting unrewrapped. There is deliberately no `.editorconfig`. If you add style flags
+  to any of these formatters without reformatting the files in the same change, the `lint`
+  gate will start failing on correct code.
 
 **The toolchain is installed** — TeX Live 2026 (`scheme-full`, no docs or sources) went in
 on 2026-09-09 under `~/texlive/2026`, user-owned, no sudo (#50). Times New Roman and Arial
