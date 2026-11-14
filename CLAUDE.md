@@ -202,11 +202,9 @@ a way a repository name is not.
 - **`task lint` is every linter that can gate**: `ruff` over the Python (via `uvx`; not
   installed), `shellcheck` and `shfmt -d` over the shell, `latexindent -k` over
   `armymemo.cls` and the examples, and `bun fmt --check .` over the Markdown and YAML.
-  `task format` is the writing half. `bun fmt` is Prettier-compatible and reads
-  `.prettierrc.json` and `.prettierignore`, both adopted from the workspace config (#133).
-  It respects `.gitignore`, so `.` does not wander into `.task/`, `.latexindent/` or
-  `references/figures/`; `.prettierignore` covers `.issues/`, which is ignored only through
-  the global `core.excludesfile`. It needs Homebrew `bun` 1.4.4 or later — on 1.4.3
+  `task format` is the writing half. Its settings are the `[fmt]` table in
+  `bunfig.toml`. It respects `.gitignore`, so `.` does not wander into `.task/`,
+  `.latexindent/` or `references/figures/`. It needs Homebrew `bun` 1.4.4 or later — on 1.4.3
   `bun fmt` fails with `Script not found "fmt"`. If a `package.json` ever gains a `fmt`
   script, `bun fmt` runs that instead of formatting.
 - **`chktex` is in `lint` and runs clean.** A line it misreads carries a `% chktex N`
@@ -226,12 +224,11 @@ a way a repository name is not.
   latexindent, shfmt and `bun fmt` are given no style flags at all, so `tools/run-tests.sh`
   is tab indented with `case` arms at column zero, the LaTeX is tab indented, and the
   Markdown uses `_emphasis_`, because that is what those tools do unprompted. The one
-  formatter config is the workspace `.prettierrc.json`, which pins `proseWrap: preserve`
-  (Prettier's default anyway) — why the hand-wrapped prose in these files survives
-  formatting unrewrapped — and turns off embedded-language formatting. There is
-  deliberately no `.editorconfig`. If you add style flags to any of these formatters
-  without reformatting the files in the same change, the `lint` gate will start failing on
-  correct code.
+  formatter setting is `embeddedLanguageFormatting = "off"` in `bunfig.toml`; `bun fmt`'s
+  default preserves prose wrap, which is why the hand-wrapped prose in these files survives
+  formatting unrewrapped. There is deliberately no `.editorconfig`. If you add style flags
+  to any of these formatters without reformatting the files in the same change, the `lint`
+  gate will start failing on correct code.
 
 **The toolchain is installed** — TeX Live 2026 (`scheme-full`, no docs or sources) went in
 on 2026-09-09 under `~/texlive/2026`, user-owned, no sudo (#50). Times New Roman and Arial
