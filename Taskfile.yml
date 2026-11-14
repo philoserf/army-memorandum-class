@@ -110,10 +110,9 @@ tasks:
 
   # Every linter that can gate, in one place: ruff over the Python, shellcheck and
   # shfmt over the shell, latexindent -k over the LaTeX, `bun fmt` over the
-  # Markdown and YAML. The first three run on their own defaults. `bun fmt` is
-  # Prettier-compatible and reads .prettierrc.json, the workspace config, which
-  # sets `proseWrap: preserve` (Prettier's default anyway) so it normalises
-  # structure without rewrapping the hand-wrapped prose.
+  # Markdown and YAML. The first three run on their own defaults. `bun fmt`
+  # takes one setting from bunfig.toml, and its default preserves prose wrap, so
+  # it normalises structure without rewrapping the hand-wrapped prose.
   #
   # chktex runs clean: a line it misreads carries a `% chktex N` suppression with
   # its reason beside it, so a new warning fails the gate rather than joining a
